@@ -9,15 +9,11 @@
   "Application routes"
   @{"/" (http/html-get /index)})
 
-(defn update-rpc
-  "Prepares RPC configuration"
-  [url] @{:url url :functions @{}})
-
 (def config
   "Configuration"
   (merge ((=> (=>machine-config :student) tuple
               (>merge @{:routes routes})
-              (>update :rpc update-rpc)) compile-config)))
+              (>update :rpc (update-rpc @{}))) compile-config)))
 
 (defn main
   ```

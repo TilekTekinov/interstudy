@@ -4,7 +4,10 @@
   :debug true
   :log false}
  :machines
- {:student
+ {:tree
+  {:image "test/tree"
+   :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}
+   :student
   {:image "test/test"
    :http "localhost:6666"
    :cookie-host "localhost"
@@ -16,5 +19,7 @@
  :mycelium
  {:psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
   :nodes
-  {:student
-   {:rpc "localhost:5555"}}}}
+  {:tree
+   {:rpc "localhost:5555"}
+   :student
+   {:rpc "localhost:5556"}}}}

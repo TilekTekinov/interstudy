@@ -6,7 +6,7 @@
 (end-suite)
 
 
-(init-test)
+(init-test :student)
 (ev/go student/main)
 (ev/sleep 0.01) # Settle the server
 

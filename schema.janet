@@ -27,7 +27,13 @@
    :debug boolean?
    :log boolean?})
 
-(def?! machine-config
+(def?! tree-config
+  dictionary?
+  {:image bytes?
+   :key present-string?
+   :rpc (?optional present-string?)})
+
+(def?! avatar-config
   dictionary?
   {:image bytes?
    :sentry boolean?
@@ -37,6 +43,10 @@
    :public present-string?
    :key present-string?
    :rpc (?optional present-string?)})
+
+(def?! machine-config
+  dictionary?
+  (>check-all some avatar-config? tree-config?))
 
 (def?! machines-config
   dictionary?
@@ -69,5 +79,4 @@
         (do
           (eprint "Config does not conform to its schema. Exiting!")
           (eprintf "%Q" (config! c))
-          (eprintf "%Q" (machine-config! ( (=> :machines :student >trace-base) c)))
           (os/exit 1)))))

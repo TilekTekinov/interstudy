@@ -10,10 +10,15 @@
       (<- c (=> :mycelium (>select-keys :psk)))
       (>base c) (>merge)))
 
+(defn update-rpc
+  "Prepares RPC configuration"
+  [funcs]
+  (fn [url] @{:url url :functions funcs}))
+
 # Test helpers
 (defmacro init-test
   "Initializes test defs and store"
-  [&opt cookie?]
+  [machine &opt cookie?]
   (default cookie? true)
   (def now (- (os/time) 10))
   ~(upscope
@@ -21,7 +26,7 @@
            :image image
            :key key
            :rpc rpc-url
-           :psk psk} ((=>machine-config :student) compile-config))
+           :psk psk} ((=>machine-config ,machine) compile-config))
      (def image-file (string image ".jimage"))
      (if (os/stat image-file) (os/rm image-file))
      (def test-store (:init (make Store :image image)))
