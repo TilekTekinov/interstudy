@@ -1,0 +1,4 @@
+*.jdn
+*.jimage
+test/test.jimage
+dev

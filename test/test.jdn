@@ -1,0 +1,20 @@
+{:deploy
+ {:host "localhost"
+  :release-path "./"
+  :debug true
+  :log false}
+ :machines
+ {:student
+  {:image "test/test"
+   :http "localhost:6666"
+   :cookie-host "localhost"
+   :timeout 300
+   :static false
+   :public "public"
+   :sentry true
+   :key "L\x06A1\xDD\x7F'\x02\e\x96~\x9E\x81$\xD2\xF8\xC5!\x90\xFB\xD8*\x94lx>\x01\xC7\xD2U\xDFL"}}
+ :mycelium
+ {:psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
+  :nodes
+  {:student
+   {:rpc "localhost:5555"}}}}

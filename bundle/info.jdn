@@ -1,0 +1,8 @@
+@{:repo "https://git.sr.ht/~pepe/interstudy"
+  :license "MIT"
+  :jpm-dependencies @["https://git.sr.ht/~pepe/gp"]
+  :name "interstudy"
+  :description "Erasmus enrollment"
+  :url "https://git.sr.ht/~pepe/interstudy"
+  :author "Josef Posp\xC3\xAD\xC5\xA1il <josef@pospisil.work>"
+  :dependencies @["spork"]}

@@ -1,6 +1,7 @@
-(use spork/test)
-
-(start-suite)
-(import /app/environment)
-(assert false "fix me")
-(end-suite)
+(use spork/test)
+(import /environment)
+
+
+(start-suite :docs)
+(assert-docs "/environment")
+(end-suite)
