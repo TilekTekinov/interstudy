@@ -6,8 +6,8 @@
 
 (def config
   "Configuration"
-  (merge ((=> (=>machine-config :tree)
-              (>update :rpc (update-rpc rpc-funcs))) compile-config)))
+  ((=> (=>machine-initial-state :tree)
+       (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
 (defn main
   ```

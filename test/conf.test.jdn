@@ -1,16 +1,17 @@
-{:deploy
- {:host "tpw"
+{:name "interstudy"
+ :deploy
+ {:host "localhost"
   :release-path "/var/code/insterstudy"
   :debug true
-  :log true}
+  :log false}
  :machines
  {:tree
-  {:image "data/tree"}
+  {:image "test/tree"}
   :student
-  {:image "data/student"
+  {:image "test/student"
    :timeout 300}
   :admin
-  {:image "data/admin"
+  {:image "test/admin"
    :timeout 300}}
  :mycelium
  {:psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"

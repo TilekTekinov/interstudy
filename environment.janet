@@ -1,14 +1,15 @@
 (import gp/environment/app :prefix "" :export true)
 
-(defn =>machine-config
+(defn =>machine-initial-state
   "Navigation to extract `machine` congig from main config"
-  [machine &opt suffix]
-  (def c @[{:name (string machine ;(if suffix ["-" suffix] []))}])
-  (=> (<- c (=> :deploy))
-      (<- c (=> :machines machine))
-      (<- c (=> :mycelium :nodes machine))
-      (<- c (=> :mycelium (>select-keys :psk)))
-      (>base c) (>merge)))
+  [machine]
+  (let [c @[@{:name (string machine)}]]
+    (=> (<- c (=> :name |{:thicket $}))
+        (<- c (=> :deploy))
+        (<- c (=> :machines machine))
+        (<- c (=> :mycelium :nodes machine))
+        (<- c (=> :mycelium (>select-keys :psk)))
+        (>base c) (>merge))))
 
 (defn update-rpc
   "Prepares RPC configuration"
@@ -26,7 +27,7 @@
            :image image
            :key key
            :rpc rpc-url
-           :psk psk} ((=>machine-config ,machine) compile-config))
+           :psk psk} ((=>machine-initial-state ,machine) compile-config))
      (def image-file (string image ".jimage"))
      (if (os/stat image-file) (os/rm image-file))
      (def test-store (:init (make Store :image image)))

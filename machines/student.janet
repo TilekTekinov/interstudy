@@ -3,7 +3,7 @@
 (defn /index
   "Index page."
   [req]
-  (http/page app {:content "Hello World!"}))
+  "Hello World!")
 
 (def routes
   "Application routes"
@@ -11,7 +11,7 @@
 
 (def config
   "Configuration"
-  (merge ((=> (=>machine-config :student) tuple
+  (merge ((=> (=>machine-initial-state :student) tuple
               (>merge @{:routes routes})
               (>update :rpc (update-rpc @{}))) compile-config)))
 

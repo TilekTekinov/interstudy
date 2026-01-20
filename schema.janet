@@ -20,6 +20,10 @@
   table?
   {:session session?})
 
+(def?! url
+  present-string?
+  (?matches-peg '(* (to ":") ":" (some :d) -1)))
+
 (def?! deploy-config
   dictionary?
   {:host present-string?
@@ -27,22 +31,20 @@
    :debug boolean?
    :log boolean?})
 
+(def?! persisted-config
+  {:image present-string?})
+
+(def?! named-config
+  {:name present-string?})
+
 (def?! tree-config
   dictionary?
-  {:image bytes?
-   :key present-string?
-   :rpc (?optional present-string?)})
+  persisted-config?)
 
 (def?! avatar-config
   dictionary?
-  {:image bytes?
-   :sentry boolean?
-   :http present-string?
-   :cookie-host present-string?
-   :static boolean?
-   :public present-string?
-   :key present-string?
-   :rpc (?optional present-string?)})
+  persisted-config?
+  {:timeout number?})
 
 (def?! machine-config
   dictionary?
@@ -50,33 +52,55 @@
 
 (def?! machines-config
   dictionary?
-  {values (>?? all machine-config?)})
+  {keys (>?? all keyword)
+   values (>?? all machine-config?)})
 
-(def?! node
+(def?! mycelium-node
   dictionary?
-  {:rpc present-string?})
+  {:rpc url?
+   :key present-string?})
 
-(def?! nodes-config
+(def?! mycelium-nodes-config
   dictionary?
   {keys (>?? all keyword)
-   values (>?? all node?)})
+   values (>?? all mycelium-node?)})
 
 (def?! mycelium-config
   dictionary?
   {:psk present-string?
-   :nodes nodes-config?})
+   :nodes mycelium-nodes-config?})
+
+(def?! membrane-node
+  dictionary?
+  {:http url?
+   :cookie-host present-string?
+   :static boolean?
+   :public (?optional present-string?)})
+
+(def?! membrane-nodes-config
+  dictionary?
+  {keys (>?? all keyword)
+   values (>?? all membrane-node?)})
+
+(def?! membranes-config
+  dictionary?
+  {:nodes membrane-nodes-config?})
 
 (def?! config
   dictionary?
-  {:deploy deploy-config?
+  {:name present-string?
+   :deploy deploy-config?
    :machines machines-config?
-   :mycelium mycelium-config?})
+   :mycelium mycelium-config?
+   :membranes membranes-config?})
 
 (def compile-config
   "Compile time configuration"
-  (let [c (parse (slurp (os/getenv "CONF" "conf.jdn")))]
-    (or (config? c)
-        (do
-          (eprint "Config does not conform to its schema. Exiting!")
-          (eprintf "%Q" (config! c))
-          (os/exit 1)))))
+  (parse (slurp (os/getenv "CONF" "conf.jdn"))))
+
+  # (let [c (parse (slurp (os/getenv "CONF" "conf.jdn")))]
+  #   (or (config? c)
+  #       (do
+  #         (eprint "Config does not conform to its schema. Exiting!")
+  #         (eprintf "%Q" (config! c))
+  #         (os/exit 1))))

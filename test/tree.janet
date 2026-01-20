@@ -1,3 +1,4 @@
+(os/setenv "CONF" "test/conf.test.jdn")
 (use spork/test /environment /schema spork/http gp/net/rpc)
 (import /machines/tree)
 
