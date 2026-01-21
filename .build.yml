@@ -16,8 +16,8 @@ tasks:
         cd janet
         make -j
         sudo make install
-  - bow-test: |
-        cd bow
+  - interstudy-test: |
+        cd interstudy
         sudo janet --install ../spork
         sudo janet --install ../jhydro
         sudo janet --install ../gp
