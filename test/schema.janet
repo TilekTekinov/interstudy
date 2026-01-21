@@ -15,3 +15,14 @@
 (assert?! schema/membranes-config (schema/compile-config :membranes))
 (assert (schema/config? schema/compile-config))
 (end-suite)
+
+(start-suite :entities)
+(assert?! schema/registration
+          @{:birth-date "1973-01-10"
+            :email "josef@pospisil.work"
+            :faculty "FE"
+            :fullname "Josef Posp\xC3\xAD\xC5\xA1il"
+            :home-university "Oxford"
+            :study-programme "Erasmus+ (EU)"
+            :timestamp (os/time)})
+(end-suite)

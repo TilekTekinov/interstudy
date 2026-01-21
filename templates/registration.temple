@@ -1,0 +1,49 @@
+<h2>All fields are required</h2>
+<div class="error">{{ (args :error) }}</div>
+<form method='post' action='/' class='table rows'>
+  <p>
+    <label for='fullname'>
+      Fullname
+    </label>
+   <input name='fullname' id='fullname' type='text' required/>
+  </p>
+  <p>
+    <label for='email'>
+      Email
+    </label>
+    <input name='email' id='email' type='email' required/>
+  </p>
+  <p>
+    <label for='birth-date'>
+      Date of birth
+    </label>
+    <input name='birth-date' id='birth-date' type='date' max='2010-01-01' required/>
+  </p>
+  <p>
+    <label for='home-university'>
+      Home university
+    </label>
+    <input name='home-university' id='home-university' type='text' required/>
+  </p>
+  <p>
+    <label for='faculty'>
+      Faculty
+    </label>
+    <select name='faculty' id='faculty' type='text' required>
+	{% (eachp [code name] (args :faculties) %}
+      <option value="{{ code }}">{{ name }}</option>
+	{% ) %}
+	</select>
+  </p>
+  <p>
+    <label for='study-programme'>
+      Study programme
+    </label>
+    <select name='study-programme' id='study-programme' type='text' required>
+	{% (each name (args :study-programmes) %}
+      <option value="{{ name }}">{{ name }}</option>
+	{% ) %}
+	</select>
+  </p>
+  <button>Register</button>
+</form>

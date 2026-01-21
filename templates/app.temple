@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>interstudy</title>
+    <title>Interstudy - {{ (args :title) }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.1/dist/missing.css">
@@ -12,11 +12,13 @@
   <header class="navbar">
     <span class="f-row">
       <a class="brand" href="/" aria-label="Home">
-        <h1>interstudy</h1>
+        <h1>Interstudy - {{ (args :title) }}</h1>
       </a>
     </span>
   </header>
-  {- (args :content) -}
+  <main>
+    {- (args :content) -}
+  </main>
   <footer>interstudy</footer>
   </body>
 </html>

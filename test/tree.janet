@@ -7,13 +7,17 @@
 (end-suite)
 
 (init-test :tree)
+(load-dump "test/data.jdn")
 (ev/go tree/main)
 (ev/sleep 0.01) # Settle the server
 
 (start-suite :rpc)
 (let [c (client ;(server/host-port rpc-url) "test" psk)]
   (assert c)
-  (assert (:subjects c)))
+  (each coll tree/collections
+    (assert (c coll))
+    (let [ss (coll c)]
+      ((=> (>assert present?)) ss))))
 
 (end-suite)
 (os/exit 0)

@@ -1,4 +1,5 @@
-{:deploy
+{:name "interstudy"
+ :deploy
  {:host "tpw"
   :release-path "/var/code/insterstudy"
   :debug true

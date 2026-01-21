@@ -2,13 +2,18 @@
 
 (defn =>machine-initial-state
   "Navigation to extract `machine` congig from main config"
-  [machine]
-  (let [c @[@{:name (string machine)}]]
+  [machine &opt tree]
+  (let [c @[{:name (string machine)}]]
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
         (<- c (=> :machines machine))
-        (<- c (=> :mycelium :nodes machine))
         (<- c (=> :mycelium (>select-keys :psk)))
+        (>if (=> :mycelium :nodes machine)
+             (<- c (=> :mycelium :nodes machine)))
+        (>if (=> :membranes :nodes machine)
+             (<- c (=> :membranes :nodes machine)))
+        (>if (always tree)
+             (<- c (=> :mycelium :nodes :tree :rpc |{:tree $})))
         (>base c) (>merge))))
 
 (defn update-rpc
@@ -19,9 +24,9 @@
 # Test helpers
 (defmacro init-test
   "Initializes test defs and store"
-  [machine &opt cookie?]
-  (default cookie? true)
+  [machine]
   (def now (- (os/time) 10))
+  (def store-name (symbol machine "-store"))
   ~(upscope
      (def {:http http-url
            :image image
@@ -31,16 +36,12 @@
      (def image-file (string image ".jimage"))
      (if (os/stat image-file) (os/rm image-file))
      (def test-store (:init (make Store :image image)))
-     (def cookie "f98bb104ad8468452201aaeab1410f12")
-     (:save test-store (pwhash/create "s3ntr7" key) :secret)
-     (:save test-store ,(if cookie? ~[cookie @{:logged ,now :active ,now}] '[]) :session)
-     (:flush test-store)
-     (defn url [path] (string "http://" http-url path))
-     (defn auth-req
-       [method path &named headers body urlenc]
-       (default headers
-         (if urlenc {"Content-Type" "application/x-www-form-urlencoded"} {}))
-       (request (string/ascii-upper method) path
-                :body body
-                :headers (merge {"Cookie" (string "session=" cookie)}
-                                headers)))))
+     (defn url [path] (string "http://" http-url path))))
+
+(defmacro load-dump
+  "Loads dump into test-store"
+  [file]
+  (def data (parse (slurp "test/data.jdn")))
+  ~(upscope
+     (:save test-store ,data)
+     (:flush test-store)))
