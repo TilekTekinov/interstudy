@@ -15,6 +15,16 @@
    :home-university present-string?
    :study-programme present-string?})
 
+(def?! enrollment
+  entity?
+  @{:course-1 present-string?
+    :course-2 present-string?
+    :course-3 present-string?
+    :course-4 present-string?
+    :course-5 present-string?
+    :course-6 present-string?}
+  (fn [e] (deep= (values e) (distinct (values e)))))
+
 (def?! session-payload
   table?
   {:logged epoch?

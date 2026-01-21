@@ -1,29 +1,32 @@
+{% (def reg (args :registration)) %}
 <h2>All fields are required</h2>
-<div class="error">{{ (args :error) }}</div>
+{% (when (args :error) %}
+<div class="error bad box">{{ (args :error) }}</div>
+{% ) %}
 <form method='post' action='/' class='table rows'>
   <p>
     <label for='fullname'>
       Fullname
     </label>
-   <input name='fullname' id='fullname' type='text' required/>
+   <input name='fullname' id='fullname' type='text' required value='{- (if reg (reg :fullname)) -}'/>
   </p>
   <p>
     <label for='email'>
       Email
     </label>
-    <input name='email' id='email' type='email' required/>
+    <input name='email' id='email' type='email' required value='{- (if reg (reg :email)) -}'/>
   </p>
   <p>
     <label for='birth-date'>
       Date of birth
     </label>
-    <input name='birth-date' id='birth-date' type='date' max='2010-01-01' required/>
+    <input name='birth-date' id='birth-date' type='date' max='2010-01-01' required value='{- (if reg (reg :birth-date)) -}'/>
   </p>
   <p>
     <label for='home-university'>
       Home university
     </label>
-    <input name='home-university' id='home-university' type='text' required/>
+    <input name='home-university' id='home-university' type='text' required value='{- (if reg (reg :home-university)) -}'/>
   </p>
   <p>
     <label for='faculty'>

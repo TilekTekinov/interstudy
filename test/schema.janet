@@ -25,4 +25,20 @@
             :home-university "Oxford"
             :study-programme "Erasmus+ (EU)"
             :timestamp (os/time)})
+(assert?! schema/enrollment
+          @{:course-1 "EAE56E"
+            :course-2 "EIE67E"
+            :course-3 "ENE49E"
+            :course-4 "EEEI2E"
+            :course-5 "EEEB5E"
+            :course-6 "EEEF4E"
+            :timestamp 1768995243})
+(assert-not?! schema/enrollment
+          @{:course-1 "EAE56E"
+            :course-2 "EAE56E"
+            :course-3 "ENE49E"
+            :course-4 "EEEI2E"
+            :course-5 "EEEB5E"
+            :course-6 "EEEF4E"
+            :timestamp 1768995243})
 (end-suite)

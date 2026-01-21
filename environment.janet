@@ -1,5 +1,6 @@
 (import gp/environment/app :prefix "" :export true)
 
+# Navigation
 (defn =>machine-initial-state
   "Navigation to extract `machine` congig from main config"
   [machine &opt tree]
@@ -20,6 +21,11 @@
   "Prepares RPC configuration"
   [funcs]
   (fn [url] @{:url url :functions funcs}))
+
+(defmacro appcap
+  "Convenience for app template capture"
+  [title content]
+  ~(app/capture :title ,title :content ,content))
 
 # Test helpers
 (defmacro init-test
