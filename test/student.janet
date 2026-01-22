@@ -17,7 +17,7 @@
 (:save test-store @{} :enrollments)
 (:flush test-store)
 (ev/go student/main)
-(ev/sleep 0.1) # Settle the server
+(ev/sleep 0.05) # Settle the server
 
 (start-suite :http)
 (let [resp (request "GET" (url "/"))]

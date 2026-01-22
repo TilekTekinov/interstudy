@@ -115,7 +115,7 @@
 
 (def compile-config
   "Compile time configuration"
-  (parse (slurp (os/getenv "CONF" "conf.jdn"))))
+  (tracev (parse (slurp (os/getenv "CONF" "conf.jdn")))))
 
 # (let [c (parse (slurp (os/getenv "CONF" "conf.jdn")))]
 #   (or (config? c)
