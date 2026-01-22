@@ -5,6 +5,7 @@
   </div>
 </div>
 <div data-init="@get('/courses')">
+  <div id="course-form"></div>
   <div id='courses'>
     <h4>Courses</h4>
   </div>

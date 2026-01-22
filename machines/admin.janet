@@ -1,6 +1,7 @@
 (use /environment /schema)
 (import /templates/app)
 (import /templates/admin)
+(import /templates/course-form)
 
 (setdyn *handler-defines* [:view])
 
@@ -99,10 +100,21 @@
                 (hg/html (<semesters-list/> semester
                                             (view :semesters))))))
 
+(defh /edit-course
+  "Edit course SSE stream"
+  []
+  (def code (params :code))
+  (def subject ((=> :courses (>Y (??? {:code (?eq code)})) 0) view))
+  (http/stream
+    (ds/element
+      "div#course-form"
+      (string/replace-all "\n" "" (course-form/capture :subject subject)))))
+
 (def routes
   "HTTP routes"
   @{"/" /index
-    "/courses" /courses
+    "/courses" @{"" /courses
+                 "/edit/:code" /edit-course}
     "/semesters" @{"" /semesters
                    "/activate/:semester" /activate}})
 

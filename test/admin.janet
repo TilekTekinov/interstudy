@@ -52,6 +52,17 @@
                          "Winter" "x"
                          "Summer" "<a data-on:click" "/semesters/activate/" "Activate")
             resp) "After activate"))
+(let [resp (request "GET" (url "/courses"))]
+  (assert (success? resp))
+  (assert
+    ((success-has? "<div id='courses'" "<details open" "<summary>Courses"
+                   "<table" "code" "name" "credits" "active" "action"
+                   "<a data-on:click" "/courses/edit/" "Edit") resp)))
+(let [resp (request "GET" (url "/courses/edit/EAE56E"))]
+  (assert (success? resp))
+  (assert ((success-has? "course-form" "<label for='active'"
+                         "<input type='checkbox'" "id='active"
+                        "<button" "Save") resp)))
 (end-suite)
 
 (os/exit 0)
