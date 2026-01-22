@@ -1,0 +1,8 @@
+<h3>Collections</h3>
+<div data-init="@get('/courses')">
+  <div id='courses'>
+    <h4>Courses</h4>
+  </div>
+</div>
+<script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@1.0.0-RC.7/bundles/datastar.js"></script>
+

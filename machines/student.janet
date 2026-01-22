@@ -6,26 +6,6 @@
 
 (setdyn *handler-defines* [:view])
 
-(define-event ConnectTree
-  "Connects to the tree"
-  {:update
-   (fn [_ state]
-     (def {:psk psk :name name :tree tree} state)
-     (def [host port] (server/host-port tree))
-     (put state :client
-          (make rpc/Client
-                :host host
-                :port port
-                :psk psk
-                :name name)))
-   :effect (fn [_ {:client client} _]
-             (:open client))})
-
-(define-effect CloseTree
-  "Closes the tree client"
-  [_ {:client client}]
-  (:close client))
-
 (define-update RefreshView
   "Refreshes the data in view"
   [_ state]
