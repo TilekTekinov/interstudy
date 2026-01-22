@@ -50,6 +50,11 @@
   (def [tag id] (string/split "#" sel))
   ~(,ds/patch-elements "<" ,tag " id='" ,id "'>" ,;content "</" ,tag ">"))
 
+(defn ds/get
+"Constructs ds get uri"
+[& parts]
+(string "@get('" ;parts "')"))
+
 # Utils
 (def ctx
   "Jhydro context"
