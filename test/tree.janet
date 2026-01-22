@@ -9,7 +9,7 @@
 (init-test :tree)
 (load-dump "test/data.jdn")
 (ev/go tree/main)
-(ev/sleep 0.01) # Settle the server
+(ev/sleep 0.1) # Settle the server
 
 (start-suite :rpc)
 (let [c (client ;(server/host-port rpc-url) "test" psk)]

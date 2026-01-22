@@ -10,14 +10,14 @@
 (init-test :tree)
 (load-dump "test/data.jdn")
 (ev/go tree/main)
-(ev/sleep 0.01) # Settle the server
+(ev/sleep 0.1) # Settle the server
 
 (init-test :student)
 (:save test-store @{} :registrations)
 (:save test-store @{} :enrollments)
 (:flush test-store)
 (ev/go student/main)
-(ev/sleep 0.05) # Settle the server
+(ev/sleep 0.1) # Settle the server
 
 (start-suite :http)
 (let [resp (request "GET" (url "/"))]
