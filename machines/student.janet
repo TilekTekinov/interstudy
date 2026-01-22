@@ -6,39 +6,48 @@
 
 (setdyn *handler-defines* [:view])
 
-(define-effect ConnectTree
+(define-event ConnectTree
   "Connects to the tree"
-  [_ state _]
-  (setdyn :client
-          (rpc/client ;(server/host-port (state :tree))
-                      :student (state :psk))))
+  {:update
+   (fn [_ state]
+     (def {:psk psk :name name :tree tree} state)
+     (def [host port] (server/host-port tree))
+     (put state :client
+          (make rpc/Client
+                :host host
+                :port port
+                :psk psk
+                :name name)))
+   :effect (fn [_ {:client client} _]
+             (:open client))})
+
+(define-effect CloseTree
+  "Closes the tree client"
+  [_ {:client client}]
+  (:close client))
 
 (define-update RefreshView
   "Refreshes the data in view"
   [_ state]
   (def {:store store} state)
   ((=> :view
-       (>put :registrations (:load store :registrations))
-       (>put :enrollments (:load store :enrollments))) state))
+       (>merge-into
+         (:transact store (>select-keys :registrations :enrollments))))
+    state))
+
+(def collections
+  "View collections"
+  [:faculties :active-courses :study-programmes :semesters])
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
-     (define :client)
-     ((>put :view
-            ((>update :courses (>Y (=> :active)))
-              (tabseq [coll :in tree/collections] coll
-                (coll client))))
+     (def {:client client} state)
+     ((>put :view (tabseq [coll :in collections] coll (coll client)))
        state))
-   :watch RefreshView
+   :watch [RefreshView CloseTree]
    :effect (fn [_ {:view view} _] (setdyn :view view))})
-
-(defn- hash-email
-  [registration]
-  (and
-    (registration :email)
-    (string (util/bin2hex (hash/hash 16 (registration :email) "student0")))))
 
 (defn ^save-registration
   "Event that creates registration in the store"
@@ -83,7 +92,7 @@ Please make sure you fill all the fields with correct data.
   (def registration
     ((>put :timestamp (os/time)) body))
   (def emhash
-    (hash-email registration))
+    (hash (registration :email)))
   (appcap
     "Registration"
     (cond
@@ -103,12 +112,14 @@ Please make sure you fill all the fields with correct data.
 (defmacro enrcap
   "Convenience for enrollment template capture"
   [&opt err]
-  ~(enrollment/capture :id id
-                       ;,(if err ~[:error ,err :registration registration] '[])
-                       :fullname (registration :fullname)
-                       :email (registration :email)
-                       :courses (view :courses)
-                       :enrollment enrollment))
+  ~(enrollment/capture
+     :id id
+     ;,(if err ~[:error ,err :registration registration] '[])
+     :fullname (registration :fullname)
+     :email (registration :email)
+     :courses (view :active-courses)
+     :enrollment enrollment))
+
 (defh /enrollment
   "Enrollment handler"
   [http/html-success]
@@ -130,6 +141,7 @@ Please make sure you fill all the fields with correct data.
               (produce (^save-enrollment id enrollment))
               "<h2>Enrolled</h2")
             (enrcap "Not enrolled. All courses must be unique."))))
+
 (def routes
   "Application routes"
   @{"/" (http/dispatch {"GET" /index
@@ -149,7 +161,8 @@ Please make sure you fill all the fields with correct data.
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact ConnectTree PrepareView PrepareStore)
+      (:transact ConnectTree PrepareStore)
+      (:transact PrepareView)
       (:transact HTTP)
       :await)
   (os/exit 0))

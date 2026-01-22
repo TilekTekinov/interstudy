@@ -9,7 +9,7 @@
 (init-test :tree)
 (load-dump "test/data.jdn")
 (ev/go tree/main)
-(ev/sleep 0.1) # Settle the server
+(ev/sleep 0.01) # Settle the server
 
 (start-suite :rpc)
 (let [c (client ;(server/host-port rpc-url) "test" psk)]
@@ -17,7 +17,9 @@
   (each coll tree/collections
     (assert (c coll))
     (let [ss (coll c)]
-      ((=> (>assert present?)) ss))))
+      ((=> (>assert present?)) ss)))
+  (assert (c :active-courses))
+  ((=> (>assert present?)) (:active-courses c)))
 
 (end-suite)
 (os/exit 0)

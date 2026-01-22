@@ -22,10 +22,23 @@
   [funcs]
   (fn [url] @{:url url :functions funcs}))
 
+# HTTP
 (defmacro appcap
   "Convenience for app template capture"
   [title content]
   ~(app/capture :title ,title :content ,content))
+
+# Utils
+(def ctx
+  "Jhydro context"
+  "student0")
+
+(defn hash
+  "Returns hash item"
+  [item]
+  (and
+    item
+    (string (util/bin2hex (hash/hash 16 item ctx)))))
 
 # Test helpers
 (defmacro init-test

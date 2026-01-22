@@ -6,7 +6,7 @@
 
 (def rpc-funcs
   "RPC functions for the tree"
-  (tabseq [coll :in collections]
+  (tabseq [coll :in (array/concat @[:active-courses] collections)]
     coll (fn [rpc]
            (define :view)
            (view coll))))
@@ -20,11 +20,13 @@
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
-     ((>put :view
-            (:transact (state :store)
-                       (>select-keys :faculties :semesters
-                                     :study-programmes :courses)))
-       state))
+     (def c @[])
+     (def view
+       (:transact (state :store)
+                  (<- c (=> :courses (>Y (=> :active)) |@{:active-courses $}))
+                  (<- c (>select-keys ;collections))
+                  (>base c) (>merge)))
+     ((>put :view view) state))
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defn main
