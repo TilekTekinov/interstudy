@@ -19,7 +19,12 @@
     (let [ss (coll c)]
       ((=> (>assert present?)) ss)))
   (assert (c :active-courses))
-  ((=> (>assert present?)) (:active-courses c)))
+  ((=> (>assert present?)) (:active-courses c))
+  (assert (c :active-semester))
+  (assert (nil? (:active-semester c)))
+  (assert (c :set-active-semester))
+  (assert (= :ok (:set-active-semester c "Winter")))
+  (assert (= "Winter" (:active-semester c))))
 
 (end-suite)
 (os/exit 0)

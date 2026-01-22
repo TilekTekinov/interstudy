@@ -9,10 +9,10 @@
 
 (init-test :tree)
 (load-dump "test/data.jdn")
-(ev/go tree/main)
-(ev/sleep 0.01) # Settle the server
-(init-test :admin)
+(def tree-server (os/spawn ["janet" "machines/tree.janet"] :p))
+(ev/sleep 0.05) # Settle the server
 
+(init-test :admin)
 (ev/go admin/main)
 (ev/sleep 0.05) # Settle the server
 

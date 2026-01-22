@@ -4,12 +4,29 @@
   "All collections provided by the tree"
   [:faculties :semesters :study-programmes :courses])
 
+(defn ^set-active-semester
+  "Event that saves active semester into store"
+  [semester]
+  (make-event
+    {:update
+     (fn [_ {:store store :view view}]
+       (:save store semester :active-semester)
+       ((>put :active-semester semester) view))
+     :watch Flush}))
+
 (def rpc-funcs
   "RPC functions for the tree"
-  (tabseq [coll :in (array/concat @[:active-courses] collections)]
-    coll (fn [rpc]
-           (define :view)
-           (view coll))))
+  (merge-into
+    @{:active-semester
+      (fn [rpc] (define :view) (view :active-semester))
+      :set-active-semester
+      (fn [rpc semester]
+        (produce (^set-active-semester semester))
+        :ok)}
+    (tabseq [coll :in (array/concat @[:active-courses] collections)]
+      coll (fn [rpc]
+             (define :view)
+             (view coll)))))
 
 (def initial-state
   "Configuration"
@@ -23,6 +40,7 @@
      (def c @[])
      (def view
        (:transact (state :store)
+                  (<- c (>select-keys :active-semester))
                   (<- c (=> :courses (>Y (=> :active)) |@{:active-courses $}))
                   (<- c (>select-keys ;collections))
                   (>base c) (>merge)))

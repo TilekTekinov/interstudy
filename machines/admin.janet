@@ -8,15 +8,21 @@
   "View collections"
   [:faculties :courses :study-programmes :semesters])
 
+(define-update RefreshView
+  "Refreshes the data in view"
+  [_ state]
+  (def {:client client :view view} state)
+  ((>put :active-semester (:active-semester client))
+    view))
+
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
-     (def {:store store :client client} state)
-     ((=> (>put :view (tabseq [coll :in collections] coll (coll client)))
-          :view (>put :active-semester (:load store :active-semester)))
+     (def {:client client} state)
+     ((>put :view (tabseq [coll :in collections] coll (coll client)))
        state))
-   :watch CloseTree
+   :watch RefreshView
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defh /index
@@ -75,21 +81,13 @@
     (ds/element "div#semesters" (hg/html (<semesters-list/> (view :active-semester)
                                                             (view :semesters))))))
 
-(define-update RefreshView
-  "Refreshes the data in view"
-  [_ state]
-  (def {:store store} state)
-  ((=> :view
-       (>put :active-semester (:load store :active-semester)))
-    state))
-
 (defn ^activate
   "Events that activates semester"
   [semester]
   (make-event
-    {:update (fn [_ {:store store}]
-               (:save store semester :active-semester))
-     :watch [Flush RefreshView]}))
+    {:effect (fn [_ {:client client} _]
+               (:set-active-semester client semester))
+     :watch RefreshView}))
 
 (defh /activate
   "Semesters SSE stream"
@@ -120,8 +118,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact ConnectTree PrepareStore)
-      (:transact PrepareView)
-      (:transact HTTP)
+      (:transact ConnectTree PrepareView HTTP)
       :await)
   (os/exit 0))

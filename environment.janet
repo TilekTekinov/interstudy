@@ -51,9 +51,9 @@
   ~(,ds/patch-elements "<" ,tag " id='" ,id "'>" ,;content "</" ,tag ">"))
 
 (defn ds/get
-"Constructs ds get uri"
-[& parts]
-(string "@get('" ;parts "')"))
+  "Constructs ds get uri"
+  [& parts]
+  (string "@get('" ;parts "')"))
 
 # Utils
 (def ctx
@@ -100,15 +100,17 @@
            :key key
            :rpc rpc-url
            :psk psk} ((=>machine-initial-state ,machine) compile-config))
-     (def image-file (string image ".jimage"))
-     (if (os/stat image-file) (os/rm image-file))
-     (def test-store (:init (make Store :image image)))
+     (def test-store
+       (when image
+         (def image-file (string image ".jimage"))
+         (if (os/stat image-file) (os/rm image-file))
+         (:init (make Store :image image))))
      (defn url [path] (string "http://" http-url path))))
 
+  (def test-data "Test data" (table ;(kvs (parse (slurp "test/data.jdn")))))
 (defmacro load-dump
   "Loads dump into test-store"
   [file]
-  (def data (parse (slurp "test/data.jdn")))
-  ~(upscope
-     (:save test-store ,data)
+  ~(do
+     (:save test-store ,test-data)
      (:flush test-store)))

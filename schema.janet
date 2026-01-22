@@ -51,7 +51,7 @@
    :log boolean?})
 
 (def?! persisted-config
-  {:image present-string?})
+  {:image (?optional present-string?)})
 
 (def?! named-config
   {:name present-string?})
