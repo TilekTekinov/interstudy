@@ -4,15 +4,22 @@
   "All collections provided by the tree"
   [:faculties :semesters :study-programmes :courses])
 
+(define-update RefreshView
+  "Event that refreshes view"
+  [_ {:view view :store store}]
+  (def active-semester (:load store :active-semester))
+  (def active-courses (:transact store :courses (>Y (??? {:active truthy? :semester (?eq active-semester)}))))
+  (merge-into view {:active-semester active-semester
+                    :active-courses active-courses}))
+
 (defn ^set-active-semester
   "Event that saves active semester into store"
   [semester]
   (make-event
     {:update
      (fn [_ {:store store :view view}]
-       (:save store semester :active-semester)
-       ((>put :active-semester semester) view))
-     :watch Flush}))
+       (:save store semester :active-semester))
+     :watch [Flush RefreshView]}))
 
 (def rpc-funcs
   "RPC functions for the tree"
@@ -37,14 +44,10 @@
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
-     (def c @[])
-     (def view
-       (:transact (state :store)
-                  (<- c (>select-keys :active-semester))
-                  (<- c (=> :courses (>Y (=> :active)) |@{:active-courses $}))
-                  (<- c (>select-keys ;collections))
-                  (>base c) (>merge)))
-     ((>put :view view) state))
+     ((>put :view
+            (:transact (state :store) (>select-keys ;collections)))
+       state))
+   :watch RefreshView
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defn main

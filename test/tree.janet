@@ -17,14 +17,15 @@
   (each coll tree/collections
     (assert (c coll))
     (let [ss (coll c)]
-      ((=> (>assert present?)) ss)))
+      (assert (present? ss))))
   (assert (c :active-courses))
-  ((=> (>assert present?)) (:active-courses c))
+  (assert (empty? (:active-courses c)))
   (assert (c :active-semester))
   (assert (nil? (:active-semester c)))
   (assert (c :set-active-semester))
   (assert (= :ok (:set-active-semester c "Winter")))
-  (assert (= "Winter" (:active-semester c))))
+  (assert (= "Winter" (:active-semester c)))
+  (assert-not (empty? (:active-courses c)) "Active after active semester"))
 
 (end-suite)
 (os/exit 0)

@@ -9,6 +9,8 @@
 
 (init-test :tree)
 (load-dump "test/data.jdn")
+(:save test-store "Winter" :active-semester)
+(:flush test-store)
 (ev/go tree/main)
 (ev/sleep 0.01) # Settle the server
 
