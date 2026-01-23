@@ -1,4 +1,4 @@
-(os/setenv "CONF" "test/test.jdn")
+(os/setenv "CONF" "test/conf.test.jdn")
 
 (use gp/utils)
 
