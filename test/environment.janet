@@ -24,7 +24,6 @@
                  :rpc "localhost:5445"
                  :static true
                  :thicket "interstudy"
-                 :timeout 300
                  :tree "localhost:5444"})
         "symbiont config navigation")
 (assert (deep= ((environment/update-rpc @{}) "localhost:4444") @{:url "localhost:4444" :functions @{}}))

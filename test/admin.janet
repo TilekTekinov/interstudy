@@ -52,7 +52,7 @@
   (assert ((success-has? "<div id='semesters'" "<details open" "<summary>Semesters"
                          "Winter" "x"
                          "Summer" "<a data-on:click" "/semesters/activate/" "Activate")
-            (tracev resp)) "After activate"))
+            resp) "After activate"))
 (let [resp (request "GET" (url "/courses"))]
   (assert (success? resp))
   (assert

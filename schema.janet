@@ -63,7 +63,7 @@
 (def?! avatar-config
   dictionary?
   persisted-config?
-  {:timeout number?})
+  {:timeout (?optional number?)})
 
 (def?! symbiont-config
   dictionary?
