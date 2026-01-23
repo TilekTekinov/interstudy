@@ -109,7 +109,7 @@
   (produce (^activate semester))
   (http/stream
     (ds/element "div#semesters"
-                (hg/html (<semesters-list/> (tracev semester)
+                (hg/html (<semesters-list/> semester
                                             (view :semesters))))))
 
 (defh /edit-course
