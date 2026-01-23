@@ -7,13 +7,15 @@
 (define-update RefreshView
   "Event that refreshes view"
   [_ {:view view :store store}]
-  (def active-semester (:load store :active-semester))
-  (def courses (:load store :courses))
-  (def active-courses
-    ((=> (>Y (??? {:active truthy? :semester (?eq active-semester)}))) courses))
-  (merge-into view {:active-semester active-semester
-                    :active-courses active-courses
-                    :courses courses}))
+  (def c @[])
+  (merge-into
+    view
+    (:transact store
+               (<- c (=> :active-semester))
+               :courses (<- c)
+               (<- c (=> (>Y (??? {:active truthy? :semester (?eq (c 0))}))))
+               (>base c)
+               (>zipcoll [:active-semester :courses :active-courses]))))
 
 (defn ^set-active-semester
   "Event that saves active semester into store"
