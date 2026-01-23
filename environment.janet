@@ -121,3 +121,11 @@
   ~(do
      (:save test-store ,test-data)
      (:flush test-store)))
+
+# Bin helpers
+(def project-files-peg
+  "PEG for filewatch"
+  '(+
+                  (* (+ "machines" "bundle" "test" "schema" "environment" "dev")
+                     (thru ".janet") -1)
+                  (* "templates" (thru ".temple") -1)))

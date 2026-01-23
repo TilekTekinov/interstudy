@@ -115,12 +115,9 @@
 
 (def compile-config
   "Compile time configuration"
-  (parse (slurp (os/getenv "CONF" "conf.jdn"))))
-
-# (let [c (parse (slurp (os/getenv "CONF" "conf.jdn")))]
-#   (or (config? c)
-#       (do
-#         (eprint "Config does not conform to its schema. Exiting!")
-#         (eprintf "%Q" (config! c))
-#         (os/exit 1))))
-
+  (let [c (parse (slurp (os/getenv "CONF" "conf.jdn")))]
+    (or (config? c)
+        (do
+          (eprint "Config does not conform to its schema. Exiting!")
+          (eprintf "%Q" (config! c))
+          (os/exit 1)))))

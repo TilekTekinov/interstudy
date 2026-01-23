@@ -1,5 +1,4 @@
-(use gp/utils)
 (import spork/path)
+(use /environment)
 
-(watch-spawn '(+ (* (thru "temple") -1)
-                 (* (thru "janet") -1)) ["janet" "-d" (path/join "machines" "tree.janet")])
+(watch-spawn project-files-peg ["janet" "-d" (path/join "machines" "tree.janet")])
