@@ -27,6 +27,10 @@
   [code]
   (=> :courses (>find-from-start (??? {:code (?eq code)}))))
 
+(def >stamp
+  "Function that timestamps"
+  (>put :timestamp (os/time)))
+
 # HTTP
 (defmacro appcap
   "Convenience for app template capture"

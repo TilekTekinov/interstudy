@@ -5,14 +5,15 @@
 <div class="error bad box">{{ (args :error) }}</div>
 {% ) %}
 <form method='post' action='/enroll/{- (args :id) -}' class='table rows'>
+  <div><span>Legend</span><span>code</span><span>credits</span><span>name</span></div>
 {% (loop [i :range [1 7] :let [n (string "course-" i)]] %}
   <p>
     <label for='{{ n }}'>
       Course&nbsp;{{ i }}
     </label>
     <select name='{{ n }}' id='{{ n }}' type='text' required >
-	{% (each {:code code :name name} (args :courses) %}
-      <option value="{{ code }}" {- (if (= code (and enr (enr (keyword n)))) "selected") -}>{{ name }}</option>
+	{% (each {:code code :name name :credits credits} (args :courses) %}
+      <option value="{{ code }}" {- (if (= code (and enr (enr (keyword n)))) "selected") -}>{{ code }} {{ credits }} {{ name }}</option>
 	{% ) %}
 	</select>
   </p>

@@ -60,19 +60,16 @@
   [http/html-get]
   (appcap "Registration" (regcap)))
 
-(def- err-msg
-  ``
-Registration failed.
-Please make sure you fill all the fields with correct data.
-``)
+(defn- err-msg
+  [reason]
+  (string "Registration failed. " reason))
 
 (defh /register
   "Registration handler"
   [http/html-success http/urlenc-post]
-  (def registration
-    ((>put :timestamp (os/time)) body))
-  (def emhash
-    (hash (registration :email)))
+  (def registration (>stamp body))
+  (def {:email email} registration)
+  (def emhash (hash email))
   (appcap
     "Registration"
     (cond
@@ -81,13 +78,13 @@ Please make sure you fill all the fields with correct data.
         ((=> :registrations emhash) view))
       (do
         (put registration :email nil)
-        (regcap "Registration failed. Email already registered."))
+        (regcap (err-msg "Email already registered.")))
       (registration? registration)
       (do
         (produce (^save-registration emhash registration))
         (string "<h2>Registered</h2><div><a href='/enroll/"
                 emhash "'>enroll link</a></div>"))
-      (regcap err-msg))))
+      (regcap (err-msg "Please make sure you fill all the fields with correct data.")))))
 
 (defmacro enrcap
   "Convenience for enrollment template capture"
@@ -113,8 +110,7 @@ Please make sure you fill all the fields with correct data.
   [http/html-success http/urlenc-post]
   (def id (params :id))
   (def registration ((=> :registrations id) view))
-  (def enrollment
-    ((>put :timestamp (os/time)) body))
+  (def enrollment (>stamp body))
   (appcap "Enrollemnt"
           (if (enrollment? enrollment)
             (do
