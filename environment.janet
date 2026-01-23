@@ -126,6 +126,6 @@
 (def project-files-peg
   "PEG for filewatch"
   '(+
-                  (* (+ "machines" "bundle" "test" "schema" "environment" "dev")
-                     (thru ".janet") -1)
-                  (* "templates" (thru ".temple") -1)))
+     (* (+ "machines" "bundle" "test" "schema" "environment" "dev")
+        (thru ".janet") -1)
+     (* "templates" (thru ".temple") -1)))
