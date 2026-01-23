@@ -19,14 +19,14 @@
         ((>put coll (coll client))
           view)))))
 
-(define-event PrepareView
+(define-event PrepareViewHTTP
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
      (def {:client client} state)
      ((>put :view (tabseq [coll :in collections] coll (coll client)))
        state))
-   :watch (^refresh :active-semester :courses)
+   :watch [(^refresh :active-semester :courses) HTTP]
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defh /index
@@ -177,7 +177,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact ConnectTree PrepareView)
-      (:transact HTTP)
+      (:transact ConnectTree PrepareViewHTTP)
       :await)
   (os/exit 0))
