@@ -10,11 +10,11 @@
 (init-test :tree)
 (load-dump "test/data.jdn")
 (def tree-server (os/spawn ["janet" "symbionts/tree.janet"] :p))
-(ev/sleep 0.05) # Settle the server
+(ev/sleep 0.15) # Settle the server
 
 (init-test :admin)
 (ev/go admin/main)
-(ev/sleep 0.05) # Settle the server
+(ev/sleep 0.15) # Settle the server
 
 (start-suite :http)
 (let [resp (request "GET" (url "/"))]
