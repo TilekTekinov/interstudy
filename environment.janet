@@ -1,18 +1,18 @@
 (import gp/environment/app :prefix "" :export true)
 
 # Navigation
-(defn =>machine-initial-state
-  "Navigation to extract `machine` congig from main config"
-  [machine &opt tree]
-  (let [c @[{:name (string machine)}]]
+(defn =>symbiont-initial-state
+  "Navigation to extract `symbiont` congig from main config"
+  [symbiont &opt tree]
+  (let [c @[{:name (string symbiont)}]]
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
-        (<- c (=> :machines machine))
+        (<- c (=> :symbionts symbiont))
         (<- c (=> :mycelium (>select-keys :psk)))
-        (>if (=> :mycelium :nodes machine)
-             (<- c (=> :mycelium :nodes machine)))
-        (>if (=> :membranes :nodes machine)
-             (<- c (=> :membranes :nodes machine)))
+        (>if (=> :mycelium :nodes symbiont)
+             (<- c (=> :mycelium :nodes symbiont)))
+        (>if (=> :membranes :nodes symbiont)
+             (<- c (=> :membranes :nodes symbiont)))
         (>if (always tree)
              (<- c (=> :mycelium :nodes :tree :rpc |{:tree $})))
         (>base c) (>merge))))
@@ -97,15 +97,15 @@
 # Test helpers
 (defmacro init-test
   "Initializes test defs and store"
-  [machine]
+  [symbiont]
   (def now (- (os/time) 10))
-  (def store-name (symbol machine "-store"))
+  (def store-name (symbol symbiont "-store"))
   ~(upscope
      (def {:http http-url
            :image image
            :key key
            :rpc rpc-url
-           :psk psk} ((=>machine-initial-state ,machine) compile-config))
+           :psk psk} ((=>symbiont-initial-state ,symbiont) compile-config))
      (def test-store
        (when image
          (def image-file (string image ".jimage"))
@@ -126,6 +126,6 @@
 (def project-files-peg
   "PEG for filewatch"
   '(+
-     (* (+ "machines" "bundle" "test" "schema" "environment" "dev")
+     (* (+ "symbionts" "bundle" "test" "schema" "environment" "dev")
         (thru ".janet") -1)
      (* "templates" (thru ".temple") -1)))

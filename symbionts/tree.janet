@@ -56,7 +56,7 @@
 
 (def initial-state
   "Configuration"
-  ((=> (=>machine-initial-state :tree)
+  ((=> (=>symbiont-initial-state :tree)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
 (define-event PrepareView

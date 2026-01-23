@@ -4,7 +4,7 @@
   :release-path "/var/code/insterstudy"
   :debug true
   :log true}
- :machines
+ :symbionts
  {:tree
   {:image "data/tree"}
   :student

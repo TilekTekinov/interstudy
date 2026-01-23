@@ -167,12 +167,12 @@
 
 (def initial-state
   "Initial state"
-  ((=> (=>machine-initial-state :admin true)
+  ((=> (=>symbiont-initial-state :admin true)
        (>put :routes routes)) compile-config))
 
 (defn main
   ```
-  Main entry into student machine.
+  Main entry into student symbiont.
   ```
   [_]
   (-> initial-state

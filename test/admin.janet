@@ -1,15 +1,15 @@
 (os/setenv "CONF" "test/conf.test.jdn")
 (use spork/test /environment /schema spork/http gp/net/rpc)
-(import /machines/tree)
-(import /machines/admin)
+(import /symbionts/tree)
+(import /symbionts/admin)
 
 (start-suite :docs)
-(assert-docs "/machines/admin")
+(assert-docs "/symbionts/admin")
 (end-suite)
 
 (init-test :tree)
 (load-dump "test/data.jdn")
-(def tree-server (os/spawn ["janet" "machines/tree.janet"] :p))
+(def tree-server (os/spawn ["janet" "symbionts/tree.janet"] :p))
 (ev/sleep 0.05) # Settle the server
 
 (init-test :admin)

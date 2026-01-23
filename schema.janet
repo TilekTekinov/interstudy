@@ -65,14 +65,14 @@
   persisted-config?
   {:timeout number?})
 
-(def?! machine-config
+(def?! symbiont-config
   dictionary?
   (>check-all some avatar-config? tree-config?))
 
-(def?! machines-config
+(def?! symbionts-config
   dictionary?
   {keys (>?? all keyword)
-   values (>?? all machine-config?)})
+   values (>?? all symbiont-config?)})
 
 (def?! mycelium-node
   dictionary?
@@ -109,7 +109,7 @@
   dictionary?
   {:name present-string?
    :deploy deploy-config?
-   :machines machines-config?
+   :symbionts symbionts-config?
    :mycelium mycelium-config?
    :membranes membranes-config?})
 

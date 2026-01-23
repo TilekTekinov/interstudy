@@ -4,15 +4,15 @@
 
 (declare-executable
   :name "tree"
-  :entry "machines/tree.janet")
+  :entry "symbionts/tree.janet")
 
 (declare-executable
   :name "student"
-  :entry "machines/student.janet")
+  :entry "symbionts/student.janet")
 
 (declare-executable
   :name "admin"
-  :entry "machines/admin.janet")
+  :entry "symbionts/admin.janet")
 
 
 (defn check

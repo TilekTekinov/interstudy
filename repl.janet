@@ -10,9 +10,9 @@
 
 (defmacro reload []
   '(upscope
-     (def tree-store (make Store :image ((=> :machines :tree :image) compile-config)))
+     (def tree-store (make Store :image ((=> :symbionts :tree :image) compile-config)))
      (:init tree-store)
-     (def student-store (make Store :image ((=> :machines :student :image) compile-config)))
+     (def student-store (make Store :image ((=> :symbionts :student :image) compile-config)))
      (:init student-store)))
 
 (reload)

@@ -8,9 +8,9 @@
 (end-suite)
 
 (start-suite :config)
-(assert?! schema/tree-config ((=> :machines :tree) schema/compile-config))
-(assert?! schema/avatar-config ((=> :machines :student) schema/compile-config))
-(assert?! schema/machines-config (schema/compile-config :machines))
+(assert?! schema/tree-config ((=> :symbionts :tree) schema/compile-config))
+(assert?! schema/avatar-config ((=> :symbionts :student) schema/compile-config))
+(assert?! schema/symbionts-config (schema/compile-config :symbionts))
 (assert?! schema/mycelium-config (schema/compile-config :mycelium))
 (assert?! schema/membranes-config (schema/compile-config :membranes))
 (assert (schema/config? schema/compile-config))

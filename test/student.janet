@@ -1,10 +1,10 @@
 (os/setenv "CONF" "test/conf.test.jdn")
 (use spork/test /environment /schema spork/http gp/net/rpc)
-(import /machines/tree)
-(import /machines/student)
+(import /symbionts/tree)
+(import /symbionts/student)
 
 (start-suite :docs)
-(assert-docs "/machines/student")
+(assert-docs "/symbionts/student")
 (end-suite)
 
 (init-test :tree)

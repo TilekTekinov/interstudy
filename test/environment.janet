@@ -9,7 +9,7 @@
 (end-suite)
 
 (start-suite :utils)
-(assert (deep= ((environment/=>machine-initial-state :student true) compile-config)
+(assert (deep= ((environment/=>symbiont-initial-state :student true) compile-config)
                @{:cookie-host "localhost"
                  :debug true
                  :host "localhost"
@@ -26,6 +26,6 @@
                  :thicket "interstudy"
                  :timeout 300
                  :tree "localhost:5444"})
-        "machine config navigation")
+        "symbiont config navigation")
 (assert (deep= ((environment/update-rpc @{}) "localhost:4444") @{:url "localhost:4444" :functions @{}}))
 (end-suite)

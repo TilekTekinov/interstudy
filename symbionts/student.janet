@@ -1,5 +1,5 @@
 (use /environment /schema)
-(import /machines/tree :only [collections])
+(import ./tree :only [collections])
 (import /templates/app)
 (import /templates/registration)
 (import /templates/enrollment)
@@ -131,12 +131,12 @@ Please make sure you fill all the fields with correct data.
 
 (def initial-state
   "Initial state"
-  ((=> (=>machine-initial-state :student true)
+  ((=> (=>symbiont-initial-state :student true)
        (>put :routes routes)) compile-config))
 
 (defn main
   ```
-  Main entry into student machine.
+  Main entry into student symbiont.
   ```
   [_]
   (-> initial-state

@@ -3,7 +3,7 @@
 (defn main
   "Make fresh store for the tree"
   [&]
-  (def image ((=> :machines :tree :image) compile-config))
+  (def image ((=> :symbionts :tree :image) compile-config))
   (if (os/stat image)
     (os/rm image))
   (def store (:init (make Store :image image)))
