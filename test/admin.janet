@@ -68,6 +68,13 @@
                     :body "")]
   (assert (success? resp) "Save course")
   (assert ((success-has? "<h2>Saving") resp) "Save subject content"))
+(let [resp (request "GET" (url "/semesters/deactivate"))]
+  (assert (success? resp))
+  (assert
+    ((success-has? "<div id='semesters'" "<details open" "<summary>Semesters"
+                   "Winter" "<a data-on:click" "/semesters/activate/" "Activate"
+                   "Summer" "<a data-on:click" "/semesters/activate/" "Activate")
+      resp)))
 (end-suite)
 
 (os/exit 0)

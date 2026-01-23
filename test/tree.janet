@@ -19,7 +19,7 @@
     (let [ss (coll c)]
       (assert (present? ss))))
   (assert (c :active-courses))
-  (assert (empty? (:active-courses c)))
+  (assert (empty? (:active-courses c)) "Empty active courses")
   (assert (c :active-semester))
   (assert (nil? (:active-semester c)))
   (assert (c :set-active-semester))
@@ -32,7 +32,10 @@
   (assert (c :save-course))
   (assert (= :ok (:save-course c "EAE56E" {:active false})))
   (assert-not ((>find-from-start (??? {:code (?eq "EAE56E")}))
-                (:active-courses c)) "Deactivated course"))
+                (:active-courses c)) "Deactivated course")
+  (assert (= :ok (:set-active-semester c false)))
+  (assert-not (:active-semester c) "No active semester"))
+
 
 (end-suite)
 (os/exit 0)

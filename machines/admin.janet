@@ -37,11 +37,12 @@
 (defn <course/>
   "Contructs htmlgen representation of one `course`"
   [{:code code :name name :credits credits
-    :active active}]
+    :semester semester :active active}]
   [:tr {:id code}
    [:td code]
    [:td name]
    [:td credits]
+   [:td semester]
    [:td (if active "x")]
    [:td
     [:a {:data-on:click (string "@get('/courses/edit/" code "')")}
@@ -55,7 +56,7 @@
      [:table
       [:thead
        [:tr [:th "code"] [:th "name"] [:th "credits"]
-        [:th "active"] [:th "action"]]]
+        [:th "semester"] [:th "active"] [:th "action"]]]
       [:tbody
        (seq [course :in courses]
          (<course/> course))]]]])
@@ -71,6 +72,8 @@
   [active-semester semesters]
   @[[:details {:open "true"}
      [:summary "Semesters"]
+     [:a {:data-on:click (ds/get "/semesters/deactivate")}
+      "Deactivate"]
      [:table
       [:thead
        [:tr [:th "name"] [:th "active"] [:th "action"]]]
@@ -139,6 +142,19 @@
     (ds/patch-elements (hg/html (<course/> course)))
     (ds/element "div#course-form" "")))
 
+(define-event Deactivate
+  "Events that deactivates semester"
+  {:effect (fn [_ {:client client} _]
+             (:set-active-semester client false))
+   :watch (^refresh :active-semester)})
+
+(defh /deactivate
+  "Deactivation handler"
+  []
+  (produce Deactivate)
+  (http/stream
+    (ds/element "div#semesters"
+                (hg/html (<semesters-list/> false (view :semesters))))))
 (def routes
   "HTTP routes"
   @{"/" /index
@@ -146,7 +162,8 @@
                  "/edit/:code" /edit-course
                  "/:code" /save-course}
     "/semesters" @{"" /semesters
-                   "/activate/:semester" /activate}})
+                   "/activate/:semester" /activate
+                   "/deactivate" /deactivate}})
 
 (def initial-state
   "Initial state"

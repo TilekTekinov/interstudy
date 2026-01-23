@@ -1,4 +1,5 @@
 (use /schema /environment)
+
 (defn main
   "Make fresh store for the tree"
   [&]
