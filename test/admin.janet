@@ -24,6 +24,7 @@
                    "/semesters" "Semesters"
                    "/courses" "Courses") resp)))
 (end-suite)
+
 (start-suite :sse)
 (let [resp (request "GET" (url "/semesters"))]
   (assert (success? resp))
@@ -51,7 +52,7 @@
   (assert ((success-has? "<div id='semesters'" "<details open" "<summary>Semesters"
                          "Winter" "x"
                          "Summer" "<a data-on:click" "/semesters/activate/" "Activate")
-            resp) "After activate"))
+            (tracev resp)) "After activate"))
 (let [resp (request "GET" (url "/courses"))]
   (assert (success? resp))
   (assert
