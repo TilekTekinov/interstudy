@@ -1,9 +1,9 @@
 {% (def subject (args :subject)) %}
-<form data-on:submit="@post('/course/{{ (subject :code) }}')" class="box ok">
+<form class="box ok">
   <h4>Editing subject {{ (subject :name) }} with code {{ (subject :code) }}
   <label for='active'>
 	Active
-    <input type='checkbox' name='active' id='active' value='{- (subject :active) -}'/>
+    <input type='checkbox' name='active' id='active' {- (if (subject :active) "checked") -}/>
   </label>
-  <button>Save</button>
+  <button data-on:click="@post('/courses/{{ (subject :code) }}', {contentType: 'form'})">Save</button>
 </form>

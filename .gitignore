@@ -2,3 +2,6 @@ conf.jdn
 *.jimage
 test/test.jimage
 dev
+_build
+*.obj
+.vcvars.jdn

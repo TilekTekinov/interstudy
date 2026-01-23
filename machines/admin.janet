@@ -7,14 +7,17 @@
 
 (def collections
   "View collections"
-  [:faculties :courses :study-programmes :semesters])
+  [:faculties :study-programmes :semesters])
 
-(define-update RefreshView
+(defn ^refresh
   "Refreshes the data in view"
-  [_ state]
-  (def {:client client :view view} state)
-  ((>put :active-semester (:active-semester client))
-    view))
+  [& colls]
+  (make-update
+    (fn [_ state]
+      (def {:client client :view view} state)
+      (each coll colls
+        ((>put coll (coll client))
+          view)))))
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
@@ -23,13 +26,26 @@
      (def {:client client} state)
      ((>put :view (tabseq [coll :in collections] coll (coll client)))
        state))
-   :watch RefreshView
+   :watch (^refresh :active-semester :courses)
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defh /index
   "Index page"
   [http/html-get]
   (appcap "Admin" (admin/capture)))
+
+(defn <course/>
+  "Contructs htmlgen representation of one `course`"
+  [{:code code :name name :credits credits
+    :active active}]
+  [:tr {:id code}
+   [:td code]
+   [:td name]
+   [:td credits]
+   [:td (if active "x")]
+   [:td
+    [:a {:data-on:click (string "@get('/courses/edit/" code "')")}
+     "Edit"]]])
 
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
@@ -42,14 +58,7 @@
         [:th "active"] [:th "action"]]]
       [:tbody
        (seq [course :in courses]
-         [:tr
-          [:td (course :code)]
-          [:td (course :name)]
-          [:td (course :credits)]
-          [:td (if (course :active) "x")]
-          [:td
-           [:a {:data-on:click (string "@get('/courses/edit/" (course :code) "')")}
-            "Edit"]]])]]]])
+         (<course/> course))]]]])
 
 (defh /courses
   "Courses SSE stream"
@@ -88,7 +97,7 @@
   (make-event
     {:effect (fn [_ {:client client} _]
                (:set-active-semester client semester))
-     :watch RefreshView}))
+     :watch (^refresh :active-semester)}))
 
 (defh /activate
   "Semesters SSE stream"
@@ -110,11 +119,32 @@
       "div#course-form"
       (string/replace-all "\n" "" (course-form/capture :subject subject)))))
 
+(defn ^save-course
+  "Event that saves the course"
+  [code course]
+  (make-event
+    {:effect (fn [_ {:client client} _]
+               (:save-course client code course))
+     :watch (^refresh :courses)}))
+
+(defh /save-course
+  "Save course"
+  [http/urlenc-post]
+  (def code (get params :code))
+  (def active (get body :active false))
+  (def course ((=> (=>course/by-code code) (>put :active active)) view))
+  (produce (^save-course code course))
+  (http/stream
+    (ds/element "div#course-form" "<h2>Saving</h2>")
+    (ds/patch-elements (hg/html (<course/> course)))
+    (ds/element "div#course-form" "")))
+
 (def routes
   "HTTP routes"
   @{"/" /index
     "/courses" @{"" /courses
-                 "/edit/:code" /edit-course}
+                 "/edit/:code" /edit-course
+                 "/:code" /save-course}
     "/semesters" @{"" /semesters
                    "/activate/:semester" /activate}})
 
@@ -130,6 +160,7 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact ConnectTree PrepareView HTTP)
+      (:transact ConnectTree PrepareView)
+      (:transact HTTP)
       :await)
   (os/exit 0))

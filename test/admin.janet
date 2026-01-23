@@ -62,7 +62,12 @@
   (assert (success? resp))
   (assert ((success-has? "course-form" "<label for='active'"
                          "<input type='checkbox'" "id='active"
-                        "<button" "Save") resp)))
+                         "<button" "Save") resp)))
+(let [resp (request "POST" (url "/courses/EAE56E")
+                    :headers {"Content-Type" "application/x-www-form-urlencoded"}
+                    :body "")]
+  (assert (success? resp) "Save course")
+  (assert ((success-has? "<h2>Saving") resp) "Save subject content"))
 (end-suite)
 
 (os/exit 0)

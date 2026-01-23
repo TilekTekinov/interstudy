@@ -22,6 +22,11 @@
   [funcs]
   (fn [url] @{:url url :functions funcs}))
 
+(defn =>course/by-code
+  "Subject finder by code"
+  [code]
+  (=> :courses (>find-from-start (??? {:code (?eq code)}))))
+
 # HTTP
 (defmacro appcap
   "Convenience for app template capture"
@@ -37,10 +42,11 @@
   "Writes patch-elements SSE message to conn"
   [& elements]
   (def msg
-    (string
-      "event: datastar-patch-elements\n"
-      "data: elements " ;elements "\n\n"))
-  (protect (:write (dyn :sse-conn) (chunk-msg msg))))
+    (chunk-msg
+      (string
+        "event: datastar-patch-elements\n"
+        "data: elements " ;elements "\n\n")))
+  (protect (:write (dyn :sse-conn) msg)))
 
 (defmacro ds/element
   "Convenience to patch one element by selector"
@@ -107,7 +113,8 @@
          (:init (make Store :image image))))
      (defn url [path] (string "http://" http-url path))))
 
-  (def test-data "Test data" (table ;(kvs (parse (slurp "test/data.jdn")))))
+(def test-data "Test data" (parse (slurp "test/data.jdn")))
+
 (defmacro load-dump
   "Loads dump into test-store"
   [file]

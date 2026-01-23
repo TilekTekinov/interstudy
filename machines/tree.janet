@@ -2,15 +2,18 @@
 
 (def collections
   "All collections provided by the tree"
-  [:faculties :semesters :study-programmes :courses])
+  [:faculties :semesters :study-programmes])
 
 (define-update RefreshView
   "Event that refreshes view"
   [_ {:view view :store store}]
   (def active-semester (:load store :active-semester))
-  (def active-courses (:transact store :courses (>Y (??? {:active truthy? :semester (?eq active-semester)}))))
+  (def courses (:load store :courses))
+  (def active-courses
+    ((=> (>Y (??? {:active truthy? :semester (?eq active-semester)}))) courses))
   (merge-into view {:active-semester active-semester
-                    :active-courses active-courses}))
+                    :active-courses active-courses
+                    :courses courses}))
 
 (defn ^set-active-semester
   "Event that saves active semester into store"
@@ -19,7 +22,17 @@
     {:update
      (fn [_ {:store store :view view}]
        (:save store semester :active-semester))
-     :watch [Flush RefreshView]}))
+     :watch [RefreshView Flush]}))
+
+(defn ^save-course
+  "Event that saves course"
+  [code new]
+  (make-event
+    {:update (fn [_ {:store store}]
+               (:transact store
+                          (=>course/by-code code)
+                          (>merge-into new)))
+     :watch [RefreshView Flush]}))
 
 (def rpc-funcs
   "RPC functions for the tree"
@@ -29,8 +42,12 @@
       :set-active-semester
       (fn [rpc semester]
         (produce (^set-active-semester semester))
+        :ok)
+      :save-course
+      (fn [rpc code new]
+        (produce (^save-course code new))
         :ok)}
-    (tabseq [coll :in (array/concat @[:active-courses] collections)]
+    (tabseq [coll :in (array/concat @[:active-courses :courses] collections)]
       coll (fn [rpc]
              (define :view)
              (view coll)))))
