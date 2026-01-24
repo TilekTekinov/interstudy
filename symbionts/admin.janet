@@ -14,17 +14,17 @@
   [& colls]
   (make-update
     (fn [_ state]
-      (def {:client client :view view} state)
+      (def {:tree tree :view view} state)
       (each coll colls
-        ((>put coll (coll client))
+        ((>put coll (coll tree))
           view)))))
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
-     (def {:client client} state)
-     ((>put :view (tabseq [coll :in collections] coll (coll client)))
+     (def {:tree tree} state)
+     ((>put :view (tabseq [coll :in collections] coll (coll tree)))
        state))
    :watch (^refresh :active-semester :courses)
    :effect (fn [_ {:view view} _] (setdyn :view view))})
@@ -98,8 +98,8 @@
   "Events that activates semester"
   [semester]
   (make-event
-    {:effect (fn [_ {:client client} _]
-               (:set-active-semester client semester))
+    {:effect (fn [_ {:tree tree} _]
+               (:set-active-semester tree semester))
      :watch (^refresh :active-semester)}))
 
 (defh /activate
@@ -126,8 +126,8 @@
   "Event that saves the course"
   [code course]
   (make-event
-    {:effect (fn [_ {:client client} _]
-               (:save-course client code course))
+    {:effect (fn [_ {:tree tree} _]
+               (:save-course tree code course))
      :watch (^refresh :courses)}))
 
 (defh /save-course
@@ -144,8 +144,8 @@
 
 (define-event Deactivate
   "Events that deactivates semester"
-  {:effect (fn [_ {:client client} _]
-             (:set-active-semester client false))
+  {:effect (fn [_ {:tree tree} _]
+             (:set-active-semester tree false))
    :watch (^refresh :active-semester)})
 
 (defh /deactivate
@@ -177,7 +177,7 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact ConnectTree PrepareView)
-      (:transact HTTP)
+      (:transact PrepareStore)
+      (:transact (^connect-tree [PrepareView HTTP]))
       :await)
   (os/exit 0))

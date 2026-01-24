@@ -78,25 +78,32 @@
     (string (util/bin2hex (hash/hash 16 item ctx)))))
 
 # Events
-(define-event ConnectTree
+(defn ^connect-tree
   "Connects to the tree"
-  {:update
-   (fn [_ state]
-     (def {:psk psk :name name :tree tree} state)
-     (def [host port] (server/host-port tree))
-     (put state :client
-          (make rpc/Client
-                :host host
-                :port port
-                :psk psk
-                :name name)))
-   :effect (fn [_ {:client client} _] (:open client))})
-
-(define-effect CloseTree
-  "Closes the tree client"
-  [_ {:client client} _]
-  (:close client))
-
+  [succ]
+  (make-event
+    {:update
+     (fn [_ state]
+       (def {:psk psk :name name :tree tree} state)
+       (def [host port] (server/host-port tree))
+       (put state :tree
+            (make rpc/Client
+                  :host host :port port
+                  :psk psk :name name)))
+     :watch
+     (fn [_ {:tree tree} _]
+       (var tries 0)
+       (var res succ)
+       (while (not ((protect (:open tree)) 0))
+         (if (< tries 10)
+           (++ tries)
+           (do
+             (set res
+                  [(log "FATAL: Cannot connect to Catalog. Exiting.") Stop])
+             (break)))
+         (ev/sleep (* tries 0.1)))
+       [(log "Connected to tree") ;res])}
+    "connect tree"))
 
 # Test helpers
 (defmacro init-test

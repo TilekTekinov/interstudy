@@ -1,3 +1,4 @@
+# TODO test the RPC fail over
 (os/setenv "CONF" "test/conf.test.jdn")
 (use spork/test /environment /schema spork/http gp/net/rpc)
 (import /symbionts/tree)

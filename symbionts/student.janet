@@ -23,10 +23,10 @@
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
-     (def {:client client} state)
-     ((>put :view (tabseq [coll :in collections] coll (coll client)))
+     (def {:tree tree} state)
+     ((>put :view (tabseq [coll :in collections] coll (coll tree)))
        state))
-   :watch [RefreshView CloseTree]
+   :watch RefreshView
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defn ^save-registration
@@ -137,8 +137,7 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact ConnectTree PrepareStore)
-      (:transact PrepareView)
-      (:transact HTTP)
+      (:transact PrepareStore)
+      (:transact (^connect-tree [PrepareView HTTP]))
       :await)
   (os/exit 0))
