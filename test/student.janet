@@ -20,7 +20,7 @@
 (ev/sleep 0.05) # Settle the server
 
 (start-suite :http)
-(let [resp (tracev (request "GET" (url "/")))]
+(let [resp (request "GET" (url "/"))]
   (assert (success? resp))
   (assert
     ((success-has?
