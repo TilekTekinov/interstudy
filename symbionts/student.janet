@@ -1,6 +1,5 @@
 (use /environment /schema)
 (import ./tree :only [collections])
-(import /templates/app)
 (import /templates/registration)
 (import /templates/enrollment)
 
@@ -56,8 +55,9 @@
 
 (defh /index
   "Index page."
-  [http/html-get]
-  (appcap "Registration" (regcap)))
+  [appcap]
+  (if-not (empty? (view :active-courses))
+    ["Registration" (regcap)]))
 
 (defn- err-msg
   [reason]
@@ -65,25 +65,24 @@
 
 (defh /register
   "Registration handler"
-  [http/html-success http/urlenc-post]
+  [appcap http/urlenc-post]
   (def registration (>stamp body))
   (def {:email email} registration)
   (def emhash (hash email))
-  (appcap
-    "Registration"
-    (cond
-      (and
-        (registration :email)
-        ((=> :registrations emhash) view))
-      (do
-        (put registration :email nil)
-        (regcap (err-msg "Email already registered.")))
-      (registration? registration)
-      (do
-        (produce (^save-registration emhash registration))
-        (string "<h2>Registered</h2><div><a href='/enroll/"
-                emhash "'>enroll link</a></div>"))
-      (regcap (err-msg "Please make sure you fill all the fields with correct data.")))))
+  ["Registration"
+   (cond
+     (and
+       (registration :email)
+       ((=> :registrations emhash) view))
+     (do
+       (put registration :email nil)
+       (regcap (err-msg "Email already registered.")))
+     (registration? registration)
+     (do
+       (produce (^save-registration emhash registration))
+       (string "<h2>Registered</h2><div><a href='/enroll/"
+               emhash "'>enroll link</a></div>"))
+     (regcap (err-msg "Please make sure you fill all the fields with correct data.")))])
 
 (defmacro enrcap
   "Convenience for enrollment template capture"
@@ -98,24 +97,24 @@
 
 (defh /enrollment
   "Enrollment handler"
-  [http/html-success]
+  [appcap]
   (def id (params :id))
-  (def registration ((=> :registrations id) view))
-  (def enrollment ((=> :enrollments id) view))
-  (appcap "Enrollment" (enrcap)))
+  (when-let [registration ((=> :registrations id) view)]
+    (def enrollment ((=> :enrollments id) view))
+    ["Enrollment" (enrcap)]))
 
 (defh /enroll
   "Enroll handler"
-  [http/html-success http/urlenc-post]
+  [appcap http/urlenc-post]
   (def id (params :id))
-  (def registration ((=> :registrations id) view))
-  (def enrollment (>stamp body))
-  (appcap "Enrollemnt"
-          (if (enrollment? enrollment)
-            (do
-              (produce (^save-enrollment id enrollment))
-              "<h2>Enrolled</h2")
-            (enrcap "Not enrolled. All courses must be unique."))))
+  (when-let [registration ((=> :registrations id) view)]
+    (def enrollment (>stamp body))
+    ["Enrollement"
+     (if (enrollment? enrollment)
+       (do
+         (produce (^save-enrollment id enrollment))
+         "<h2>Enrolled</h2")
+       (enrcap "Not enrolled. All courses must be unique."))]))
 
 (def routes
   "Application routes"

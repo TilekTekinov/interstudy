@@ -20,7 +20,7 @@
 (ev/sleep 0.05) # Settle the server
 
 (start-suite :http)
-(let [resp (request "GET" (url "/"))]
+(let [resp (tracev (request "GET" (url "/")))]
   (assert (success? resp))
   (assert
     ((success-has?
@@ -64,6 +64,8 @@
                    "<label for='course-6'>" "Course&nbsp;6" "<select name='course-6' id='course-6'" "required" "<option"
                    "<button>Enroll")
       resp)))
+(let [resp (request "GET" (url "/enroll/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"))]
+  (assert (not-found? resp) "Not found GET"))
 (let [resp (request "POST" (url "/enroll/23e365ca71557c832c39f7ba12d72d0c")
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body (slurp "test/enrollment-req"))]
@@ -74,6 +76,10 @@
                     :body (slurp "test/dup-enrollment-req"))]
   (assert (success? resp) "Reject enrollment succ")
   (assert ((success-has? "Not enrolled. All courses must be unique.") resp) "Reject enrollment content"))
+(let [resp (request "POST" (url "/enroll/ffffffffffffffffffffffffffffffff")
+                    :headers {"Content-Type" "application/x-www-form-urlencoded"}
+                    :body (slurp "test/enrollment-req"))]
+  (assert (not-found? resp) "Not found POST"))
 (end-suite)
 
 (os/exit 0)

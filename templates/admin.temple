@@ -4,8 +4,12 @@
     <h4>Semesters</h4>
   </div>
 </div>
+<div data-init="@get('/registrations')">
+  <div id='registrations'>
+    <h4>Registrations</h4>
+  </div>
+</div>
 <div data-init="@get('/courses')">
-  <div id="course-form"></div>
   <div id='courses'>
     <h4>Courses</h4>
   </div>

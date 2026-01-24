@@ -33,12 +33,11 @@
                    `<table` `name` `active` `action`
                    `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)))
-(let [resp (request "GET" (url "/semesters"))]
+(let [resp (request "GET" (url "/registrations"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id='semesters'` `<details open` `<summary>Semesters`
-                   `<table` `name` `active` `action`
-                   `<a data-on:click` `/semesters/activate/` `Activate`)
+    ((success-has? `<div id='registrations'` `<details open` `<summary>Registrations`
+                   `<table` `Fullname` `Email` `Action`)
       resp)))
 (let [resp (request "GET" (url "/semesters/activate/Winter"))]
   (assert (success? resp))
@@ -61,14 +60,12 @@
                    `<a data-on:click` `/courses/edit/` `Edit`) resp)))
 (let [resp (request "GET" (url "/courses/edit/EAE56E"))]
   (assert (success? resp))
-  (assert ((success-has? `course-form` `<label for='active'`
-                         `<input type='checkbox'` `id='active`
+  (assert ((success-has? `<input` `checked`
                          `<button` `Save`) resp)))
 (let [resp (request "POST" (url "/courses/EAE56E")
-                    :headers {"Content-Type" "application/x-www-form-urlencoded"}
-                    :body "")]
+                    :body `{"active": false}`)]
   (assert (success? resp) "Save course")
-  (assert ((success-has? `<h2>Saving`) resp) "Save subject content"))
+  (assert ((success-has? `<tr` "EAE56E") resp) "Save subject content"))
 (let [resp (request "GET" (url "/semesters/deactivate"))]
   (assert (success? resp))
   (assert

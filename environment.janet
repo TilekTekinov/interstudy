@@ -1,4 +1,5 @@
 (import gp/environment/app :prefix "" :export true)
+(import /templates/app)
 
 # Navigation
 (defn =>symbiont-initial-state
@@ -32,10 +33,15 @@
   (>put :timestamp (os/time)))
 
 # HTTP
-(defmacro appcap
-  "Convenience for app template capture"
-  [title content]
-  ~(app/capture :title ,title :content ,content))
+(defn appcap
+  "Middleware for app template capture"
+  [next-middleware]
+  (fn :appcap [req]
+    (if-let [resp (next-middleware req)
+             [title content] resp]
+      (http/html-success-resp
+        (app/capture :title title :content content))
+      (http/not-found))))
 
 (defn chunk-msg
   "Contructs chunk from msg"
@@ -64,6 +70,11 @@
   "Constructs ds get uri"
   [& parts]
   (string "@get('" ;parts "')"))
+
+(defn ds/post
+  "Constructs ds post uri"
+  [& parts]
+  (string "@post('" ;parts "')"))
 
 # Utils
 (def ctx

@@ -20,7 +20,7 @@
                (<- c (=> :enrollments))
                (<- c (=> :courses (>Y (??? {:active truthy? :semester (?eq (c 0))}))))
                (>base c)
-               (>zipcoll [:active-semester :registration :enrollments :active-courses]))))
+               (>zipcoll [:active-semester :registrations :enrollments :active-courses]))))
 
 (defn ^set-active-semester
   "Event that saves active semester into store"

@@ -7,7 +7,7 @@
 
 (def collections
   "View collections"
-  [:faculties :study-programmes :semesters])
+  [:faculties :study-programmes :semesters :registrations :enrollments])
 
 (defn ^refresh
   "Refreshes the data in view from tree"
@@ -16,8 +16,7 @@
     (fn [_ state]
       (def {:tree tree :view view} state)
       (each coll colls
-        ((>put coll (coll tree))
-          view)))))
+        ((>put coll (coll tree)) view)))))
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
@@ -31,8 +30,8 @@
 
 (defh /index
   "Index page"
-  [http/html-get]
-  (appcap "Admin" (admin/capture)))
+  [appcap]
+  ["Admin" (admin/capture)])
 
 (defn <course/>
   "Contructs htmlgen representation of one `course`"
@@ -57,9 +56,7 @@
       [:thead
        [:tr [:th "code"] [:th "name"] [:th "credits"]
         [:th "semester"] [:th "active"] [:th "action"]]]
-      [:tbody
-       (seq [course :in courses]
-         (<course/> course))]]]])
+      [:tbody (seq [course :in courses] (<course/> course))]]]])
 
 (defh /courses
   "Courses SSE stream"
@@ -91,8 +88,9 @@
   "Semesters SSE stream"
   []
   (http/stream
-    (ds/element "div#semesters" (hg/html (<semesters-list/> (view :active-semester)
-                                                            (view :semesters))))))
+    (ds/element "div#semesters"
+                (hg/html (<semesters-list/> (view :active-semester)
+                                            (view :semesters))))))
 
 (defn ^activate
   "Events that activates semester"
@@ -113,15 +111,36 @@
                 (hg/html (<semesters-list/> semester
                                             (view :semesters))))))
 
+(defn ds/input
+  "Datastar input helper"
+  [name & attrs]
+  [:input (struct ;attrs :data-bind name)])
+
+(defn <course-form/>
+  "Course form hg representation for `subject`"
+  [{:name name :code code :active active :semester semester
+    :credits credits} semesters]
+  [:tr {:id code}
+   [:td code]
+   [:td
+    (ds/input :name :type "text" :value name)]
+   [:td (ds/input :credits :type "text" :size 2 :value credits)]
+   [:td
+    [:select {:data-bind :semester}
+     (seq [s :in semesters] [:option s])]]
+   [:td
+    (ds/input :active :type "checkbox" ;(if active [:checked "checked"] []))]
+   [:td
+    [:button {:data-on:click (ds/post "/courses/" code)} "Save"]]])
+
 (defh /edit-course
   "Edit course SSE stream"
   []
   (def code (params :code))
   (def subject ((=> :courses (>Y (??? {:code (?eq code)})) 0) view))
   (http/stream
-    (ds/element
-      "div#course-form"
-      (string/replace-all "\n" "" (course-form/capture :subject subject)))))
+    (ds/patch-elements
+      (hg/html (<course-form/> subject (view :semesters))))))
 
 (defn ^save-course
   "Event that saves the course"
@@ -133,15 +152,14 @@
 
 (defh /save-course
   "Save course"
-  [http/urlenc-post]
+  [http/keywordize-body http/json->body]
   (def code (get params :code))
-  (def active (get body :active false))
-  (def course ((=> (=>course/by-code code) (>put :active active)) view))
-  (produce (^save-course code course))
+  (def course
+    ((=> (=>course/by-code code)
+         (>merge-into body)) view))
   (http/stream
-    (ds/element "div#course-form" "<h2>Saving</h2>")
-    (ds/patch-elements (hg/html (<course/> course)))
-    (ds/element "div#course-form" "")))
+    (produce (^save-course code course))
+    (ds/patch-elements (hg/html (<course/> course)))))
 
 (define-event Deactivate
   "Events that deactivates semester"
@@ -156,15 +174,54 @@
   (http/stream
     (ds/element "div#semesters"
                 (hg/html (<semesters-list/> false (view :semesters))))))
+
+(defn <registration/>
+  "Contructs htmlgen representation of one `registration`"
+  [emhash {:fullname fullname :email email :home-university hu
+           :birth-date bd :faculty fa :study-programme sp}]
+  [:tr {:id emhash}
+   [:td fullname]
+   [:td email]
+   [:td bd]
+   [:td hu]
+   [:td fa]
+   [:td sp]
+   [:td
+    [:a {:data-on:click (string "@post('/registrations/confirm" emhash "')")}
+     "Confirm"]]])
+
+(defn <registrations-list/>
+  "Contructs htmlgen representation of all `registrations`"
+  [registrations]
+  @[[:details {:open "true"}
+     [:summary "Registrations (" (length registrations) ")"]
+     [:table
+      [:thead
+       [:tr [:th "Fullname"] [:th "Email"] [:th "Date of Birth"]
+        [:th "Home University"] [:th "Faculty"] [:th "Study programme"]
+        [:th "Action"]]]
+      [:tbody (seq [[emhash registration] :pairs registrations]
+                (<registration/> emhash registration))]]]])
+
+(defh /registrations
+  "Registrations SSE stream"
+  []
+  (http/stream
+    (ds/element "div#registrations"
+                (hg/html (<registrations-list/> (view :registrations))))))
+
 (def routes
   "HTTP routes"
   @{"/" /index
-    "/courses" @{"" /courses
-                 "/edit/:code" /edit-course
-                 "/:code" /save-course}
+    "/registrations" @{"" /registrations
+                       "/activate/:registration" /activate
+                       "/deactivate" /deactivate}
     "/semesters" @{"" /semesters
                    "/activate/:semester" /activate
-                   "/deactivate" /deactivate}})
+                   "/deactivate" /deactivate}
+    "/courses" @{"" /courses
+                 "/edit/:code" /edit-course
+                 "/:code" /save-course}})
 
 (def initial-state
   "Initial state"
