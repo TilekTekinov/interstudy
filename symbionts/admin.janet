@@ -99,7 +99,7 @@
   [semester]
   (make-event
     {:effect (fn [_ {:tree tree :view view} _]
-               ((>put :activite-semester semester) view)
+               ((>put :active-semester semester) view)
                (:set-active-semester tree semester))
      :watch (^refresh :active-semester)}))
 

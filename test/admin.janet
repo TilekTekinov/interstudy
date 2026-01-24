@@ -46,7 +46,7 @@
     ((success-has? `<div id='semesters'` `<details open` `<summary>Semesters`
                    `Winter` `x`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
-      resp)))
+      resp)) "Activate response")
 (let [resp (request "GET" (url "/semesters"))]
   (assert (success? resp))
   (assert ((success-has? `<div id='semesters'` `<details open` `<summary>Semesters`
