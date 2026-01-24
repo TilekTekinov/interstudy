@@ -10,7 +10,7 @@
   [:faculties :study-programmes :semesters])
 
 (defn ^refresh
-  "Refreshes the data in view"
+  "Refreshes the data in view from tree"
   [& colls]
   (make-update
     (fn [_ state]

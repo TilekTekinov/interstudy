@@ -1,4 +1,6 @@
-@{:faculties
+@{:registrations @{}
+  :enrollments @{}
+  :faculties
   {"FEM" "Faculty of Economics and Management"
    "FAFNR" "Faculty of Agrobiology, Food and Natural Resources"
    "FE" "Faculty of Engineering"
