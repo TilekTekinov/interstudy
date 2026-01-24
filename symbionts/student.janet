@@ -8,12 +8,10 @@
 
 (define-update RefreshView
   "Refreshes the data in view"
-  [_ state]
-  (def {:store store} state)
-  ((=> :view
-       (>merge-into
-         (:transact store (>select-keys :registrations :enrollments))))
-    state))
+  [_ {:view view :tree tree}]
+  ((=> (>put :registrations (:registrations tree))
+       (>put :enrollments (:enrollments tree)))
+    view))
 
 (def collections
   "View collections"
@@ -30,22 +28,23 @@
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defn ^save-registration
-  "Event that creates registration in the store"
+  "Event that creates registration in the tree"
   [regkey regdata]
   (make-event
-    {:update (fn [_ {:store store}]
-               (:transact store :registrations
-                          (>put regkey regdata)))
-     :watch [Flush RefreshView]}))
+    {:update (fn [_ {:tree tree :view view}]
+               ((=> :registrations (>put regkey regdata)) view)
+               (:save-registration tree regkey regdata))
+     :watch RefreshView}))
 
 (defn ^save-enrollment
-  "Event that creates enrollment in the store"
-  [regkey regdata]
+  "Event that creates enrollment in the tree"
+  [regkey enrdata]
   (make-event
-    {:update (fn [_ {:store store}]
-               (:transact store :enrollments
-                          (>put regkey regdata)))
-     :watch [Flush RefreshView]}))
+    {:update
+     (fn [_ {:tree tree :view view}]
+       ((=> :enrollments (>put regkey enrdata)) view)
+       (:save-enrollment tree regkey enrdata))
+     :watch RefreshView}))
 
 (defmacro- regcap
   "Convenience for registration template capture"
@@ -137,7 +136,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact PrepareStore)
       (:transact (^connect-tree [PrepareView HTTP]))
       :await)
   (os/exit 0))

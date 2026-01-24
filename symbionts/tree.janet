@@ -1,8 +1,12 @@
 (use /environment /schema)
 
-(def collections
+(def collections/branches
   "All collections provided by the tree"
-  [:faculties :semesters :study-programmes])
+  [:faculties :semesters :study-programmes :courses])
+
+(def collections/fruits
+  "All fruit collections probided by the tree"
+  [:registrations :enrollments])
 
 (define-update RefreshView
   "Event that refreshes view"
@@ -12,10 +16,11 @@
     view
     (:transact store
                (<- c (=> :active-semester))
-               :courses (<- c)
-               (<- c (=> (>Y (??? {:active truthy? :semester (?eq (c 0))}))))
+               (<- c (=> :registrations))
+               (<- c (=> :enrollments))
+               (<- c (=> :courses (>Y (??? {:active truthy? :semester (?eq (c 0))}))))
                (>base c)
-               (>zipcoll [:active-semester :courses :active-courses]))))
+               (>zipcoll [:active-semester :registration :enrollments :active-courses]))))
 
 (defn ^set-active-semester
   "Event that saves active semester into store"
@@ -36,6 +41,24 @@
                           (>merge-into new)))
      :watch [RefreshView Flush]}))
 
+(defn ^save-registration
+  "Event that creates registration in the store"
+  [regkey regdata]
+  (make-event
+    {:update (fn [_ {:store store}]
+               (:transact store :registrations
+                          (>put regkey regdata)))
+     :watch [Flush RefreshView]}))
+
+(defn ^save-enrollment
+  "Event that creates enrollment in the store"
+  [regkey regdata]
+  (make-event
+    {:update (fn [_ {:store store}]
+               (:transact store :enrollments
+                          (>put regkey regdata)))
+     :watch [Flush RefreshView]}))
+
 (def rpc-funcs
   "RPC functions for the tree"
   (merge-into
@@ -48,11 +71,18 @@
       :save-course
       (fn [rpc code new]
         (produce (^save-course code new))
+        :ok)
+      :save-registration
+      (fn [rpc key registration]
+        (produce (^save-registration key registration))
+        :ok)
+      :save-enrollment
+      (fn [rpc key enrollment]
+        (produce (^save-enrollment key enrollment))
         :ok)}
-    (tabseq [coll :in (array/concat @[:active-courses :courses] collections)]
-      coll (fn [rpc]
-             (define :view)
-             (view coll)))))
+    (tabseq [coll :in (array/concat @[:active-courses :courses]
+                                    collections/branches collections/fruits)]
+      coll (fn [rpc] (define :view) (view coll)))))
 
 (def initial-state
   "Configuration"
@@ -64,7 +94,7 @@
   {:update
    (fn [_ state]
      ((>put :view
-            (:transact (state :store) (>select-keys ;collections)))
+            (:transact (state :store) (>select-keys ;collections/branches ;collections/fruits)))
        state))
    :watch RefreshView
    :effect (fn [_ {:view view} _] (setdyn :view view))})

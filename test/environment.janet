@@ -14,7 +14,6 @@
                  :debug true
                  :host "localhost"
                  :http "localhost:8777"
-                 :image "test/student"
                  :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"
                  :log false
                  :name "student"
