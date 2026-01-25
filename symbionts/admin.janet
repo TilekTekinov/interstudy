@@ -219,15 +219,15 @@
   "Search registrations handler"
   [http/keywordize-body http/json->body]
   (def search (body :search))
-  (defn =>search [s] (fuzzy/hasmatch search s))
+  (def =>search
+    (=> :registrations
+        (>Y (??? {:fullname |(fuzzy/hasmatch search $)}))))
   (http/stream
     (ds/element "div#registrations"
                 (hg/html
                   (<registrations-list/>
                     (if (present? search)
-                      ((=> :registrations
-                           (>Y (??? {:fullname =>search})))
-                        view)
+                      (=>search view)
                       (view :registrations)))))))
 
 (def routes
