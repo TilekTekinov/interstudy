@@ -257,7 +257,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact PrepareStore)
       (:transact (^connect-tree [PrepareView HTTP]))
       :await)
   (os/exit 0))

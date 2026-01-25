@@ -113,7 +113,7 @@
            (++ tries)
            (do
              (set res
-                  [(log "FATAL: Cannot connect to Catalog. Exiting.") Stop])
+                  [(log "Cannot connect to tree. Exiting.") Stop])
              (break)))
          (ev/sleep (* tries 0.1)))
        [(log "Connected to tree") ;res])}
