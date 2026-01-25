@@ -77,7 +77,8 @@
 (def?! mycelium-node
   dictionary?
   {:rpc url?
-   :key present-string?})
+   :peers (?optional (??? tuple? (>?? all keyword?)))
+   :key (?optional present-string?)})
 
 (def?! mycelium-nodes-config
   dictionary?

@@ -8,21 +8,21 @@
  {:tree
   {:image "data/tree"}
   :student
-  {:image "data/student"}
+  {}
   :admin
-  {:image "data/admin"}}
+  {}}
  :mycelium
  {:psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
   :nodes
   {:tree
    {:rpc "localhost:4444"
-    :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}
+    :peers [:student :admin]}
    :student
    {:rpc "localhost:4445"
-    :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}
+    :peers [:tree]}
    :admin
    {:rpc "localhost:4446"
-    :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}}}
+    :peers [:tree]}}}
  :membranes
  {:nodes
   {:student

@@ -14,13 +14,14 @@
   :nodes
   {:tree
    {:rpc "localhost:5444"
-    :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}
+   :peers [:student :admin]
+    }
    :student
    {:rpc "localhost:5445"
-    :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}
+    :peers [:tree]}
    :admin
    {:rpc "localhost:5446"
-    :key "{dU\xFE\x8D`\x84Q%Q\xF7\x0E\xFA\xF8\x17\x83\x03\x9A7&,\xE9\x8C9\xF0;5\xE3\x93|\x13\x9A"}}}
+    :peers [:tree]}}}
  :membranes
  {:nodes
   {:student

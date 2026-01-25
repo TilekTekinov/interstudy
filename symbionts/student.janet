@@ -125,7 +125,7 @@
 
 (def initial-state
   "Initial state"
-  ((=> (=>symbiont-initial-state :student true)
+  ((=> (=>symbiont-initial-state :student)
        (>put :routes routes)) compile-config))
 
 (defn main

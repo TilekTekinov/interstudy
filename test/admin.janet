@@ -22,22 +22,23 @@
   (assert
     ((success-has? `<h1>Interstudy - Admin` `Collections`
                    `/semesters` `Semesters`
+                   `/registrations` `Registrations`
                    `/courses` `Courses`) resp)))
 (end-suite)
 
 (start-suite :sse)
+(let [resp (request "GET" (url "/registrations"))]
+  (assert (success? resp))
+  (assert
+    ((success-has? `<div id='registrations'` `<details open` `<summary>` `Registrations`
+                   `Search` `<table` `Fullname` `Email` `Action`)
+      resp)))
 (let [resp (request "GET" (url "/semesters"))]
   (assert (success? resp))
   (assert
     ((success-has? `<div id='semesters'` `<details open` `<summary>Semesters`
                    `<table` `name` `active` `action`
                    `<a data-on:click` `/semesters/activate/` `Activate`)
-      resp)))
-(let [resp (request "GET" (url "/registrations"))]
-  (assert (success? resp))
-  (assert
-    ((success-has? `<div id='registrations'` `<details open` `<summary>Registrations`
-                   `<table` `Fullname` `Email` `Action`)
       resp)))
 (let [resp (request "GET" (url "/semesters/activate/Winter"))]
   (assert (success? resp))
@@ -72,6 +73,14 @@
     ((success-has? `<div id='semesters'` `<details open` `<summary>Semesters`
                    `Winter` `<a data-on:click` `/semesters/activate/` `Activate`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
+      resp)))
+(let [resp (request "POST" (url "/registrations/search")
+                    :headers {"Content-Type" "application/json"}
+                    :body `{"search":"a"}`)]
+  (assert (success? resp))
+  (assert
+    ((success-has? `<div id='registrations'` `<details open` `<summary>` `Registrations`
+                   `Search` `<table` `Fullname` `Email` `Action`)
       resp)))
 (end-suite)
 

@@ -4,18 +4,21 @@
 # Navigation
 (defn =>symbiont-initial-state
   "Navigation to extract `symbiont` congig from main config"
-  [symbiont &opt tree]
+  [symbiont]
   (let [c @[{:name (string symbiont)}]]
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
         (<- c (=> :symbionts symbiont))
-        (<- c (=> :mycelium (>select-keys :psk)))
-        (>if (=> :mycelium :nodes symbiont)
-             (<- c (=> :mycelium :nodes symbiont)))
         (>if (=> :membranes :nodes symbiont)
              (<- c (=> :membranes :nodes symbiont)))
-        (>if (always tree)
-             (<- c (=> :mycelium :nodes :tree :rpc |{:tree $})))
+        :mycelium
+        (<- c (=> (>select-keys :psk)))
+        :nodes
+        (>if (=> symbiont)
+             (<- c (=> symbiont)))
+        (>if (=> symbiont :peers present?)
+             (=> (<- c (=> symbiont :peers))
+                 (<- c (fn [ns] (tabseq [i :in (array/pop c)] i ((=> i :rpc) ns))))))
         (>base c) (>merge))))
 
 (defn update-rpc
@@ -143,6 +146,19 @@
   ~(do
      (:save test-store ,test-data)
      (:flush test-store)))
+
+(defn fixtures
+  "Combine members of the `sets` to get `n` uniq combinations"
+  [n & sets]
+  (def rng (math/rng (os/cryptorand 8)))
+  (def res @{})
+  (while (< (length res) n)
+    (put res
+         (freeze
+           (seq [set :in sets :let [ls (length set)]]
+             (get set (math/rng-int rng ls))))
+         true))
+  (keys res))
 
 # Bin helpers
 (def project-files-peg

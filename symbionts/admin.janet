@@ -1,7 +1,7 @@
 (use /environment /schema)
+(import gp/data/fuzzy)
 (import /templates/app)
 (import /templates/admin)
-(import /templates/course-form)
 
 (setdyn *handler-defines* [:view])
 
@@ -123,7 +123,7 @@
   [:tr {:id code}
    [:td code]
    [:td
-    (ds/input :name :type "text" :value name)]
+    (ds/input :name :type "text" :size 40 :value name)]
    [:td (ds/input :credits :type "text" :size 2 :value credits)]
    [:td
     [:select {:data-bind :semester}
@@ -194,7 +194,12 @@
   "Contructs htmlgen representation of all `registrations`"
   [registrations]
   @[[:details {:open "true"}
-     [:summary "Registrations (" (length registrations) ")"]
+     [:summary
+      [:div {:class :f-row}
+       "Registrations (" (length registrations) ")"
+       [:input {:type :text :placeholder "Search in fullname"
+                :data-bind "search"
+                :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]]
      [:table
       [:thead
        [:tr [:th "Fullname"] [:th "Email"] [:th "Date of Birth"]
@@ -210,12 +215,28 @@
     (ds/element "div#registrations"
                 (hg/html (<registrations-list/> (view :registrations))))))
 
+(defh /search
+  "Search registrations handler"
+  [http/keywordize-body http/json->body]
+  (def search (body :search))
+  (defn =>search [s] (fuzzy/hasmatch search s))
+  (http/stream
+    (ds/element "div#registrations"
+                (hg/html
+                  (<registrations-list/>
+                    (if (present? search)
+                      ((=> :registrations
+                           (>Y (??? {:fullname =>search})))
+                        view)
+                      (view :registrations)))))))
+
 (def routes
   "HTTP routes"
   @{"/" /index
     "/registrations" @{"" /registrations
                        "/activate/:registration" /activate
-                       "/deactivate" /deactivate}
+                       "/deactivate" /deactivate
+                       "/search" /search}
     "/semesters" @{"" /semesters
                    "/activate/:semester" /activate
                    "/deactivate" /deactivate}
@@ -225,7 +246,7 @@
 
 (def initial-state
   "Initial state"
-  ((=> (=>symbiont-initial-state :admin true)
+  ((=> (=>symbiont-initial-state :admin)
        (>put :routes routes)) compile-config))
 
 (defn main
