@@ -195,9 +195,10 @@
   [registrations]
   @[[:details {:open "true"}
      [:summary
-      [:div {:class :f-row}
-       "Registrations (" (length registrations) ")"
+      [:div {:class "f-row padding-block-end"}
+       [:div "Registrations (" (length registrations) ")"]
        [:input {:type :text :placeholder "Search in fullname"
+                :autofocus true
                 :data-bind "search"
                 :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]]
      [:table
