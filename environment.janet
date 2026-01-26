@@ -99,7 +99,7 @@
     (fn [_ state]
       (def {:tree tree :view view} state)
       (each coll colls
-        ((>put coll (coll tree)) view)))))
+        (put view coll (coll tree))))))
 
 (defn ^connect-peers
   "Connects to the tree"

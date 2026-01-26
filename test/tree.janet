@@ -58,8 +58,7 @@
                                      :course-5 "EEEB5E"
                                      :course-6 "EEEF4E"
                                      :timestamp 1768995243})) "Save registration")
-  (assert-not (empty? (:enrollments tree)) "Present enrollments"))
-
-
+  (assert-not (empty? (:enrollments tree)) "Present enrollments")
+  (assert (= :ok (:stop tree))))
 (end-suite)
 (os/exit 0)
