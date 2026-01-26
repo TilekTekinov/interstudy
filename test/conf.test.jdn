@@ -14,7 +14,7 @@
   :nodes
   {:tree
    {:rpc "localhost:5444"
-   :peers [:student :admin]
+   :peers [] # later [:student :admin]
     }
    :student
    {:rpc "localhost:5445"

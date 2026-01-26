@@ -9,15 +9,6 @@
   "View collections"
   [:faculties :study-programmes :semesters :registrations :enrollments])
 
-(defn ^refresh
-  "Refreshes the data in view from tree"
-  [& colls]
-  (make-update
-    (fn [_ state]
-      (def {:tree tree :view view} state)
-      (each coll colls
-        ((>put coll (coll tree)) view)))))
-
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
   {:update
@@ -25,7 +16,7 @@
      (def {:tree tree} state)
      ((>put :view (tabseq [coll :in collections] coll (coll tree)))
        state))
-   :watch (^refresh :active-semester :courses)
+   :watch (^refresh-view :active-semester :courses)
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defh /index
@@ -99,7 +90,7 @@
     {:effect (fn [_ {:tree tree :view view} _]
                ((>put :active-semester semester) view)
                (:set-active-semester tree semester))
-     :watch (^refresh :active-semester)}))
+     :watch (^refresh-view :active-semester)}))
 
 (defh /activate
   "Semesters SSE stream"
@@ -148,7 +139,7 @@
   (make-event
     {:effect (fn [_ {:tree tree} _]
                (:save-course tree code course))
-     :watch (^refresh :courses)}))
+     :watch (^refresh-view :courses)}))
 
 (defh /save-course
   "Save course"
@@ -165,7 +156,7 @@
   "Events that deactivates semester"
   {:effect (fn [_ {:tree tree} _]
              (:set-active-semester tree false))
-   :watch (^refresh :active-semester)})
+   :watch (^refresh-view :active-semester)})
 
 (defh /deactivate
   "Deactivation handler"
@@ -245,10 +236,15 @@
                  "/edit/:code" /edit-course
                  "/:code" /save-course}})
 
+(def rpc-funcs
+  "RPC functions"
+  @{:refresh (fn [_ & what] (produce (^refresh-view ;what)) :ok)})
+
 (def initial-state
   "Initial state"
   ((=> (=>symbiont-initial-state :admin)
-       (>put :routes routes)) compile-config))
+       (>put :routes routes)
+       (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
 (defn main
   ```
@@ -257,6 +253,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact (^connect-tree [PrepareView HTTP]))
+      (:transact (^connect-peers PrepareView HTTP RPC))
       :await)
   (os/exit 0))

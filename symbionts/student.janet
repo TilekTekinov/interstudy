@@ -123,10 +123,23 @@
     "/enroll/:id" (http/dispatch {"GET" /enrollment
                                   "POST" /enroll})})
 
+(def rpc-funcs
+  "RPC functions"
+  @{:refresh
+    (fn [_ what]
+      (case what
+        :active-semester
+        (produce (^refresh-view :active-courses :active-semester))
+        :courses
+        (produce (^refresh-view :active-courses :courses))
+        (produce (^refresh-view what)))
+      :ok)})
+
 (def initial-state
   "Initial state"
   ((=> (=>symbiont-initial-state :student)
-       (>put :routes routes)) compile-config))
+       (>put :routes routes)
+       (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
 (defn main
   ```
@@ -135,6 +148,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact (^connect-tree [PrepareView HTTP]))
+      (:transact (^connect-peers PrepareView HTTP RPC))
       :await)
   (os/exit 0))

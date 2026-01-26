@@ -23,7 +23,8 @@
     :course-4 present-string?
     :course-5 present-string?
     :course-6 present-string?}
-  (fn [e] (deep= (values e) (distinct (values e)))))
+  (fn [e] (= (length (values e))
+             (length (distinct (values e))))))
 
 (def?! session-payload
   table?

@@ -13,7 +13,7 @@
 (:save test-store "Winter" :active-semester)
 (:flush test-store)
 (ev/go tree/main)
-(ev/sleep 0.01) # Settle the server
+(ev/sleep 0.1) # Settle the server
 
 (init-test :student)
 (ev/go student/main)
@@ -80,6 +80,12 @@
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body (slurp "test/enrollment-req"))]
   (assert (not-found? resp) "Not found POST"))
+(end-suite)
+(start-suite :rpc)
+(let [student (client ;(server/host-port rpc-url) "test" psk)]
+  (assert (= :pong (:ping student)))
+  (assert (= :ok (:refresh student :active-semester))))
+
 (end-suite)
 
 (os/exit 0)

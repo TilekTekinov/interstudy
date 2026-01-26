@@ -1,6 +1,6 @@
 (use /environment /schema)
 
-(def collections/branches
+(def collections/leafs
   "All collections provided by the tree"
   [:faculties :semesters :study-programmes :courses])
 
@@ -22,6 +22,14 @@
                (>base c)
                (>zipcoll [:active-semester :registrations :enrollments :active-courses]))))
 
+(defn ^refresh-peers
+  "Events that sends :refresh to `peer`"
+  [what]
+  (make-effect
+    (fn [_ state _]
+    (def {:peers peers} state)
+      (each peer peers (:refresh (state peer) what)))))
+
 (defn ^set-active-semester
   "Event that saves active semester into store"
   [semester]
@@ -29,7 +37,8 @@
     {:update
      (fn [_ {:store store :view view}]
        (:save store semester :active-semester))
-     :watch [RefreshView Flush]}))
+     :watch [RefreshView Flush
+             (^refresh-peers :active-semester)]}))
 
 (defn ^save-course
   "Event that saves course"
@@ -39,7 +48,7 @@
                (:transact store
                           (=>course/by-code code)
                           (>merge-into new)))
-     :watch [RefreshView Flush]}))
+     :watch [RefreshView Flush (^refresh-peers :courses)]}))
 
 (defn ^save-registration
   "Event that creates registration in the store"
@@ -48,7 +57,7 @@
     {:update (fn [_ {:store store}]
                (:transact store :registrations
                           (>put regkey regdata)))
-     :watch [Flush RefreshView]}))
+     :watch [Flush RefreshView (^refresh-peers :registrations)]}))
 
 (defn ^save-enrollment
   "Event that creates enrollment in the store"
@@ -57,7 +66,7 @@
     {:update (fn [_ {:store store}]
                (:transact store :enrollments
                           (>put regkey regdata)))
-     :watch [Flush RefreshView]}))
+     :watch [Flush RefreshView (^refresh-peers :registrations)]}))
 
 (def rpc-funcs
   "RPC functions for the tree"
@@ -81,7 +90,7 @@
         (produce (^save-enrollment key enrollment))
         :ok)}
     (tabseq [coll :in (array/concat @[:active-courses :courses]
-                                    collections/branches collections/fruits)]
+                                    collections/leafs collections/fruits)]
       coll (fn [rpc] (define :view) (view coll)))))
 
 (def initial-state
@@ -94,7 +103,7 @@
   {:update
    (fn [_ state]
      ((>put :view
-            (:transact (state :store) (>select-keys ;collections/branches ;collections/fruits)))
+            (:transact (state :store) (>select-keys ;collections/leafs ;collections/fruits)))
        state))
    :watch RefreshView
    :effect (fn [_ {:view view} _] (setdyn :view view))})
@@ -108,5 +117,6 @@
       (make-manager on-error)
       (:transact PrepareStore PrepareView)
       (:transact RPC)
+      (:transact (^connect-peers (log "Tree is ready")))
       :await)
   (os/exit 0))

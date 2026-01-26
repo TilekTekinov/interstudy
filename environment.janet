@@ -92,32 +92,52 @@
     (string (util/bin2hex (hash/hash 16 item ctx)))))
 
 # Events
-(defn ^connect-tree
+(defn ^refresh-view
+  "Refreshes the data in view from tree"
+  [& colls]
+  (make-update
+    (fn [_ state]
+      (def {:tree tree :view view} state)
+      (each coll colls
+        ((>put coll (coll tree)) view)))))
+
+(defn ^connect-peers
   "Connects to the tree"
-  [succ]
+  [& succ]
   (make-event
     {:update
      (fn [_ state]
-       (def {:psk psk :name name :tree tree} state)
-       (def [host port] (server/host-port tree))
-       (put state :tree
-            (make rpc/Client
-                  :host host :port port
-                  :psk psk :name name)))
+       (def {:psk psk :name name :peers peers} state)
+       (each peer peers
+         (let [url (state peer)
+               [host port] (server/host-port url)]
+           (put state peer
+                (make rpc/Client
+                      :host host :port port
+                      :psk psk :name name)))))
      :watch
-     (fn [_ {:tree tree} _]
-       (var tries 0)
-       (var res succ)
-       (while (not ((protect (:open tree)) 0))
-         (if (< tries 10)
-           (++ tries)
-           (do
-             (set res
-                  [(log "Cannot connect to tree. Exiting.") Stop])
-             (break)))
-         (ev/sleep (* tries 0.1)))
-       [(log "Connected to tree") ;res])}
-    "connect tree"))
+     (fn [_ state _]
+       (producer
+         (def {:peers peers} state)
+         (def res (array/new (length peers)))
+         (each peer peers
+           (var tries 0)
+           (while (not ((protect (:open (state peer))) 0))
+             (if (< tries 10)
+               (++ tries)
+               (do
+                 (array/push res
+                             (log "Cannot connect to " peer ". Exiting.") Stop)
+                 (break)))
+             (ev/sleep (* tries 0.1)))
+           (array/push res (log "Connected to " peer)))
+         (produce ;res ;succ)))}
+    "connect peers"))
+
+(defn ^delay
+  "Delay the `event` for `s` time"
+  [s event]
+  (make-watch (producer (ev/sleep s) (produce event)) "delay"))
 
 # Test helpers
 (defmacro init-test

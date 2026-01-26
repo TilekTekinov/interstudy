@@ -14,7 +14,7 @@
 (start-suite :rpc)
 (let [tree (client ;(server/host-port rpc-url) "test" psk)]
   (assert tree)
-  (each coll [;tree/collections/branches]
+  (each coll [;tree/collections/leafs]
     (assert (tree coll))
     (let [ss (coll tree)]
       (assert (present? ss) (string "Present collection " coll))))

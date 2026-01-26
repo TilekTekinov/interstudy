@@ -84,4 +84,11 @@
       resp)))
 (end-suite)
 
+(start-suite :rpc)
+(let [admin (client ;(server/host-port rpc-url) "test" psk)]
+  (assert (= :pong (:ping admin)))
+  (assert (= :ok (:refresh admin :active-semester))))
+
+(end-suite)
+
 (os/exit 0)
