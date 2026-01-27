@@ -43,7 +43,7 @@
 (let [resp (request "GET" (url "/semesters/activate/Winter"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="semesters` `<details` `<summary>Semesters`
+    ((success-has? `<div id="semesters` `<details open` `<summary>Semesters`
                    `Winter` `x`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)) "Activate response")
@@ -87,7 +87,7 @@
 (let [resp (request "GET" (url "/semesters/deactivate"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="semesters` `<details` `<summary>Semesters`
+    ((success-has? `<div id="semesters` `<details open` `<summary>Semesters`
                    `Winter` `<a data-on:click` `/semesters/activate/` `Activate`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)))

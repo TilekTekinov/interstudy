@@ -8,12 +8,10 @@
 
 (def?! registration
   entity?
-  {:birth-date present-string?
-   :email present-string?
+  {:email present-string?
    :faculty present-string?
    :fullname present-string?
-   :home-university present-string?
-   :study-programme present-string?})
+   :home-university present-string?})
 
 (def?! enrollment
   entity?

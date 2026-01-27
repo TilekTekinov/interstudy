@@ -29,10 +29,8 @@
        "<form" "post" "/"
        "<label for='fullname'>" "Fullname" "<input name='fullname' id='fullname' type='text'" "required"
        "<label for='email'>" "Email" "<input name='email' id='email' type='email'" "required"
-       "<label for='birth-date'>" "Date of birth" "<input name='birth-date' id='birth-date'" "required"
        "<label for='home-university'>" "Home university" "<input name='home-university' id='home-university'" "required"
        "<label for='faculty'>" "Faculty" "<select name='faculty' id='faculty'" "required" "<option"
-       "<label for='study-programme'>" "Study programme" "<select name='study-programme' id='study-programme'" "required" "<option"
        "<button>Register</button>")
       resp)
     "Registration page"))

@@ -2,7 +2,7 @@
 
 (def collections/leafs
   "All collections provided by the tree"
-  [:faculties :semesters :study-programmes :courses])
+  [:faculties :semesters :courses])
 
 (def collections/fruits
   "All fruit collections probided by the tree"

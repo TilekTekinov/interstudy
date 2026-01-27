@@ -14,7 +14,7 @@
 
 (def collections
   "View collections"
-  [:faculties :active-courses :study-programmes :semesters])
+  [:faculties :active-courses :semesters])
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
@@ -50,8 +50,7 @@
   [&opt err]
   ~(registration/capture
      ;,(if err ~[:error ,err :registration registration] '[])
-     :faculties (view :faculties)
-     :study-programmes (view :study-programmes)))
+     :faculties (view :faculties)))
 
 (defh /index
   "Index page."

@@ -10,11 +10,6 @@
    "IEC" "Institute of Education and Communication"}
   :semesters
   ["Winter" "Summer"]
-  :study-programmes
-  ["Erasmus+ (EU)"
-   "Exchange"
-   "Erasmus Mundus (nonEU)"
-   "CEEPUS"]
   :courses
   [@{:faculty "FEM"
      :semester "Winter"

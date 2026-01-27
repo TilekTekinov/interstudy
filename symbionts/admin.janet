@@ -7,7 +7,7 @@
 
 (def collections
   "View collections"
-  [:faculties :study-programmes :semesters :registrations :enrollments])
+  [:faculties :semesters :registrations :enrollments])
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
@@ -63,9 +63,9 @@
 
 (defn <semesters-list/>
   "Contructs htmlgen representation of all `semesters`"
-  [active-semester semesters]
+  [active-semester semesters &opt open]
   [:div {:id "semesters"}
-   [:details
+   [:details (if open {:open true})
     [:summary "Semesters"]
     [:a {:data-on:click (ds/get "/semesters/deactivate")}
      "Deactivate"]
@@ -103,7 +103,7 @@
   []
   (def semester (params :semester))
   (produce (^activate semester))
-  (ds/hg-stream (<semesters-list/> semester (view :semesters))))
+  (ds/hg-stream (<semesters-list/> semester (view :semesters) true)))
 
 (defn <course-form/>
   "Course form hg representation"
@@ -156,19 +156,17 @@
   "Deactivation handler"
   []
   (produce Deactivate)
-  (ds/hg-stream (<semesters-list/> false (view :semesters))))
+  (ds/hg-stream (<semesters-list/> false (view :semesters) true)))
 
 (defn <registration/>
   "Contructs htmlgen representation of one `registration`"
   [emhash {:fullname fullname :email email :home-university hu
-           :birth-date bd :faculty fa :study-programme sp}]
+           :faculty fa}]
   [:tr {:id emhash}
    [:td fullname]
    [:td email]
-   [:td bd]
    [:td hu]
    [:td fa]
-   [:td sp]
    [:td
     [:a {:data-on:click (string "@post('/registrations/confirm" emhash "')")}
      "Confirm"]]])
@@ -187,8 +185,8 @@
               :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]
     [:table
      [:thead
-      [:tr [:th "Fullname"] [:th "Email"] [:th "Date of Birth"]
-       [:th "Home University"] [:th "Faculty"] [:th "Study programme"]
+      [:tr [:th "Fullname"] [:th "Email"]
+       [:th "Home University"] [:th "Faculty"]
        [:th "Action"]]]
      [:tbody (seq [[emhash registration] :pairs registrations]
                (<registration/> emhash registration))]]]])

@@ -41,12 +41,10 @@
   (assert-not (:active-semester tree) "No active semester")
   (assert (empty? (:registrations tree)) "Empty registrations")
   (assert (= :ok (:save-registration tree (hash "josef@pospisil.work")
-                                     @{:birth-date "1973-01-10"
-                                       :email "josef@pospisil.work"
+                                     @{:email "josef@pospisil.work"
                                        :faculty "FE"
                                        :fullname "Josef Posp\xC3\xAD\xC5\xA1il"
                                        :home-university "Oxford"
-                                       :study-programme "Erasmus+ (EU)"
                                        :timestamp (os/time)})) "Save registration")
   (assert-not (empty? (:registrations tree)) "Present registrations")
   (assert (empty? (:enrollments tree)) "Empty enrollments")

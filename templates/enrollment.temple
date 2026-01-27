@@ -12,10 +12,10 @@
       Course&nbsp;{{ i }}
     </label>
     <select name='{{ n }}' id='{{ n }}' type='text' required >
-	{% (each {:code code :name name :credits credits} (args :courses) %}
+    {% (each {:code code :name name :credits credits} (args :courses) %}
       <option value="{{ code }}" {- (if (= code (and enr (enr (keyword n)))) "selected") -}>{{ code }} {{ credits }} {{ name }}</option>
-	{% ) %}
-	</select>
+    {% ) %}
+    </select>
   </p>
 {% ) %}
   <button>Enroll</button>
