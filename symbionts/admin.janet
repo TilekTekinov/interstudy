@@ -40,10 +40,16 @@
 
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
-  [courses]
+  [courses &opt open]
   [:div {:id "courses"}
-   [:details {:open "true"}
-    [:summary "Courses (" (length courses) ")"]
+   [:details (if open {:open true})
+    [:summary
+     "Courses (" (length courses) ")"]
+    [:div {:class "f-row margin-block"}
+     "Filter: "
+     [:a {:data-on:click (ds/get "/courses/filter/active")} "Only active"]
+     [:a {:data-on:click (ds/get "/courses/filter/semester/Winter")} "Winter semester"]
+     [:a {:data-on:click (ds/get "/courses/filter/semester/Summer")} "Summer semester"]]
     [:table
      [:thead
       [:tr [:th "code"] [:th "name"] [:th "credits"]
@@ -59,7 +65,7 @@
   "Contructs htmlgen representation of all `semesters`"
   [active-semester semesters]
   [:div {:id "semesters"}
-   [:details {:open "true"}
+   [:details
     [:summary "Semesters"]
     [:a {:data-on:click (ds/get "/semesters/deactivate")}
      "Deactivate"]
@@ -99,25 +105,19 @@
   (produce (^activate semester))
   (ds/hg-stream (<semesters-list/> semester (view :semesters))))
 
-(defn ds/input
-  "Datastar input helper"
-  [name & attrs]
-  [:input (struct ;attrs :data-bind name)])
-
 (defn <course-form/>
-  "Course form hg representation for `subject`"
-  [{:name name :code code :active active :semester semester
-    :credits credits} semesters]
-  [:tr {:id code}
+  "Course form hg representation"
+  [course semesters]
+  (def {:code code} course)
+  [:tr {:id code :data-signals (json/encode course)}
    [:td code]
+   [:td (ds/input :name :type "text" :size 40)]
+   [:td (ds/select :credits
+                   (seq [c :range [1 6]] [:option c]))]
    [:td
-    (ds/input :name :type "text" :size 40 :value name)]
-   [:td (ds/input :credits :type "text" :size 2 :value credits)]
+    (ds/select :semester (seq [s :in semesters] [:option s]))]
    [:td
-    [:select {:data-bind :semester}
-     (seq [s :in semesters] [:option s])]]
-   [:td
-    (ds/input :active :type "checkbox" ;(if active [:checked "checked"] []))]
+    (ds/input :active :type "checkbox")]
    [:td
     [:button {:data-on:click (ds/post "/courses/" code)} "Save"]]])
 
@@ -175,16 +175,16 @@
 
 (defn <registrations-list/>
   "Contructs htmlgen representation of all `registrations`"
-  [registrations]
+  [registrations &opt open]
   [:div {:id "registrations"}
-   [:details {:open "true"}
+   [:details (if open {:open true})
     [:summary
-     [:div {:class "f-row padding-block-end"}
-      [:div "Registrations (" (length registrations) ")"]
-      [:input {:type :text :placeholder "Search in fullname"
-               :autofocus true
-               :data-bind "search"
-               :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]]
+     "Registrations (" (length registrations) ")"]
+    [:div {:class "margin-block"}
+     [:input {:type :text :placeholder "Search in fullname"
+              :autofocus true
+              :data-bind "search"
+              :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]
     [:table
      [:thead
       [:tr [:th "Fullname"] [:th "Email"] [:th "Date of Birth"]
@@ -208,7 +208,18 @@
         (>Y (??? {:fullname |(fuzzy/hasmatch search $)}))))
   (ds/hg-stream
     (<registrations-list/>
-      (if (present? search) (=>search view) (view :registrations)))))
+      (if (present? search) (=>search view) (view :registrations))
+      true)))
+
+(defh /filter
+  "Filtered courses SSE stream"
+  []
+  (def finder
+    (match [(params :by) (params :what)]
+      [by nil] (=> :courses (>Y (=> (keyword by))))
+      [by what] (=> :courses (>Y (??? {(keyword what) (?eq by)})))))
+  (ds/hg-stream
+    (<courses-list/> (finder view) true)))
 
 (def routes
   "HTTP routes"
@@ -222,7 +233,9 @@
                    "/deactivate" /deactivate}
     "/courses" @{"" /courses
                  "/edit/:code" /edit-course
-                 "/:code" /save-course}})
+                 "/:code" /save-course
+                 "/filter/:by" /filter
+                 "/filter/:what/:by" /filter}})
 
 (def rpc-funcs
   "RPC functions"

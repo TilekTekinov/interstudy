@@ -30,39 +30,56 @@
 (let [resp (request "GET" (url "/registrations"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="registrations` `<details open` `<summary>` `Registrations`
+    ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
                    `Search` `<table` `Fullname` `Email` `Action`)
       resp)))
 (let [resp (request "GET" (url "/semesters"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="semesters` `<details open` `<summary>Semesters`
+    ((success-has? `<div id="semesters` `<details` `<summary>Semesters`
                    `<table` `name` `active` `action`
                    `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)))
 (let [resp (request "GET" (url "/semesters/activate/Winter"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="semesters` `<details open` `<summary>Semesters`
+    ((success-has? `<div id="semesters` `<details` `<summary>Semesters`
                    `Winter` `x`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)) "Activate response")
 (let [resp (request "GET" (url "/semesters"))]
   (assert (success? resp))
-  (assert ((success-has? `<div id="semesters` `<details open` `<summary>Semesters`
+  (assert ((success-has? `<div id="semesters` `<details` `<summary>Semesters`
                          `Winter` `x`
-                         `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
+                         `Summer` `<a data-on:click` `@get(` `/semesters/activate/` `Activate`)
             resp) "After activate"))
 (let [resp (request "GET" (url "/courses"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="courses` `<details open` `<summary>Courses`
+    ((success-has? `<div id="courses` `<details`
+                   `<summary>` `Courses`
+                   `<a data-on:click=` `/courses/filter/active` `Only active`
+                   `<a data-on:click=` `/courses/filter/semester/Winter` `Winter semester`
+                   `<a data-on:click=` `/courses/filter/semester/Summer` `Summer semester`
                    `<table` `code` `name` `credits` `active` `action`
                    `<a data-on:click` `/courses/edit/` `Edit`) resp)))
+(let [resp (request "GET" (url "/courses/filter/active"))]
+  (assert (success? resp))
+  (assert ((success-has? `<details open` `<td>x</td>`) resp) "Some active")
+  (assert ((success-has-not? `<td></td>`) resp) "No not active"))
+(let [resp (request "GET" (url "/courses/filter/semester/Winter"))]
+  (assert (success? resp) "Filter winter succ")
+  (assert ((success-has? `<td>Winter</td>`) resp) "Some Winter")
+  (assert ((success-has-not? `<td>Summer</td>`) resp) "No Summer"))
 (let [resp (request "GET" (url "/courses/edit/EAE56E"))]
   (assert (success? resp))
-  (assert ((success-has? `<input` `checked`
-                         `<button` `Save`) resp)))
+  (assert ((success-has?
+             `data-signals=`
+             `<input data-bind="name"`
+             `<select data-bind="credits"`
+             `<select data-bind="semester"`
+             `<input data-bind="active"`
+             `<button` `Save`) resp)))
 (let [resp (request "POST" (url "/courses/EAE56E")
                     :body `{"active": false}`)]
   (assert (success? resp) "Save course")
@@ -70,7 +87,7 @@
 (let [resp (request "GET" (url "/semesters/deactivate"))]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="semesters` `<details open` `<summary>Semesters`
+    ((success-has? `<div id="semesters` `<details` `<summary>Semesters`
                    `Winter` `<a data-on:click` `/semesters/activate/` `Activate`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)))
@@ -79,7 +96,7 @@
                     :body `{"search":"a"}`)]
   (assert (success? resp))
   (assert
-    ((success-has? `<div id="registrations` `<details open` `<summary>` `Registrations`
+    ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
                    `Search` `<table` `Fullname` `Email` `Action`)
       resp)))
 (end-suite)

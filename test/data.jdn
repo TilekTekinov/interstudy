@@ -28,7 +28,7 @@
      :name "tesT"
      :credits 5}
    @{:faculty "FEM"
-     :semester "Winter"
+     :semester "Summer"
      :code "EUEB1E"
      :name "Accounting Theory BA2 * * *"
      :credits 5
@@ -45,7 +45,7 @@
      :credits 5
      :active true}
    @{:faculty "FEM"
-     :semester "Winter"
+     :semester "Summer"
      :code "ETEA3E"
      :name "Communication and Information Resources EAD1 * * (outdated)"
      :credits 5}]}

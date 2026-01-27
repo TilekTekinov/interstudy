@@ -76,6 +76,16 @@
   [elements]
   (http/stream (ds/patch-elements (hg/html elements))))
 
+(defn ds/input
+  "Datastar input helper"
+  [name & attrs]
+  [:input (struct ;attrs :data-bind name)])
+
+(defn ds/select
+  "Datastar select helper"
+  [name options]
+  [:select {:data-bind name} options])
+
 # Utils
 (def ctx "Jhydro context" "interstu")
 
