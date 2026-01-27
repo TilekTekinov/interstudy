@@ -41,47 +41,47 @@
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
   [courses]
-  @[[:details {:open "true"}
-     [:summary "Courses (" (length courses) ")"]
-     [:table
-      [:thead
-       [:tr [:th "code"] [:th "name"] [:th "credits"]
-        [:th "semester"] [:th "active"] [:th "action"]]]
-      [:tbody (seq [course :in courses] (<course/> course))]]]])
+  [:div {:id "courses"}
+   [:details {:open "true"}
+    [:summary "Courses (" (length courses) ")"]
+    [:table
+     [:thead
+      [:tr [:th "code"] [:th "name"] [:th "credits"]
+       [:th "semester"] [:th "active"] [:th "action"]]]
+     [:tbody (seq [course :in courses] (<course/> course))]]]])
 
 (defh /courses
   "Courses SSE stream"
   []
-  (http/stream
-    (ds/element "div#courses" (hg/html (<courses-list/> (view :courses))))))
+  (ds/hg-stream (<courses-list/> (view :courses))))
 
 (defn <semesters-list/>
   "Contructs htmlgen representation of all `semesters`"
   [active-semester semesters]
-  @[[:details {:open "true"}
-     [:summary "Semesters"]
-     [:a {:data-on:click (ds/get "/semesters/deactivate")}
-      "Deactivate"]
-     [:table
-      [:thead
-       [:tr [:th "name"] [:th "active"] [:th "action"]]]
-      [:tbody
-       (seq [semester :in semesters :let [active? (= semester active-semester)]]
-         [:tr
-          [:td semester]
-          [:td (if active? "x")]
-          [:td
-           (if-not active?
-             [:a {:data-on:click (ds/get "/semesters/activate/" semester)}
-              "Activate"])]])]]]])
+  [:div {:id "semesters"}
+   [:details {:open "true"}
+    [:summary "Semesters"]
+    [:a {:data-on:click (ds/get "/semesters/deactivate")}
+     "Deactivate"]
+    [:table
+     [:thead
+      [:tr [:th "name"] [:th "active"] [:th "action"]]]
+     [:tbody
+      (seq [semester :in semesters :let [active? (= semester active-semester)]]
+        [:tr
+         [:td semester]
+         [:td (if active? "x")]
+         [:td
+          (if-not active?
+            [:a {:data-on:click (ds/get "/semesters/activate/" semester)}
+             "Activate"])]])]]]])
 
 (defh /semesters
   "Semesters SSE stream"
   []
-  (http/stream
-    (ds/element "div#semesters"
-                (hg/html (<semesters-list/> (view :active-semester)
-                                            (view :semesters))))))
+  (ds/hg-stream
+    (<semesters-list/> (view :active-semester)
+                       (view :semesters))))
 
 (defn ^activate
   "Events that activates semester"
@@ -97,10 +97,7 @@
   []
   (def semester (params :semester))
   (produce (^activate semester))
-  (http/stream
-    (ds/element "div#semesters"
-                (hg/html (<semesters-list/> semester
-                                            (view :semesters))))))
+  (ds/hg-stream (<semesters-list/> semester (view :semesters))))
 
 (defn ds/input
   "Datastar input helper"
@@ -129,9 +126,7 @@
   []
   (def code (params :code))
   (def subject ((=> :courses (>Y (??? {:code (?eq code)})) 0) view))
-  (http/stream
-    (ds/patch-elements
-      (hg/html (<course-form/> subject (view :semesters))))))
+  (ds/hg-stream (<course-form/> subject (view :semesters))))
 
 (defn ^save-course
   "Event that saves the course"
@@ -148,9 +143,8 @@
   (def course
     ((=> (=>course/by-code code)
          (>merge-into body)) view))
-  (http/stream
-    (produce (^save-course code course))
-    (ds/patch-elements (hg/html (<course/> course)))))
+  (produce (^save-course code course))
+  (ds/hg-stream (<course/> course)))
 
 (define-event Deactivate
   "Events that deactivates semester"
@@ -162,9 +156,7 @@
   "Deactivation handler"
   []
   (produce Deactivate)
-  (http/stream
-    (ds/element "div#semesters"
-                (hg/html (<semesters-list/> false (view :semesters))))))
+  (ds/hg-stream (<semesters-list/> false (view :semesters))))
 
 (defn <registration/>
   "Contructs htmlgen representation of one `registration`"
@@ -184,28 +176,28 @@
 (defn <registrations-list/>
   "Contructs htmlgen representation of all `registrations`"
   [registrations]
-  @[[:details {:open "true"}
-     [:summary
-      [:div {:class "f-row padding-block-end"}
-       [:div "Registrations (" (length registrations) ")"]
-       [:input {:type :text :placeholder "Search in fullname"
-                :autofocus true
-                :data-bind "search"
-                :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]]
-     [:table
-      [:thead
-       [:tr [:th "Fullname"] [:th "Email"] [:th "Date of Birth"]
-        [:th "Home University"] [:th "Faculty"] [:th "Study programme"]
-        [:th "Action"]]]
-      [:tbody (seq [[emhash registration] :pairs registrations]
-                (<registration/> emhash registration))]]]])
+  [:div {:id "registrations"}
+   [:details {:open "true"}
+    [:summary
+     [:div {:class "f-row padding-block-end"}
+      [:div "Registrations (" (length registrations) ")"]
+      [:input {:type :text :placeholder "Search in fullname"
+               :autofocus true
+               :data-bind "search"
+               :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]]
+    [:table
+     [:thead
+      [:tr [:th "Fullname"] [:th "Email"] [:th "Date of Birth"]
+       [:th "Home University"] [:th "Faculty"] [:th "Study programme"]
+       [:th "Action"]]]
+     [:tbody (seq [[emhash registration] :pairs registrations]
+               (<registration/> emhash registration))]]]])
 
 (defh /registrations
   "Registrations SSE stream"
   []
-  (http/stream
-    (ds/element "div#registrations"
-                (hg/html (<registrations-list/> (view :registrations))))))
+  (ds/hg-stream
+    (<registrations-list/> (view :registrations))))
 
 (defh /search
   "Search registrations handler"
@@ -214,13 +206,9 @@
   (def =>search
     (=> :registrations
         (>Y (??? {:fullname |(fuzzy/hasmatch search $)}))))
-  (http/stream
-    (ds/element "div#registrations"
-                (hg/html
-                  (<registrations-list/>
-                    (if (present? search)
-                      (=>search view)
-                      (view :registrations)))))))
+  (ds/hg-stream
+    (<registrations-list/>
+      (if (present? search) (=>search view) (view :registrations)))))
 
 (def routes
   "HTTP routes"

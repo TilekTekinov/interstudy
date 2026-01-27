@@ -40,7 +40,8 @@
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body (slurp "test/registration-req"))]
   (assert (success? resp) "Save registration succ")
-  (assert ((success-has? "<h2>Registered" "<a href='/enroll/23e365ca71557c832c39f7ba12d72d0c") resp) "Save registration content"))
+  (assert ((success-has? "<h2>Registered" "<a href='/enroll/d73e5fabb537b904d535047420894bc1") resp)
+  "Save registration content"))
 (let [resp (request "POST" (url "/")
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body "asdfasdc=asfasf")]
@@ -51,11 +52,11 @@
                     :body (slurp "test/registration-req"))]
   (assert (success? resp) "Reject email registration succ")
   (assert ((success-has? "Registration failed" "value='Josef") resp) "Reject email registration content"))
-(let [resp (request "GET" (url "/enroll/23e365ca71557c832c39f7ba12d72d0c"))]
+(let [resp (request "GET" (url "/enroll/d73e5fabb537b904d535047420894bc1"))]
   (assert (success? resp))
   (assert
     ((success-has? "Enrollment" "Student: Josef Pospíšil &lt;josef@pospisil.work&gt;" "Please choose"
-                   "<form" "post" "/enroll/23e365ca71557c832c39f7ba12d72d0c"
+                   "<form" "post" "/enroll/d73e5fabb537b904d535047420894bc1"
                    "<label for='course-1'>" "Course&nbsp;1" "<select name='course-1' id='course-1'" "required" "<option" ">" "EAE56E 5"
                    "<label for='course-2'>" "Course&nbsp;2" "<select name='course-2' id='course-2'" "required" "<option" "EAE56E"
                    "<label for='course-3'>" "Course&nbsp;3" "<select name='course-3' id='course-3'" "required" "<option"
@@ -63,15 +64,15 @@
                    "<label for='course-5'>" "Course&nbsp;5" "<select name='course-5' id='course-5'" "required" "<option"
                    "<label for='course-6'>" "Course&nbsp;6" "<select name='course-6' id='course-6'" "required" "<option"
                    "<button>Enroll")
-      resp)))
+      resp) "Enrollment form content"))
 (let [resp (request "GET" (url "/enroll/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"))]
   (assert (not-found? resp) "Not found GET"))
-(let [resp (request "POST" (url "/enroll/23e365ca71557c832c39f7ba12d72d0c")
+(let [resp (request "POST" (url "/enroll/d73e5fabb537b904d535047420894bc1")
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body (slurp "test/enrollment-req"))]
   (assert (success? resp) "Save enrollment succ")
   (assert ((success-has? "<h2>Enrolled") resp) "Save enrollment content"))
-(let [resp (request "POST" (url "/enroll/23e365ca71557c832c39f7ba12d72d0c")
+(let [resp (request "POST" (url "/enroll/d73e5fabb537b904d535047420894bc1")
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body (slurp "test/dup-enrollment-req"))]
   (assert (success? resp) "Reject enrollment succ")

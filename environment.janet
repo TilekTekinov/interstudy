@@ -61,14 +61,6 @@
         "data: elements " ;elements "\n\n")))
   (protect (:write (dyn :sse-conn) msg)))
 
-(defmacro ds/element
-  "Convenience to patch one element by selector"
-  [sel & content]
-  (assert ((??? string? (?find "#")) sel)
-          "Selector must be css id selector with tag")
-  (def [tag id] (string/split "#" sel))
-  ~(,ds/patch-elements "<" ,tag " id='" ,id "'>" ,;content "</" ,tag ">"))
-
 (defn ds/get
   "Constructs ds get uri"
   [& parts]
@@ -79,10 +71,13 @@
   [& parts]
   (string "@post('" ;parts "')"))
 
+(defn ds/hg-stream
+  "Convenience for defining SSE stream handler"
+  [elements]
+  (http/stream (ds/patch-elements (hg/html elements))))
+
 # Utils
-(def ctx
-  "Jhydro context"
-  "student0")
+(def ctx "Jhydro context" "interstu")
 
 (defn hash
   "Returns hash item"
