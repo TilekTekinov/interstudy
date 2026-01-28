@@ -37,7 +37,7 @@
    [:td name]
    [:td credits]
    [:td semester]
-   [:td (if active "x")]
+   [:td {:class :active} (if active "x")]
    [:td
     [:a {:data-on:click (string "@get('/courses/edit/" code "')")}
      "Edit"]]])
@@ -45,15 +45,21 @@
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
   [courses &opt open]
-  [:div {:id "courses"}
+  [:div {:id "courses" :data-bind (json/encode {:active false :semester false})}
    [:details (if open {:open true})
     [:summary
      "Courses (" (length courses) ")"]
     [:div {:class "f-row margin-block"}
      "Filter: "
-     [:a {:data-on:click (ds/get "/courses/filter/active")} "Only active"]
-     [:a {:data-on:click (ds/get "/courses/filter/semester/Winter")} "Winter semester"]
-     [:a {:data-on:click (ds/get "/courses/filter/semester/Summer")} "Summer semester"]]
+     [:label "Only active "
+      (ds/input :active :type :checkbox
+                :data-on:change (ds/get "/courses/filter/"))]
+     [:label "Only Winter semester "
+      (ds/input :semester :type :checkbox :value "Winter"
+                :data-on:change (ds/get "/courses/filter/"))]
+     [:label "Only Summer semester "
+      (ds/input :semester :type :checkbox :value "Summer"
+                :data-on:change (ds/get "/courses/filter/"))]]
     [:table
      [:thead
       [:tr [:th "code"] [:th "name"] [:th "credits"]
@@ -164,64 +170,72 @@
 
 (defn <registration/>
   "Contructs htmlgen representation of one `registration`"
-  [emhash {:fullname fullname :email email :home-university hu
-           :faculty fa}]
+  [emhash
+   {:fullname fn :email em :home-university hu :faculty fa :timestamp ts}
+   enrollment]
+  (def {:courses ecs :timestamp ets :credits ecr} (or enrollment {}))
   [:tr {:id emhash}
-   [:td fullname]
-   [:td email]
+   [:td fn]
+   [:td em]
    [:td hu]
    [:td fa]
-   [:td
-    [:a {:data-on:click (string "@post('/registrations/confirm" emhash "')")}
-     "Confirm"]]])
+   ;(if ets
+      [[:td (dt/format-date-time ts)]
+       [:td (dt/format-date-time ets) " " (length ecs) " for " ecr " credits"]]
+      [[:td] [:td]])])
 
 (defn <registrations-list/>
   "Contructs htmlgen representation of all `registrations`"
-  [registrations &opt open]
+  [registrations enrollments &opt open]
   [:div {:id "registrations"}
    [:details (if open {:open true})
     [:summary
      "Registrations (" (length registrations) ")"]
     [:div {:class "margin-block"}
-     [:input {:type :search :placeholder "Search in fullname"
-              :autofocus true
-              :data-bind "search"
-              :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]
+     (ds/input
+       :search :type :search :size 50
+       :placeholder "Search in email and fullname"
+       :data-on:input__debounce.200ms (ds/post "/registrations/search"))]
     [:table
      [:thead
       [:tr [:th "Fullname"] [:th "Email"]
        [:th "Home University"] [:th "Faculty"]
-       [:th "Action"]]]
-     [:tbody (seq [[emhash registration] :pairs registrations]
-               (<registration/> emhash registration))]]]])
+       [:th "Registered"] [:th "Enrollment"]]]
+     [:tbody
+      (seq [[emhash registration] :pairs registrations]
+        (<registration/> emhash registration (enrollments emhash)))]]]])
 
 (defh /registrations
   "Registrations SSE stream"
   []
   (ds/hg-stream
-    (<registrations-list/> (view :registrations))))
+    (<registrations-list/> (view :registrations) (view :enrollments))))
 
 (defh /search
   "Search registrations handler"
   [http/keywordize-body http/json->body]
   (def search (body :search))
   (def =>search
-    (=> :registrations
-        (>Y (??? {:fullname |(fuzzy/hasmatch search $)}))))
+    (=> :registrations pairs
+        (>Y (=> last |(string ($ :fullname) ($ :email)) |(fuzzy/hasmatch search $)))
+        (>map |(table ;$)) (>merge)))
   (ds/hg-stream
     (<registrations-list/>
       (if (present? search) (=>search view) (view :registrations))
-      true)))
+      (view :enrollments) true)))
 
 (defh /filter
   "Filtered courses SSE stream"
-  []
-  (def finder
-    (match [(params :by) (params :what)]
-      [by nil] (=> :courses (>Y (=> (keyword by))))
-      [by what] (=> :courses (>Y (??? {(keyword what) (?eq by)})))))
+  [http/query-params]
+  (def finders
+    ((=> :query-params "datastar" 
+         (>if present? json/decode (always {})) pairs
+         (>Y (>check-all all
+                         (=> first (?one-of "semester" "active"))
+                         (=> last (>check-all some true? present?))))
+         (>map (fn [[k v]] (>Y (=> (??? {(keyword k) (?eq v)})))))) req))
   (ds/hg-stream
-    (<courses-list/> (finder view) true)))
+    (<courses-list/> ((=> :courses ;finders) view) true)))
 
 (def routes
   "HTTP routes"
@@ -236,8 +250,7 @@
     "/courses" @{"" /courses
                  "/edit/:code" /edit-course
                  "/:code" /save-course
-                 "/filter/:by" /filter
-                 "/filter/:what/:by" /filter}})
+                 "/filter/" /filter}})
 
 (def rpc-funcs
   "RPC functions"

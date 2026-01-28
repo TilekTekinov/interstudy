@@ -11,6 +11,20 @@
 (load-dump "test/data.jdn")
 (def tree-server (os/spawn ["janet" "symbionts/tree.janet"] :p))
 (ev/sleep 0.05) # Settle the server
+(def tree-client
+  (client ;(server/host-port rpc-url) :test psk))
+(:save-registration tree-client (hash "josef@pospisil.work")
+                    @{:email "josef@pospisil.work"
+                      :faculty "FE"
+                      :fullname "Josef Pospíšil"
+                      :home-university "Oxford"
+                      :timestamp (os/time)})
+(:save-enrollment tree-client (hash "josef@pospisil.work")
+                  @{:courses
+                    @["EAE56E" "EIE67E" "ENE49E"
+                      "EEEI2E" "EEEB5E" "EEEF4E"]
+                    :credits 30
+                    :timestamp 1768995243})
 
 (init-test :admin)
 (ev/go admin/main)
@@ -27,12 +41,6 @@
 (end-suite)
 
 (start-suite :sse)
-(let [resp (request "GET" (url "/registrations"))]
-  (assert (success? resp))
-  (assert
-    ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
-                   `Search` `<table` `Fullname` `Email` `Action`)
-      resp)))
 (let [resp (request "GET" (url "/semesters"))]
   (assert (success? resp))
   (assert
@@ -54,20 +62,21 @@
                          `Summer` `<a data-on:click` `@get(` `/semesters/activate/` `Activate`)
             resp) "After activate"))
 (let [resp (request "GET" (url "/courses"))]
-  (assert (success? resp))
+  (assert (success? resp) "Courses succ")
   (assert
     ((success-has? `<div id="courses` `<details`
                    `<summary>` `Courses`
-                   `<a data-on:click=` `/courses/filter/active` `Only active`
-                   `<a data-on:click=` `/courses/filter/semester/Winter` `Winter semester`
-                   `<a data-on:click=` `/courses/filter/semester/Summer` `Summer semester`
+                   `Only active` `<input` `data-on:change` `/courses/filter/` 
+                   `Winter semester` `<input` `data-on:change` `/courses/filter/` 
+                   `Summer semester` `<input` `data-on:change` `/courses/filter/` 
                    `<table` `code` `name` `credits` `active` `action`
-                   `<a data-on:click` `/courses/edit/` `Edit`) resp)))
-(let [resp (request "GET" (url "/courses/filter/active"))]
-  (assert (success? resp))
-  (assert ((success-has? `<details open` `<td>x</td>`) resp) "Some active")
-  (assert ((success-has-not? `<td></td>`) resp) "No not active"))
-(let [resp (request "GET" (url "/courses/filter/semester/Winter"))]
+                   `<a data-on:click` `/courses/edit/` `Edit`) resp)
+                  "Courses succ content"))
+(let [resp (request "GET" (url `/courses/filter/?datastar=%7B%22search%22%3A%22%22%2C%22active%22%3Atrue%2C%22semester%22%3A%22%22%7D`))]
+  (assert (success? resp) "Active filter succ")
+  (assert ((success-has? `<details open` `<td class="active">x</td>`) resp) "Some active")
+  (assert ((success-has-not? `<td class="active"></td>`) resp) "No not active"))
+(let [resp (request "GET" (url "/courses/filter/?datastar=%7B%22search%22%3A%22%22%2C%22active%22%3Afalse%2C%22semester%22%3A%22Winter%22%7D"))]
   (assert (success? resp) "Filter winter succ")
   (assert ((success-has? `<td>Winter</td>`) resp) "Some Winter")
   (assert ((success-has-not? `<td>Summer</td>`) resp) "No Summer"))
@@ -91,13 +100,21 @@
                    `Winter` `<a data-on:click` `/semesters/activate/` `Activate`
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)))
-(let [resp (request "POST" (url "/registrations/search")
-                    :headers {"Content-Type" "application/json"}
-                    :body `{"search":"a"}`)]
+(let [resp (request "GET" (url "/registrations"))]
   (assert (success? resp))
   (assert
     ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
-                   `Search` `<table` `Fullname` `Email` `Action`)
+                   `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
+                   `Josef Pospíšil` `josef@pospisil.work` `6 for 30 credits`)
+      resp)))
+(let [resp (request "POST" (url "/registrations/search")
+                    :headers {"Content-Type" "application/json"}
+                    :body `{"search":"j"}`)]
+  (assert (success? resp))
+  (assert
+    ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
+                   `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
+                   `Josef Pospíšil` `josef@pospisil.work` `6 for 30 credits`)
       resp)))
 (end-suite)
 

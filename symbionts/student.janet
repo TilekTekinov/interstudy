@@ -115,7 +115,6 @@
    (if (present? err)
      [:div {:class "warn box"}
       (seq [e :in err :when (present? e) :let [[field reason] (kvs e)]]
-      (tracev reason)
         (case field
           :credits [:div "Credit limit exceeded"]
           :courses [:div "Courses must be unique"]))]
