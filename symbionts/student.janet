@@ -94,26 +94,85 @@
      :courses (view :active-courses)
      :enrollment enrollment))
 
+(defn <enrollment-form/>
+  "htmlgen representation of the enrollment form"
+  [registration enrollment courses &opt err]
+  (def credits (get enrollment :credits 0))
+  (def add-empty (and (not (present? err)) (< credits 30)))
+  (def ec
+    ((=> :courses (>if (always add-empty) |[;$ ""])) enrollment))
+  (def tabcourses
+    (tabseq [[i v] :pairs ec] (keyword "course-" i) v))
+  (def options
+    @[[:option {:value ""} "-- please choose course --"]
+      (seq [{:code code :name name :credits credits} :in courses]
+        [:option {:value code} (string/format "%s (%i) %s" code credits name)])])
+  [:div {:id "enrollment-form"}
+   [:h2 "Student: " (registration :fullname) " <" (registration :email) ">"]
+   [:h3 "Credits: " credits]
+   (if (present? err)
+     [:div {:class "warn box"}
+      (seq [e :in err :when (present? e) :let [[field _] (kvs e)]]
+        (case field
+          :credits [:div "Credit limit exceeded"]
+          :courses [:div "Courses must be unique"]))]
+     (if (not= 0 credits)
+       [:div {:class "ok box"}
+        "Your enrollment was saved. You can leave this page and return later."]))
+   [:form {:class "table rows"
+           :data-signals (json/encode tabcourses)}
+    [:div [:span "Legend"] [:span "code"] [:span "(credits)"] [:span "name"]]
+    (seq [[i course] :pairs ec
+          :let [name (keyword "course-" i)
+                label (string "Course " (inc i))]]
+      [:p
+       [:label {:for name} label]
+       [:select
+        {:name name :id name :data-bind name
+         :data-on:change (ds/post "/enroll/" (hash (registration :email)))}
+        options]])]])
+
 (defh /enrollment
   "Enrollment handler"
   [appcap]
   (def id (params :id))
-  (when-let [registration ((=> :registrations id) view)]
-    (def enrollment ((=> :enrollments id) view))
-    ["Enrollment" (enrcap)]))
+  (when-let [registration ((=> :registrations id) view)
+             courses ((??? present?) (view :active-courses))]
+    (def enrollment
+      ((=> :enrollments (>if (=> id) (=> id) (always @{:courses @[]}))) view))
+    ["Enrollment"
+     (hg/html (<enrollment-form/> registration enrollment
+                                  courses))]))
+
+# TODO view credit index
+(defn sum-credits
+  "Sums all credit from enrollment"
+  [enrollment courses]
+  (var sum 0)
+  (each code enrollment
+    ((=> (>find-from-start (??? {:code (?eq code) :credits number?}))
+         (>if (=> :credits) (=> :credits |(+= sum $)))) courses))
+  sum)
 
 (defh /enroll
   "Enroll handler"
-  [appcap http/urlenc-post]
+  [http/keywordize-body http/json->body]
   (def id (params :id))
-  (when-let [registration ((=> :registrations id) view)]
-    (def enrollment (>stamp body))
-    ["Enrollement"
-     (if (enrollment? enrollment)
-       (do
-         (produce (^save-enrollment id enrollment))
-         "<h2>Enrolled</h2")
-       (enrcap "Not enrolled. All courses must be unique."))]))
+  (if-let [registration ((=> :registrations id) view)
+           courses ((=> values (>Y present?)) body)
+           credits (sum-credits courses (view :active-courses))
+           enrollment
+           (>stamp
+             @{:credits credits :courses courses})]
+    (ds/hg-stream
+      (<enrollment-form/>
+        registration enrollment (view :active-courses)
+        (if (enrollment? enrollment)
+          (produce (^save-enrollment id enrollment))
+          (if (empty? (enrollment :courses))
+            (produce (^save-enrollment id nil))
+            (enrollment! enrollment)))))
+    (http/not-found)))
 
 (def routes
   "Application routes"

@@ -1,17 +1,20 @@
+{$ (import spork/json) $}
 {% (def enr (args :enrollment)) %}
 <h2>Student: {{ (args :fullname) }} &lt;{{ (args :email) }}&gt;</h2>
 <h3>Please choose your courses</h3>
 {% (when (args :error) %}
 <div class="error bad box">{{ (args :error) }}</div>
 {% ) %}
-<form method='post' action='/enroll/{- (args :id) -}' class='table rows'>
+<form method='post' action='/enroll/{- (args :id) -}' class='table rows'
+data-signals="{- (json/encode enr) -}">
   <div><span>Legend</span><span>code</span><span>credits</span><span>name</span></div>
-{% (loop [i :range [1 7] :let [n (string "course-" i)]] %}
+{% (loop [[i course] :pairs (values enr) :let [n (string "course-" i)]] %}
   <p>
     <label for='{{ n }}'>
       Course&nbsp;{{ i }}
     </label>
     <select name='{{ n }}' id='{{ n }}' type='text' required >
+    <option value="">-- please choose your first course --</option>
     {% (each {:code code :name name :credits credits} (args :courses) %}
       <option value="{{ code }}" {- (if (= code (and enr (enr (keyword n)))) "selected") -}>{{ code }} {{ credits }} {{ name }}</option>
     {% ) %}

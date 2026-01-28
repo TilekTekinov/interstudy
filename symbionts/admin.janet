@@ -19,10 +19,14 @@
    :watch (^refresh-view :active-semester :courses)
    :effect (fn [_ {:view view} _] (setdyn :view view))})
 
+(def admin-page
+  "Admin captured"
+  (admin/capture))
+
 (defh /index
   "Index page"
   [appcap]
-  ["Admin" (admin/capture)])
+  ["Admin" admin-page])
 
 (defn <course/>
   "Contructs htmlgen representation of one `course`"
@@ -179,7 +183,7 @@
     [:summary
      "Registrations (" (length registrations) ")"]
     [:div {:class "margin-block"}
-     [:input {:type :text :placeholder "Search in fullname"
+     [:input {:type :search :placeholder "Search in fullname"
               :autofocus true
               :data-bind "search"
               :data-on:input__debounce.200ms (ds/post "/registrations/search")}]]

@@ -24,19 +24,31 @@
             :home-university "Oxford"
             :timestamp (os/time)})
 (assert?! schema/enrollment
-          @{:course-1 "EAE56E"
-            :course-2 "EIE67E"
-            :course-3 "ENE49E"
-            :course-4 "EEEI2E"
-            :course-5 "EEEB5E"
-            :course-6 "EEEF4E"
+          @{:courses
+            @["EAE56E"
+              "EIE67E"
+              "ENE49E"
+              "EEEI2E"
+              "EEEB5E"
+              "EEEF4E"]
+            :credits 30
             :timestamp 1768995243})
 (assert-not?! schema/enrollment
-              @{:course-1 "EAE56E"
-                :course-2 "EAE56E"
-                :course-3 "ENE49E"
-                :course-4 "EEEI2E"
-                :course-5 "EEEB5E"
-                :course-6 "EEEF4E"
+              @{:courses
+                @["EAE56E"
+                  "EAE56E"
+                  "ENE49E"
+                  "EEEI2E"
+                  "EEEB5E"
+                  "EEEF4E"]
+                :timestamp 1768995243})
+(assert-not?! schema/enrollment
+              @{:courses
+                ["EAE56E"
+                 ""
+                 "ENE49E"
+                 "EEEI2E"
+                 "EEEB5E"
+                 "EEEF4E"]
                 :timestamp 1768995243})
 (end-suite)

@@ -3,7 +3,7 @@
 (def?! entity
   table?
   {keys (>check all keyword?)
-   values (>check all (>check-all some string? epoch? number? array? keyword?))
+   values (>check all (>check-all some string? epoch? number? array? table? keyword?))
    :timestamp epoch?})
 
 (def?! registration
@@ -13,16 +13,19 @@
    :fullname present-string?
    :home-university present-string?})
 
+(def?! valid-credits
+  (?optional (??? number? pos? (?lte 30))))
+
+(def?! uniq-courses
+  array?
+  {values (>?? all present?)}
+  (fn [e] (= (length e)
+             (length (distinct e)))))
+
 (def?! enrollment
   entity?
-  @{:course-1 present-string?
-    :course-2 present-string?
-    :course-3 present-string?
-    :course-4 present-string?
-    :course-5 present-string?
-    :course-6 present-string?}
-  (fn [e] (= (length (values e))
-             (length (distinct (values e))))))
+  @{:courses uniq-courses?
+    :credits valid-credits?})
 
 (def?! session-payload
   table?
