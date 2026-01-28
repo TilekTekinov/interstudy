@@ -14,18 +14,17 @@
    :home-university present-string?})
 
 (def?! valid-credits
-  (?optional (??? number? pos? (?lte 30))))
+  (??? number? pos? (?lte 30)))
 
 (def?! uniq-courses
-  array?
   {values (>?? all present?)}
   (fn [e] (= (length e)
              (length (distinct e)))))
 
 (def?! enrollment
   entity?
-  @{:courses uniq-courses?
-    :credits valid-credits?})
+  {:courses uniq-courses?
+   :credits (?optional valid-credits?)})
 
 (def?! session-payload
   table?

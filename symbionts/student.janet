@@ -5,6 +5,8 @@
 
 (setdyn *handler-defines* [:view])
 
+(def max-credits "Maximal amount of credits" 30)
+
 (define-update RefreshView
   "Refreshes the data in view"
   [_ {:view view :tree tree}]
@@ -98,7 +100,7 @@
   "htmlgen representation of the enrollment form"
   [registration enrollment courses &opt err]
   (def credits (get enrollment :credits 0))
-  (def add-empty (and (not (present? err)) (< credits 30)))
+  (def add-empty (and (not (present? err)) (< credits max-credits)))
   (def ec
     ((=> :courses (>if (always add-empty) |[;$ ""])) enrollment))
   (def tabcourses
@@ -109,10 +111,11 @@
         [:option {:value code} (string/format "%s (%i) %s" code credits name)])])
   [:div {:id "enrollment-form"}
    [:h2 "Student: " (registration :fullname) " <" (registration :email) ">"]
-   [:h3 "Credits: " credits]
+   [:h3 "Credits: " credits " of " max-credits]
    (if (present? err)
      [:div {:class "warn box"}
-      (seq [e :in err :when (present? e) :let [[field _] (kvs e)]]
+      (seq [e :in err :when (present? e) :let [[field reason] (kvs e)]]
+      (tracev reason)
         (case field
           :credits [:div "Credit limit exceeded"]
           :courses [:div "Courses must be unique"]))]
@@ -147,30 +150,31 @@
 # TODO view credit index
 (defn sum-credits
   "Sums all credit from enrollment"
-  [enrollment courses]
-  (var sum 0)
-  (each code enrollment
-    ((=> (>find-from-start (??? {:code (?eq code) :credits number?}))
-         (>if (=> :credits) (=> :credits |(+= sum $)))) courses))
-  sum)
+  [enrcourses courses]
+  (when (present? enrcourses)
+    (var sum 0)
+    (each code enrcourses
+      ((=> (>find-from-start (??? {:code (?eq code) :credits number?}))
+           (>if (=> :credits) (=> :credits |(+= sum $)))) courses))
+    sum))
+
+(def =>coerce-body
+  "Navigation that coerces body courses table to enrollment array"
+  (=> pairs (>sort-by first) (>map last) (>Y present?)))
 
 (defh /enroll
   "Enroll handler"
   [http/keywordize-body http/json->body]
-  (def id (params :id))
-  (if-let [registration ((=> :registrations id) view)
-           courses ((=> values (>Y present?)) body)
-           credits (sum-credits courses (view :active-courses))
-           enrollment
-           (>stamp
-             @{:credits credits :courses courses})]
-    (ds/hg-stream
-      (<enrollment-form/>
-        registration enrollment (view :active-courses)
-        (if (enrollment? enrollment)
-          (produce (^save-enrollment id enrollment))
-          (if (empty? (enrollment :courses))
-            (produce (^save-enrollment id nil))
+  (if-let [id (params :id)
+           registration ((=> :registrations id) view)
+           courses (=>coerce-body body)]
+    (let [credits (sum-credits courses (view :active-courses))
+          enrollment (>stamp @{:credits credits :courses courses})]
+      (ds/hg-stream
+        (<enrollment-form/>
+          registration enrollment (view :active-courses)
+          (if (enrollment? enrollment)
+            (produce (^save-enrollment id enrollment))
             (enrollment! enrollment)))))
     (http/not-found)))
 

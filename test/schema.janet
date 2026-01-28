@@ -33,6 +33,9 @@
               "EEEF4E"]
             :credits 30
             :timestamp 1768995243})
+(assert?! schema/enrollment
+          @{:courses @[]
+            :timestamp 1768995243})
 (assert-not?! schema/enrollment
               @{:courses
                 @["EAE56E"
