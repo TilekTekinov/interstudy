@@ -14,10 +14,12 @@
   {:update
    (fn [_ state]
      (def {:tree tree} state)
-     ((>put :view (tabseq [coll :in collections] coll (coll tree)))
+     ((=> (>put :view (tabseq [coll :in collections] coll (coll tree))))
        state))
    :watch (^refresh-view :active-semester :courses)
-   :effect (fn [_ {:view view} _] (setdyn :view view))})
+   :effect (fn [_ {:view view :student student} _]
+             (setdyn :view view)
+             (setdyn :student student))})
 
 (def admin-page
   "Admin captured"
@@ -62,7 +64,7 @@
                 :data-on:change (ds/get "/courses/filter/"))]]
     [:table
      [:thead
-      [:tr [:th "code"] [:th "name"] [:th "credits"]
+      [:tr [:th "code"] [:th {:class :name} "name"] [:th "credits"]
        [:th "semester"] [:th "active"] [:th "action"]]]
      [:tbody (seq [course :in courses] (<course/> course))]]]])
 
@@ -173,16 +175,17 @@
   [emhash
    {:fullname fn :email em :home-university hu :faculty fa :timestamp ts}
    enrollment]
+  (define :student)
   (def {:courses ecs :timestamp ets :credits ecr} (or enrollment {}))
   [:tr {:id emhash}
-   [:td fn]
-   [:td em]
-   [:td hu]
-   [:td fa]
-   ;(if ets
-      [[:td (dt/format-date-time ts)]
-       [:td (dt/format-date-time ets) " " (length ecs) " for " ecr " credits"]]
-      [[:td] [:td]])])
+   [:td fn] [:td em] [:td hu] [:td fa]
+   [:td (if ts (dt/format-date-time ts))]
+   [:td {:class "f-coll"}
+    (if ets
+      [:div (dt/format-date-time ets) " "
+       (length ecs) " for " ecr " credits"])
+    [:a {:href (string student "/enroll/" (hash em))
+         :target "_blank"} "Enroll link"]]])
 
 (defn <registrations-list/>
   "Contructs htmlgen representation of all `registrations`"
@@ -228,7 +231,7 @@
   "Filtered courses SSE stream"
   [http/query-params]
   (def finders
-    ((=> :query-params "datastar" 
+    ((=> :query-params "datastar"
          (>if present? json/decode (always {})) pairs
          (>Y (>check-all all
                          (=> first (?one-of "semester" "active"))

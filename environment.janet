@@ -5,12 +5,19 @@
 (defn =>symbiont-initial-state
   "Navigation to extract `symbiont` congig from main config"
   [symbiont]
-  (let [c @[{:name (string symbiont)}]]
+  (let [c @[{:name (string symbiont)}]
+        =>membrane (=> :membranes :nodes symbiont)
+        =>neighbors (=> =>membrane :neighbors)]
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
         (<- c (=> :symbionts symbiont))
-        (>if (=> :membranes :nodes symbiont)
-             (<- c (=> :membranes :nodes symbiont)))
+        (>if =>membrane
+             (=> (<- c =>membrane)
+                 (>if (=> =>neighbors present?)
+                      (=> (<- c =>neighbors)
+                          (<- c (=> :membranes :nodes
+                                    |(tabseq [i :in (array/pop c)] i
+                                       ((=> i :address) $))))))))
         :mycelium
         (<- c (=> (>select-keys :psk)))
         :nodes
@@ -18,7 +25,8 @@
              (<- c (=> symbiont)))
         (>if (=> symbiont :peers present?)
              (=> (<- c (=> symbiont :peers))
-                 (<- c (fn [ns] (tabseq [i :in (array/pop c)] i ((=> i :rpc) ns))))))
+                 (<- c |(tabseq [i :in (array/pop c)]
+                          i ((=> i :rpc) $)))))
         (>base c) (>merge))))
 
 (defn update-rpc

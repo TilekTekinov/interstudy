@@ -34,4 +34,5 @@
    {:http "localhost:7778"
     :cookie-host "localhost"
     :static true
-    :public "public"}}}}
+    :public "public"
+    :neighbors [:student]}}}}

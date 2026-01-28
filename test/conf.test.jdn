@@ -27,10 +27,12 @@
   {:student
    {:http "localhost:8777"
     :cookie-host "localhost"
+    :address "http://localhost:8777"
     :static true
     :public "public"}
    :admin
    {:http "localhost:8778"
     :cookie-host "localhost"
     :static true
-    :public "public"}}}}
+    :public "public"
+    :neighbors [:student]}}}}

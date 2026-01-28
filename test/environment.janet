@@ -9,18 +9,20 @@
 (end-suite)
 
 (start-suite :utils)
-(assert (deep= ((=>symbiont-initial-state :student) compile-config)
+(assert (deep= ((=>symbiont-initial-state :admin) compile-config)
                @{:cookie-host "localhost"
                  :debug true
                  :host "localhost"
-                 :http "localhost:8777"
+                 :http "localhost:8778"
                  :log false
-                 :name "student"
+                 :name "admin"
+                 :neighbors [:student]
+                 :student "http://localhost:8777"
                  :peers [:tree]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :public "public"
                  :release-path "/var/code/insterstudy"
-                 :rpc "localhost:5445"
+                 :rpc "localhost:5446"
                  :static true
                  :thicket "interstudy"
                  :tree "localhost:5444"})
