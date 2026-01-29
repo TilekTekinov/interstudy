@@ -1,7 +1,7 @@
 {:name "interstudy"
  :deploy
  {:host "tpw"
-  :release-path "/var/code/insterstudy"
+  :release-path "/var/code/interstudy"
   :debug true
   :log true}
  :symbionts
