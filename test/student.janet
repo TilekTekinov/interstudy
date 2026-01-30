@@ -77,6 +77,7 @@
                     :body (json/encode {:course-0 "EAE56E"}))]
   (assert (not-found? resp) "Not found POST"))
 (end-suite)
+
 (start-suite :rpc)
 (let [student (client ;(server/host-port rpc-url) "test" psk)]
   (assert (= :pong (:ping student)))

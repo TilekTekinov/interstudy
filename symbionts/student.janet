@@ -109,6 +109,7 @@
     @[[:option {:value ""} "-- please choose course --"]
       (seq [{:code code :name name :credits credits} :in courses]
         [:option {:value code} (string/format "%s (%i) %s" code credits name)])])
+  (def post-change (ds/post "/enroll/" (hash (registration :email))))
   [:div {:id "enrollment-form"}
    [:h2 "Student: " (registration :fullname) " <" (registration :email) ">"]
    [:h3 "Credits: " credits " of " max-credits]
@@ -131,8 +132,11 @@
        [:label {:for name} label]
        [:select
         {:name name :id name :data-bind name
-         :data-on:change (ds/post "/enroll/" (hash (registration :email)))}
-        options]])]])
+         :data-on:change post-change}
+        options]
+       (if (present? (tabcourses name))
+         [:a {:data-on:click
+              (string "$" name " = '';" post-change)} "Remove"])])]])
 
 (defh /enrollment
   "Enrollment handler"
