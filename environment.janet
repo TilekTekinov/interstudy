@@ -2,6 +2,43 @@
 (import /templates/app)
 
 # Navigation
+# TODO PR spork
+(defn select-keys
+  "Returns new table with selected `keyz` from dictionary `data`."
+  [data keyz]
+  (def res @{})
+  (loop [k :in keyz :unless (nil? (data k))]
+    (put res k (data k)))
+  res)
+
+(defn >select-keys
+  ```
+  Returns a function which selects `keys` from the base 
+  and returns new table just with them.
+  ```
+  [& keys]
+  (fn >select [i] (select-keys i keys)))
+
+
+# TODO move to data/navigation
+(defn >collect-at
+  "Collects result of calling `fun` into `tbl` under `key`."
+  [tbl key &opt fun]
+  (fn >collect-at [base]
+    (put tbl key (if fun (fun base) base))
+    base))
+
+(def <:- ">collect-at alias" >collect-at)
+
+(defn >collect-into
+  "Merges the result of running `fun` into the `tbl`"
+  [tbl &opt fun]
+  (fn >collect-merge [base]
+    (merge-into tbl (if fun (fun base) base))
+    base))
+
+(def <:= ">collect-into alias" >collect-into)
+
 (defn =>symbiont-initial-state
   "Navigation to extract `symbiont` congig from main config"
   [symbiont]
@@ -171,13 +208,13 @@
          (:init (make Store :image image))))
      (defn url [path] (string "http://" http-url path))))
 
-(def test-data "Test data" (parse (slurp "test/data.jdn")))
+(def test-seed "Test seed" (parse (slurp "test/seed.jdn")))
 
 (defmacro load-dump
   "Loads dump into test-store"
   [file]
   ~(do
-     (:save test-store ,test-data)
+     (:save test-store ,test-seed)
      (:flush test-store)))
 
 (defn fixtures

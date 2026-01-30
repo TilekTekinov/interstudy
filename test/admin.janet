@@ -8,7 +8,7 @@
 (end-suite)
 
 (init-test :tree)
-(load-dump "test/data.jdn")
+(load-dump "test/seed.jdn")
 (def tree-server (os/spawn ["janet" "symbionts/tree.janet"] :p))
 (ev/sleep 0.05) # Settle the server
 (def tree-client
@@ -21,9 +21,8 @@
                       :timestamp (os/time)})
 (:save-enrollment tree-client (hash "josef@pospisil.work")
                   @{:courses
-                    @["EAE56E" "EIE67E" "ENE49E"
-                      "EEEI2E" "EEEB5E" "EEEF4E"]
-                    :credits 30
+                    @["EAE56E" "ETEA1E" "AHA29E"]
+                    :credits 15
                     :timestamp 1768995243})
 
 (init-test :admin)
@@ -67,10 +66,11 @@
     ((success-has? `<div id="courses` `<details`
                    `<summary>` `Courses`
                    `Only active` `<input` `data-on:change` `/courses/filter/` 
+                   `Only enrolled` `<input` `data-on:change` `/courses/filter/` 
                    `Winter semester` `<input` `data-on:change` `/courses/filter/` 
                    `Summer semester` `<input` `data-on:change` `/courses/filter/` 
-                   `<table` `code` `name` `credits` `active` `action`
-                   `<a data-on:click` `/courses/edit/` `Edit`) resp)
+                   `<table` `code` `name` `credits` `active` `enrolled` `action`
+                   `<td>1&nbsp;enrolled</td>` `<a data-on:click` `/courses/edit/` `Edit`) resp)
                   "Courses succ content"))
 (let [resp (request "GET" (url `/courses/filter/?datastar=%7B%22search%22%3A%22%22%2C%22active%22%3Atrue%2C%22semester%22%3A%22%22%7D`))]
   (assert (success? resp) "Active filter succ")
@@ -105,7 +105,7 @@
   (assert
     ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
                    `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
-                   `Josef Pospíšil` `josef@pospisil.work` `6 for 30 credits`)
+                   `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
       resp)))
 (let [resp (request "POST" (url "/registrations/search")
                     :headers {"Content-Type" "application/json"}
@@ -114,7 +114,7 @@
   (assert
     ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
                    `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
-                   `Josef Pospíšil` `josef@pospisil.work` `6 for 30 credits`)
+                   `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
       resp)))
 (end-suite)
 

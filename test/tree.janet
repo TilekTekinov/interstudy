@@ -7,7 +7,7 @@
 (end-suite)
 
 (init-test :tree)
-(load-dump "test/data.jdn")
+(load-dump "test/seed.jdn")
 (ev/go tree/main)
 (ev/sleep 0.01) # Settle the server
 
@@ -21,20 +21,20 @@
   (each coll [;tree/collections/fruits]
     (assert (tree coll))
     (let [ss (coll tree)]
-      (assert (empty? ss) (string "Empty collection " coll))))
+      (assert (or (false? ss) (empty? ss)) (string "Empty collection " coll))))
   (assert (tree :active-courses))
   (assert (empty? (:active-courses tree)) "Empty active courses")
   (assert (tree :active-semester))
-  (assert (nil? (:active-semester tree)))
+  (assert (false? (:active-semester tree)))
   (assert (tree :set-active-semester))
   (assert (= :ok (:set-active-semester tree "Winter")))
   (assert (= "Winter" (:active-semester tree)))
   (assert-not (empty? (:active-courses tree))
-              "Active after active semester")
+              "Active courses after active semester")
   (assert ((>find-from-start (??? {:code (?eq "EAE56E")}))
-            (:active-courses tree)) "Active course")
+            (:active-courses tree)) "Active courses")
   (assert (tree :save-course))
-  (assert (= :ok (:save-course tree "EAE56E" {:active false})))
+  (assert (= :ok (:save-course tree "EAE56E" @{:active false})))
   (assert-not ((>find-from-start (??? {:code (?eq "EAE56E")}))
                 (:active-courses tree)) "Deactivated course")
   (assert (= :ok (:set-active-semester tree false)))
@@ -49,12 +49,8 @@
   (assert-not (empty? (:registrations tree)) "Present registrations")
   (assert (empty? (:enrollments tree)) "Empty enrollments")
   (assert (= :ok (:save-enrollment tree (hash "josef@pospisil.work")
-                                   @{:course-1 "EAE56E"
-                                     :course-2 "EIE67E"
-                                     :course-3 "ENE49E"
-                                     :course-4 "EEEI2E"
-                                     :course-5 "EEEB5E"
-                                     :course-6 "EEEF4E"
+                                   @{:courses ["EAE56E"]
+                                     :credits 5
                                      :timestamp 1768995243})) "Save registration")
   (assert-not (empty? (:enrollments tree)) "Present enrollments")
   (assert (= :ok (:stop tree))))

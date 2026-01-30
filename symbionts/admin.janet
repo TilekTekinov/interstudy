@@ -9,6 +9,14 @@
   "View collections"
   [:faculties :semesters :registrations :enrollments])
 
+(define-update RecomputeIndices
+  "Recomputes indices in view"
+  [_ {:view view}]
+  (def c @[])
+  ((=>
+     (<- c (=> :enrollments values (>: :courses) flatten frequencies))
+     |(put $ :enrolled-index (array/pop c))) view))
+
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
   {:update
@@ -16,7 +24,8 @@
      (def {:tree tree} state)
      ((=> (>put :view (tabseq [coll :in collections] coll (coll tree))))
        state))
-   :watch (^refresh-view :active-semester :courses)
+   :watch [(^refresh-view :active-semester :courses)
+           RecomputeIndices]
    :effect (fn [_ {:view view :student student} _]
              (setdyn :view view)
              (setdyn :student student))})
@@ -33,21 +42,25 @@
 (defn <course/>
   "Contructs htmlgen representation of one `course`"
   [{:code code :name name :credits credits
-    :semester semester :active active}]
+    :semester semester :active active :enrolled enrolled}]
   [:tr {:id code}
    [:td code]
    [:td name]
    [:td credits]
    [:td semester]
    [:td {:class :active} (if active "x")]
+   [:td (if enrolled (hg/raw (string (length enrolled) "&nbsp;enrolled")))]
    [:td
     [:a {:data-on:click (string "@get('/courses/edit/" code "')")}
      "Edit"]]])
 
+(def- init-ds (json/encode {:active false :semester false :enrolled false}))
+
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
   [courses &opt open]
-  [:div {:id "courses" :data-bind (json/encode {:active false :semester false})}
+  [:div {:id "courses"
+         :data-bind init-ds}
    [:details (if open {:open true})
     [:summary
      "Courses (" (length courses) ")"]
@@ -55,6 +68,9 @@
      "Filter: "
      [:label "Only active "
       (ds/input :active :type :checkbox
+                :data-on:change (ds/get "/courses/filter/"))]
+     [:label "Only enrolled "
+      (ds/input :enrolled :type :checkbox
                 :data-on:change (ds/get "/courses/filter/"))]
      [:label "Only Winter semester "
       (ds/input :semester :type :checkbox :value "Winter"
@@ -65,13 +81,13 @@
     [:table
      [:thead
       [:tr [:th "code"] [:th {:class :name} "name"] [:th "credits"]
-       [:th "semester"] [:th "active"] [:th "action"]]]
+       [:th "semester"] [:th "active"] [:th "enrolled"] [:th "action"]]]
      [:tbody (seq [course :in courses] (<course/> course))]]]])
 
 (defh /courses
   "Courses SSE stream"
   []
-  (ds/hg-stream (<courses-list/> (view :courses))))
+  (ds/hg-stream (<courses-list/> (view :courses) (view :enrolled-index))))
 
 (defn <semesters-list/>
   "Contructs htmlgen representation of all `semesters`"

@@ -1,0 +1,1627 @@
+@{:registrations @{}
+  :enrollments @{}
+  :faculties {"FE" "Faculty of Engineering"
+              "FTA" "Faculty of Tropical AgriSciences"
+              "FES" "Faculty of Environmental Sciences"
+              "FFWS" "Faculty of Forestry and Wood Sciences"
+              "IEC" "Institute of Education and Communication"
+              "FEM" "Faculty of Economics and Management"
+              "FAFNR" "Faculty of Agrobiology, Food and Natural Resources"}
+  :semesters ["Winter" "Summer"]
+  :courses
+  @{"ERE8AE" @{:code "ERE8AE"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :name "Sustainable Management EMN2 * * *"}
+    "ESED9E" @{:code "ESED9E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business statistics - ITBN1 * *"}
+    "EIE31E" @{:code "EIE31E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Artificial Intelligence - INFOAN1 * *"}
+    "EUEB1E" @{:code "EUEB1E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Accounting Theory BA2 * * *"}
+    "EEE7KE" @{:code "EEE7KE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Global Economic Trends - ITBN1 * * *"}
+    "EUEB2E" @{:code "EUEB2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Accounting for Entrepreneurs BA2 * * *"}
+    "EUEB3E" @{:code "EUEB3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Theory of Trade BA3 * *"}
+    "EUEB6E" @{:code "EUEB6E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Wholesale and Retail Trade BAN1 ***"}
+    "ESE55E" @{:code "ESE55E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Statistical Methods of Data Mining - INFOAN1 * * (outdated)"}
+    "EUED2E" @{:code "EUED2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Finance BAN1 * *"}
+    "EIE50E" @{:code "EIE50E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "IS Quality Assesment INFOAN2  * * (outdated)"}
+    "EUEE9E" @{:code "EUEE9E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Certification in Trade BAN2 * *"}
+    "EUED3E" @{:code "EUED3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Banks and Stock Exchanges BAN1 * *"}
+    "ESE52E" @{:code "ESE52E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistical Software Systems INFOA3  * *"}
+    "EEEW7E" @{:code "EEEW7E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Development economics"}
+    "EIE54E" @{:code "EIE54E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Software Implementation"}
+    "EIE28E" @{:code "EIE28E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "ICT Theory * *"}
+    "ESE49E" @{:code "ESE49E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistics I EM2 * * *"}
+    "EUEB8E" @{:code "EUEB8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "International Accounting Standards BAN2 * *"}
+    "EUEE8E" @{:code "EUEE8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Foreign Trade Operations BAN2 * *"}
+    "EEEX2E" @{:code "EEEX2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Sustainable Growth and Economic Policies EMN1* * *"}
+    "EUEB7E" @{:code "EUEB7E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Accounting - BAN1 * * * (Outdated)"}
+    "EREB2E" @{:code "EREB2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Marketing - ERASMUS EMN2 * (ONLY BLOCK)"}
+    "EEEX1E" @{:code "EEEX1E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Applied  Econometrics EMN1 * *"}
+    "ESE53E" @{:code "ESE53E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistics I BA2 * * *"}
+    "EIE55E" @{:code "EIE55E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Introduction to Principles of Computers INFOA1 * * *"}
+    "EIE62E" @{:code "EIE62E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Administration and Processing of Geographical Data INFOA2 * *"}
+    "EIE32E" @{:code "EIE32E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "System Integration INFOAN2 * * *"}
+    "EREY2E" @{:code "EREY2E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Marketing Communication  BAN1*"}
+    "EEEX5E" @{:code "EEEX5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Advanced Environmental Economics EMN1 * *"}
+    "EUEB4E" @{:code "EUEB4E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International Trade OC*  (ONLY BLOCK)"}
+    "EIE36E" @{:code "EIE36E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Database Systems INFOA2 * * *"}
+    "EREB4E" @{:code "EREB4E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Strategic Management EMN2 * *"}
+    "EIE69E" @{:code "EIE69E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "UNIX Operating Systems INFOA3 * *"}
+    "ETE24E" @{:code "ETE24E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "IT for e-Business INFOAN2 * * (outdated)"}
+    "EEEX3E" @{:code "EEEX3E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Advanced Economic Writing EMN2 * *"}
+    "EUEF5E" @{:code "EUEF5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Trade and Security GISM1 * * *"}
+    "ESE23E" @{:code "ESE23E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistical Seminar EMN2 * *"}
+    "EEE2RE" @{:code "EEE2RE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International trade policies ITB2 * *"}
+    "EIE67E" @{:code "EIE67E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Component-Based SW Development INFOA2 * *"}
+    "EEE2EE" @{:code "EEE2EE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economic Impacts of Conflict and Violence GISM2 *  (ONLY BLOCK)"}
+    "EHI03E" @{:code "EHI03E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Rural Development EMN2 * *"}
+    "EEE2SE" @{:code "EEE2SE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International finance and investment ITB2 * *"}
+    "EHEA6E" @{:code "EHEA6E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Introductory Social Research Methods EM2 * *"}
+    "ESE48E" @{:code "ESE48E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistics INFOA2 * *"}
+    "EEE64E" @{:code "EEE64E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Applied Econometrics  EAD1 * *"}
+    "EEEX4E" @{:code "EEEX4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Integration Processes in Economy EMN2 * * *"}
+    "EUEF6E" @{:code "EUEF6E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Borders and Customs GISM2 * * *"}
+    "EEE63E" @{:code "EEE63E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Sectoral Economics EMN1 * *"}
+    "EREZ5E" @{:code "EREZ5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Management EMN1 * *"}
+    "EIE53E" @{:code "EIE53E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Database and Knowledge Information Systems"}
+    "EEE2DE" @{:code "EEE2DE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Health and Environment - GISM1 * * *"}
+    "EEEZ5E" @{:code "EEEZ5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Real Estates Economics BAN1 * *"}
+    "EEER2E" @{:code "EEER2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economics of Agrarian Sector EM2 * *"}
+    "ESE54E" @{:code "ESE54E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistics II BA2 * * *"}
+    "EEE10E" @{:code "EEE10E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Public Economics EMN1* * *"}
+    "EEE2TE" @{:code "EEE2TE"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Internal and external markets of EU countries ITB2 * *"}
+    "EJD04E" @{:code "EJD04E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Legal Regulation of Intergration EAD2 * *"}
+    "ETE53E" @{:code "ETE53E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Internet Technologies - Server Side INFOAN2 * * *"}
+    "EJE21E" @{:code "EJE21E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :name "Law of EU EMN2 * * * (outdated)"}
+    "ETED5E" @{:code "ETED5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Strategic Information Governance GISM1 *"}
+    "ERE7ZE" @{:code "ERE7ZE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Sustainable Management EAD2 * *"}
+    "ERE8EE" @{:code "ERE8EE"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Sustainable Management - BAN * *"}
+    "ETE50E" @{:code "ETE50E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Computer Networks INFOA1 * * (outdated)"}
+    "EAE55E" @{:code "EAE55E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematical Logic and Graph Theory INFOA1 * *"}
+    "ETEE6E" @{:code "ETEE6E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Data Visualization GISM2 * * *"}
+    "ERET2E" @{:code "ERET2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Strategic Management EAD2 (outdated)"}
+    "EREF8E" @{:code "EREF8E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Management (MSc.) INFOAN1 * * (outdated)"}
+    "ETED9E" @{:code "ETED9E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Programming in Python GISM1 * *"}
+    "EAE57E" @{:code "EAE57E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematics INFOA1 * *"}
+    "ETED8E" @{:code "ETED8E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "ICT for Managers GISM1* *"}
+    "ETE4AE" @{:code "ETE4AE"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Internet Technologies EM1  * * *"}
+    "ETEE5E" @{:code "ETEE5E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Continuity of Operations GISM2 *"}
+    "EAE56E" @{:code "EAE56E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Applied Mathematics for IT INFOA2 * *"}
+    "EHEA7E" @{:code "EHEA7E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Science, Philosophy and Society EM1/BA1 * *"}
+    "ERE8GE" @{:code "ERE8GE"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Communication in Management BAN2 * *"}
+    "ERET4E" @{:code "ERET4E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Regional Development EAD2  * *"}
+    "EXEA2E" @{:code "EXEA2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "English for Debate and Negotiation purposes OC * *"}
+    "ETE3AE" @{:code "ETE3AE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Web Design INFOA3 * *"}
+    "ETE45E" @{:code "ETE45E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Computer Security EMN2 * * *"}
+    "ETED6E" @{:code "ETED6E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Information System Security GISM1 * * *"}
+    "ETEE3E" @{:code "ETEE3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Knowledge Analytics - GISM2  * * *"}
+    "EHEE1E" @{:code "EHEE1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Rural development EAD2 * * *"}
+    "ETEA3E" @{:code "ETEA3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Communication and Information Resources EAD1 * *"}
+    "EXEA1E" @{:code "EXEA1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "English for Diplomatic Purposes * *"}
+    "EAE45E" @{:code "EAE45E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "Logistic Systems"}
+    "ETE40E" @{:code "ETE40E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "IS Security  INFOAN1 * * *"}
+    "EJE46E" @{:code "EJE46E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Legal Aspects of Informatics INFOAN1 * *"}
+    "ETE44E" @{:code "ETE44E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "IT for e-Business EMN1/INFOAN1 * *"}
+    "ETE52E" @{:code "ETE52E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Internet Technologies - Client Side INFOAN2 * * *"}
+    "ETEE4E" @{:code "ETEE4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Self-Aware Cities GISM2 * *"}
+    "EEEA1E" @{:code "EEEA1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "World Economy EMN2 * * *"}
+    "International" @{:code "International"
+                      :semester ""
+                      :credits 5
+                      :faculty "FEM"
+                      :name "International Economics EADAN2 * *"}
+    "EEE46E" @{:code "EEE46E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Managerial Economics EMN2 * *"}
+    "ERER4E" @{:code "ERER4E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Personnel Management"}
+    "EAE60E" @{:code "EAE60E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematical Methods in Economics EM1 * *"}
+    "ERET3E" @{:code "ERET3E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Prognostics and Planning"}
+    "EIE96E" @{:code "EIE96E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Interaction Design INFOA3 * *"}
+    "EEE2UE" @{:code "EEE2UE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Developing countries in the global economy ITB2 * * *"}
+    "ERE8FE" @{:code "ERE8FE"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :name "Business Models BAN2 * *"}
+    "EEEB1E" @{:code "EEEB1E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Economic Policy EMN1 * * * (outdated)"}
+    "EREX6E" @{:code "EREX6E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Management EAD1 * *"}
+    "ETEA2E" @{:code "ETEA2E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Programming INFOA1 * *"}
+    "EIEE4E" @{:code "EIEE4E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Implementation of Computer Vision and Artificial Intelligence Solutions in Java - GISM2 * *"}
+    "EREX8E" @{:code "EREX8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Human Resource Management EADAN2 * *"}
+    "EUEN6E" @{:code "EUEN6E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Retailing in the international environment ITB2 * *"}
+    "AHA29E" @{:code "AHA29E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Agricultural Systems I. BA1/EM1 * * *"}
+    "EAE70E" @{:code "EAE70E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematical Methods in Economics II BA2 * *"}
+    "EEEX7E" @{:code "EEEX7E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Economic Analysis EMN2 * *"}
+    "ETE26E" @{:code "ETE26E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Information and Communication Technologies EM1 * * *"}
+    "ELX55E" @{:code "ELX55E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "English for Business Purposes OC * *"}
+    "EEEX6E" @{:code "EEEX6E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Social and Solidarity Economy EMN2 * * *"}
+    "EUEN5E" @{:code "EUEN5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International Trade and Operations management ITBN1 * *"}
+    "EED10E" @{:code "EED10E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "World Agricultural Commodities EAD2 * * *"}
+    "EEE2VE" @{:code "EEE2VE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International economic relations ITB2 * *"}
+    "EEEZ3E" @{:code "EEEZ3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Applied Econometrics and  Economic Modelling BAN1 * * *"}
+    "EIE18E" @{:code "EIE18E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Management Information Systems EMN2 * * (outdated)"}
+    "EHEA9E" @{:code "EHEA9E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Foreign policy and International Relations EAD1* * *"}
+    "EAE61E" @{:code "EAE61E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Project Management Methods INFOA3 * *"}
+    "EEEZ2E" @{:code "EEEZ2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Innovations and Innovative Economy BAN1 * *"}
+    "EJE48E" @{:code "EJE48E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Business Law in Practice EMN2 * * *"}
+    "EIE95E" @{:code "EIE95E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Object Modelling INFOA1 * * *"}
+    "EEE37E" @{:code "EEE37E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economics for Managers BAN1 * * *"}
+    "ENE60E" @{:code "ENE60E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International Economics EMN1* *"}
+    "ENE38E" @{:code "ENE38E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Financial Economics EM2 * *"}
+    "ERET1E" @{:code "ERET1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Marketing Management"}
+    "EIE27E" @{:code "EIE27E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Projecting of IS  INFOAN1 * *"}
+    "EREZ2E" @{:code "EREZ2E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Management - BAN1 * *"}
+    "ETE4BE" @{:code "ETE4BE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Internet Technologies BA1 * *"}
+    "EEET2E" @{:code "EEET2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economics of Brewing Industry OC* *"}
+    "EHEA8E" @{:code "EHEA8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Essentials of Diplomacy EAD1 * * *"}
+    "EUEB5E" @{:code "EUEB5E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "Managerial Finance BAN1 * *"}
+    "ESEA9E" @{:code "ESEA9E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Statistics and Data Mining EMN1* *"}
+    "ENE61E" @{:code "ENE61E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "General Economics EMN1 * * (outdated)"}
+    "ETEA1E" @{:code "ETEA1E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Algorithm Development INFOA1 * *"}
+    "EEEF2E" @{:code "EEEF2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Real Estate Economics and Transactions OC *"}
+    "EIEB3E" @{:code "EIEB3E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Grammars and Languages (programming) INFOAN2 * *"}
+    "EUE51E" @{:code "EUE51E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Theory of Accounting EM3 * *"}
+    "ENE46E" @{:code "ENE46E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Macroeconomics  EM2 * *"}
+    "EEEF1E" @{:code "EEEF1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "World Economy and Agriculture - EAD1 * * *"}
+    "ESED1E" @{:code "ESED1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Data Mining INFOAN2 * *"}
+    "EUE50E" @{:code "EUE50E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Trade and Commerce (Erasmus Only) EM2 *"}
+    "EEEF7E" @{:code "EEEF7E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Agrarian Sector Economics BA3 * * *"}
+    "ELE33Z" @{:code "ELE33Z"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "English for IT"}
+    "ENE62E" @{:code "ENE62E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International Economics BAN1 * *"}
+    "EEEE7E" @{:code "EEEE7E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Economics BA3 * * *"}
+    "EIEA3E" @{:code "EIEA3E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Software Engineering  INFOA3  * *"}
+    "EIEB2E" @{:code "EIEB2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Spatial Data Processing - INFOAN"}
+    "ERE1DE" @{:code "ERE1DE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Strategic Management (ONLY MASTER students)  BAN2 *"}
+    "EEEG6E" @{:code "EEEG6E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Valuation of natural resources and real Estates Appraisal (optional course) * *"}
+    "EEEE3E" @{:code "EEEE3E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Macroeconomic Analysis EMN2 * * (outdated)"}
+    "ENE66E" @{:code "ENE66E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International Economics EAD2 * *"}
+    "ERE1EE" @{:code "ERE1EE"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Strategic Marketing  (Erasmus ONLY) BAN2 *"}
+    "ENE41E" @{:code "ENE41E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "General Economics INFOA2 * *"}
+    "ENE28E" @{:code "ENE28E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "General Economics III"}
+    "ERE1AE" @{:code "ERE1AE"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Logistics - BAN 2 *"}
+    "EIEC4E" @{:code "EIEC4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Theoretical Informatics INFOAN1* *"}
+    "ENE49E" @{:code "ENE49E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economics I BA2 * *"}
+    "ETEW5E" @{:code "ETEW5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Internet of Things - IoT INFOAN2 * *"}
+    "ENE33E" @{:code "ENE33E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "World and European Economy"}
+    "EIEC5E" @{:code "EIEC5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Process Modelling INFOAN1 * * *"}
+    "ENE45E" @{:code "ENE45E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Microeconomics EM2 * * *"}
+    "EEEI4E" @{:code "EEEI4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Investment and Long Term Financing -ERASMUS BA3 * (ONLY BLOCK)"}
+    "EEEF4E" @{:code "EEEF4E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Foreign Exchange Economics OC **"}
+    "EEEF8E" @{:code "EEEF8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Natural Resource and Energy Economics * *"}
+    "EHE06E" @{:code "EHE06E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Fundamentals of Political Science - Politology EM1 * *"}
+    "EEEE2E" @{:code "EEEE2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Trade Theory and Foreign Trade EMN2 * *"}
+    "EIEB0E" @{:code "EIEB0E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Theoretical Foundation of Informatics INFOAN1 * * (outdated)"}
+    "ERE27E" @{:code "ERE27E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Strategy EMN2 * (ONLY BLOCK)"}
+    "ETEW4E" @{:code "ETEW4E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "ICT for Managers BAN2 * * *"}
+    "ETEA6E" @{:code "ETEA6E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :name "Strategy of Information Systems BAN2 * * * (Outdated)"}
+    "ERE3PE" @{:code "ERE3PE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Organizational Behavior INFOAN1  * * *"}
+    "EEEB5E" @{:code "EEEB5E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Empirical Research in Economics EM2 * *"}
+    "EJE51E" @{:code "EJE51E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Legal Aspects of IT INFOAN2 * *"}
+    "ELD03Z_2" @{:code "ELD03Z_2"
+                 :semester ""
+                 :credits 2
+                 :faculty "FEM"
+                 :name "Communication en Fran\xC3\xA7ais I - EAD (outdated)"}
+    "EIEE2E" @{:code "EIEE2E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Systems Integration GISM2 * *"}
+    "EEEB2E" @{:code "EEEB2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Environmental Economics EM3 * *"}
+    "EED08E" @{:code "EED08E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economics of Production and Processing of Agricultural Products EAD1 * *"}
+    "EREQ5E" @{:code "EREQ5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Management Theory"}
+    "EHE01E" @{:code "EHE01E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Introduction to Sociology and Rural Sociology EM3 * *"}
+    "EED06E" @{:code "EED06E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Agricultural Policy EAD1 * * *"}
+    "EEEI2E" @{:code "EEEI2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Economics INFOA3 * * *"}
+    "EREQ4E" @{:code "EREQ4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Management Skills - ERASMUS BA3 * (ONLY BLOCK)"}
+    "EJE53E" @{:code "EJE53E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "EU commercial law ITBN1 * *"}
+    "EED07E" @{:code "EED07E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "World Economy and Economic Institutions EAD1 * * *"}
+    "ENE26E" @{:code "ENE26E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "General Economics - International Economics"}
+    "EHEE3E" @{:code "EHEE3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Essentials of Diplomacy GISM1 * *"}
+    "EUE01E" @{:code "EUE01E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Accounting - EMN1 * * *"}
+    "ELXZ2E" @{:code "ELXZ2E"
+               :semester ""
+               :credits 3
+               :faculty "FEM"
+               :name "Czech Language \xE2\x80\x93 A1/2 Intermediate * *"}
+    "EIED5E" @{:code "EIED5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Formal Techniques of Data Modelling INFOAN2 * *"}
+    "EIEE1E" @{:code "EIEE1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Geographic Information Systems GISM1 * *"}
+    "EUEN4E" @{:code "EUEN4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Research methods - ITBN1 ***"}
+    "ELX57E" @{:code "ELX57E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "English for Academic Purposes OC * *"}
+    "ETEB3E" @{:code "ETEB3E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Information and Comunication Technology BA1 * *"}
+    "ERE25E" @{:code "ERE25E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Human Resource Management (Erasmus ONLY) EMN1 *"}
+    "ERE32E" @{:code "ERE32E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Co-operative Business EMN2 * (ONLY BLOCK)"}
+    "EPEF2E" @{:code "EPEF2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Psychology of Organizational Behavior \xE2\x80\x93 EMN2/BAN2 * *"}
+    "EPEC3E" @{:code "EPEC3E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Psychology of Personality and Social Psychology  INFOA1  * *"}
+    "EJE37E" @{:code "EJE37E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Fundamentals of Juridical Sciences INFOA1 * *"}
+    "EREP8E" @{:code "EREP8E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Theory of Managing Organisational Systems INFOA1 * *"}
+    "ERET5E" @{:code "ERET5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Marketing Management - ERASMUS EM3* (ONLY BLOCK)"}
+    "ENE34E" @{:code "ENE34E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "International Finance EMN2 * * *"}
+    "EPEC9E" @{:code "EPEC9E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Psychology of Personality and Communication BA1 * * *"}
+    "ELXZ1E" @{:code "ELXZ1E"
+               :semester ""
+               :credits 3
+               :faculty "FEM"
+               :active true
+               :name "Czech Language  \xE2\x80\x93 A1/1 Beginners OC * *"}
+    "EIEA4E" @{:code "EIEA4E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Systems and Organizational Engineering  (Erasmus ONLY) BAN1 * (outdated)"}
+    "EEEF9E" @{:code "EEEF9E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Prognostic Methods INFOAN2 * * (Outdated)"}
+    "ERE4FE" @{:code "ERE4FE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Applied Innovation GISM1 * *"}
+    "ETEA5E" @{:code "ETEA5E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Business Information Systems BAN2 * *"}
+    "EEEE4E" @{:code "EEEE4E"
+               :semester "Summer"
+               :credits 4
+               :faculty "FEM"
+               :name "Social Economy EMN2 * * *"}
+    "EAED9E" @{:code "EAED9E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Planning and Project Management BA2 * *"}
+    "ENE50E" @{:code "ENE50E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Economics II BA2 * *"}
+    "ETE6AE" @{:code "ETE6AE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "ICT for Managers - BAN"}
+    "EEEG7E" @{:code "EEEG7E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "The history of economic theories (optional course) * *"}
+    "EIED4E" @{:code "EIED4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business Intelligence EMN2/INFOAN2 * *"}
+    "EIEB1E" @{:code "EIEB1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Object and Relational Databases - INFOAN1 * * * (outdated)"}
+    "EEE11E" @{:code "EEE11E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Econometric modelling BAN1 ***"}
+    "EAE58E" @{:code "EAE58E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Operations Research and Systems Analysis INFOA2 * *"}
+    "TEST" @{:code "TEST"
+             :semester "Winter"
+             :credits 5
+             :faculty "FEM"
+             :name "tesT"}
+    "EREE1E" @{:code "EREE1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Natural Resources Management OC * *"}
+    "ERET6E" @{:code "ERET6E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Human Resources Management - ERASMUS EM3 * (ONLY BLOCK)"}
+    "EAE68E" @{:code "EAE68E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematics BA1 * *"}
+    "EAED8E" @{:code "EAED8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematical Methods in Economics I BA1 * *"}
+    "ETE49E" @{:code "ETE49E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Information Systems BA3 /EM3* *"}
+    "ALE02E" @{:code "ALE02E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Agricultural Systems II  BA1/EM1 * * *"}
+    "ERE8CE" @{:code "ERE8CE"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "On-line Marketing BAN2 *"}
+    "EHEA3E" @{:code "EHEA3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Rural Development EMN2 * *"}
+    "EAE59E" @{:code "EAE59E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematics EM1 * *"}
+    "ETEE2E" @{:code "ETEE2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Strategy of Information System GISM2 * * *"}
+    "ETEB7E" @{:code "ETEB7E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "ICT for Economists EMN1 * * *"}
+    "EXEA3E" @{:code "EXEA3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Ethics for Business OC * *"}
+    "ETEB4E" @{:code "ETEB4E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Data Security"}
+    "EEE2NE" @{:code "EEE2NE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Foreign Trade - ITBN1 * *"}
+    "EJE42E" @{:code "EJE42E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Commercial and Civil Law BA1 * * *"}
+    "EEE1QE" @{:code "EEE1QE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Agricultural Trade EAD2 * * *"}
+    "ETEE1E" @{:code "ETEE1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Geospatial Intelligence GISM1 *"}
+    "ERET7E" @{:code "ERET7E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Theory of Management (Erasmus ONLY) EM2 *"}
+    "ETE8AE" @{:code "ETE8AE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Electronic Commerce and Business BA2 * *"}
+    "ERE8BE" @{:code "ERE8BE"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Marketing Plan  BAN2 *"}
+    "ETEB8E" @{:code "ETEB8E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Business IS BAN1 * * *"}
+    "EAEF2E" @{:code "EAEF2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "IT Projects Management INFOAN1 * *"}
+    "EED09E" @{:code "EED09E"
+               :semester ""
+               :credits 4
+               :faculty "FEM"
+               :active true
+               :name "Agrobusiness Economics EAD2  * *"}
+    "ETE2AE" @{:code "ETE2AE"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Operating Systems and Computer Networks INFOA2 * * *"}
+    "ERE4IE" @{:code "ERE4IE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International management - ITBN1 * *"}
+    "ERE3LE" @{:code "ERE3LE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Data Collection for Marketing Strategy BAN1 * *"}
+    "ESE34E" @{:code "ESE34E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistical Data Analysis INFOAN1 * *"}
+    "ELD09Z_2" @{:code "ELD09Z_2"
+                 :semester ""
+                 :credits 5
+                 :faculty "FEM"
+                 :name "Communication en Francais II EAD1 (outdated)"}
+    "EPEE1E" @{:code "EPEE1E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Psychology and Ethics in Business BA3 * *"}
+    "ERE3KE" @{:code "ERE3KE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Marketing Communication Strategy BAN1 *"}
+    "EHE96E" @{:code "EHE96E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Advanced Methods of Social Research EMN1 * * *"}
+    "ETE1AE" @{:code "ETE1AE"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Markup Languages and Data Formats INFOA2 * *"}
+    "ERE4KE" @{:code "ERE4KE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "International marketing ITB2 * *"}
+    "EIE70E" @{:code "EIE70E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Human Computer Interaction INFOA2 * *"}
+    "EEED2E" @{:code "EEED2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Enterprise Economics EM3 * * *"}
+    "ETEA7E" @{:code "ETEA7E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Information systems - SAP INFOA2 * *"}
+    "EEEI5E" @{:code "EEEI5E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Evaluation of Entrepreneurial Activity BAN2 * * * (outdated)"}
+    "ESE35E" @{:code "ESE35E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Seminar in Computing Statistics"}
+    "ENE24E" @{:code "ENE24E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Corporate Finance EMN2 * *"}
+    "EPE16E" @{:code "EPE16E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "Psychology of Organisation and Behaviour at Work EMN2 * * (outdated)"}
+    "EHEA2E" @{:code "EHEA2E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "Methods of Social Research EMN1 * * * (outdated)"}
+    "EEE68E" @{:code "EEE68E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :name "Environmental Economics EMN1 * * * (outdated)"}
+    "EEEE1E" @{:code "EEEE1E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "EU Integration EMN2 * * *  (outdated)"}
+    "EEE2PE" @{:code "EEE2PE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Regions in the international economy and trade ITB * *"}
+    "EEED3E" @{:code "EEED3E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "EU Integration EAD2 * * *"}
+    "EAEE2E" @{:code "EAEE2E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "IT Projects Management INFOAN2 * * (outdated)"}
+    "ESE51E" @{:code "ESE51E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Mathematical Methods for Statistics EM1 * *"}
+    "EHEA0E" @{:code "EHEA0E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Fundamentals of Political Science BA2 * *"}
+    "KIT" @{:code "KIT"
+            :semester ""
+            :credits 5
+            :faculty "FEM"
+            :name "Enterprise Information Systems"}
+    "ERE1BE" @{:code "ERE1BE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Marketing Management"}
+    "ERE1CE" @{:code "ERE1CE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :name "Marketing Research BAN2 * * (outdated)"}
+    "ETEA8E" @{:code "ETEA8E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "ICT for Managers EMN1 * * *"}
+    "ESE50E" @{:code "ESE50E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Statistics II EM2 * * *"}
+    "EUE42E" @{:code "EUE42E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Fundamentals of Accounting INFOA3 * *"}
+    "EIE56E" @{:code "EIE56E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Computer Architecture INFOA1 * * *"}
+    "EJE41E" @{:code "EJE41E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Legal Systems And Skills  BA1 * *"}
+    "EIE49E" @{:code "EIE49E"
+               :semester "Winter"
+               :credits 5
+               :faculty "FEM"
+               :name "Information Engineering INFOAN2 * * (outdated)"}
+    "ERE4JE" @{:code "ERE4JE"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Multicultural corporate management ITBN1 * * *"}
+    "ELX69E" @{:code "ELX69E"
+               :semester ""
+               :credits 3
+               :faculty "FEM"
+               :name "English for Business Purposes"}
+    "EPEC6E" @{:code "EPEC6E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Psychology EM1 * * *"}
+    "EJE33E" @{:code "EJE33E"
+               :semester "Summer"
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Fundamentals of Law EM3 * * *"}
+    "ELD09Z_1" @{:code "ELD09Z_1"
+                 :semester ""
+                 :credits 5
+                 :faculty "FEM"
+                 :name "Communication en Francais I EAD1 * * (outdated)"}
+    "EEEB8E" @{:code "EEEB8E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "IT Economy INFOAN1 * *"}
+    "EAE24E" @{:code "EAE24E"
+               :semester ""
+               :credits 5
+               :faculty "FEM"
+               :active true
+               :name "Decision Support Systems EMN1 * * *"}}}

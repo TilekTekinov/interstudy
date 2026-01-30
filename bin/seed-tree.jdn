@@ -8,7 +8,7 @@
   (if (os/stat image)
     (os/rm image))
   (def store (:init (make Store :image image)))
-  (:save store (parse (slurp "docs/init.jdn")))
+  (:save store (parse (slurp "seed.jdn")))
   (if fill-registrations
     (each [hu fn ln dm]
       (fixtures 50

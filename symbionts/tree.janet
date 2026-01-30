@@ -6,29 +6,54 @@
 
 (def collections/fruits
   "All fruit collections probided by the tree"
-  [:registrations :enrollments])
+  [:active-semester :registrations :enrollments])
 
 (define-update RefreshView
   "Event that refreshes view"
   [_ {:view view :store store}]
-  (def c @[])
+  (def t @{})
   (merge-into
     view
-    (:transact store
-               (<- c (=> :active-semester))
-               (<- c (=> :registrations))
-               (<- c (=> :enrollments))
-               (<- c (=> :courses (>Y (??? {:active truthy? :semester (?eq (c 0))}))))
-               (>base c)
-               (>zipcoll [:active-semester :registrations :enrollments :active-courses]))))
+    (:transact
+      store
+      (<:= t (>select-keys ;collections/fruits))
+      (<:- t :enrollents-index
+           (=> :enrollments pairs
+               (>reduce
+                 (fn [acc [id {:courses cs}]]
+                   (each c cs
+                     (if-let [ac (acc c)]
+                       (array/push ac id)
+                       (put acc c @[id]))) acc)
+                 @{})))
+      :courses values
+      (<:- t :courses
+           (>map
+             (fn [course]
+               (put course :enrolled
+                    ((t :enrollents-index) (course :code))))))
+      (<:- t :active-courses
+           (>Y (??? {:active truthy? :semester (?eq (t :active-semester))})))
+      (>base t))))
 
 (defn ^refresh-peers
   "Events that sends :refresh to `peer`"
   [what]
   (make-effect
     (fn [_ state _]
-    (def {:peers peers} state)
+      (def {:peers peers} state)
       (each peer peers (:refresh (state peer) what)))))
+
+(define-event PrepareView
+  "Initializes view and puts it in the dyn"
+  {:update
+   (fn [_ state]
+     ((>put :view
+            (:transact (state :store)
+                       (>select-keys ;collections/leafs)))
+       state))
+   :watch RefreshView
+   :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defn ^set-active-semester
   "Event that saves active semester into store"
@@ -46,7 +71,7 @@
   (make-event
     {:update (fn [_ {:store store}]
                (:transact store
-                          (=>course/by-code code)
+                          :courses code
                           (>merge-into new)))
      :watch [RefreshView Flush (^refresh-peers :courses)]}))
 
@@ -72,7 +97,7 @@
   "RPC functions for the tree"
   (merge-into
     @{:active-semester
-      (fn [rpc] (define :view) (view :active-semester))
+      (fn [rpc] (define :view) (print "fnnnnnn") (view :active-semester))
       :set-active-semester
       (fn [rpc semester]
         (produce (^set-active-semester semester))
@@ -97,16 +122,6 @@
   "Configuration"
   ((=> (=>symbiont-initial-state :tree)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
-
-(define-event PrepareView
-  "Initializes view and puts it in the dyn"
-  {:update
-   (fn [_ state]
-     ((>put :view
-            (:transact (state :store) (>select-keys ;collections/leafs ;collections/fruits)))
-       state))
-   :watch RefreshView
-   :effect (fn [_ {:view view} _] (setdyn :view view))})
 
 (defn main
   ```

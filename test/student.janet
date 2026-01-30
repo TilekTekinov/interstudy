@@ -9,7 +9,7 @@
 (end-suite)
 
 (init-test :tree)
-(load-dump "test/data.jdn")
+(load-dump "test/seed.jdn")
 (:save test-store "Winter" :active-semester)
 (:flush test-store)
 (ev/go tree/main)
