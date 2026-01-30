@@ -65,13 +65,17 @@
   (assert
     ((success-has? `<div id="courses` `<details`
                    `<summary>` `Courses`
-                   `Only active` `<input` `data-on:change` `/courses/filter/` 
-                   `Only enrolled` `<input` `data-on:change` `/courses/filter/` 
-                   `Winter semester` `<input` `data-on:change` `/courses/filter/` 
-                   `Summer semester` `<input` `data-on:change` `/courses/filter/` 
+                   `Only active` `<input` `data-on:change` `/courses/filter/`
+                   `Only enrolled` `<input` `data-on:change` `/courses/filter/`
+                   `Winter semester` `<input` `data-on:change` `/courses/filter/`
+                   `Summer semester` `<input` `data-on:change` `/courses/filter/`
                    `<table` `code` `name` `credits` `active` `enrolled` `action`
-                   `<td>1&nbsp;enrolled</td>` `<a data-on:click` `/courses/edit/` `Edit`) resp)
-                  "Courses succ content"))
+                   `<a data-on:click="@get(&#39;/courses/enrolled` `1&nbsp;enrolled`
+                   `<a data-on:click="@get(&#39;/courses/edit/` `Edit`) resp)
+    "Courses succ content"))
+(let [resp (request "GET" (url "/courses/enrolled/EAE56E"))]
+  (assert (success? resp) "Course enrolled succ")
+  (assert ((success-has? `<tr id="EAE56E-enrolled`) resp) "Course enrolled succ content"))
 (let [resp (request "GET" (url `/courses/filter/?datastar=%7B%22search%22%3A%22%22%2C%22active%22%3Atrue%2C%22semester%22%3A%22%22%7D`))]
   (assert (success? resp) "Active filter succ")
   (assert ((success-has? `<details open` `<td class="active">x</td>`) resp) "Some active")

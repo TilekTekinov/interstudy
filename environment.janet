@@ -98,12 +98,14 @@
 
 (defn ds/patch-elements
   "Writes patch-elements SSE message to conn"
-  [& elements]
+  [elements &opt selector mode]
   (def msg
     (chunk-msg
       (string
         "event: datastar-patch-elements\n"
-        "data: elements " ;elements "\n\n")))
+        (if selector (string "data: selector " selector "\n"))
+        (if mode (string "data: mode " mode "\n"))
+        "data: elements " elements "\n\n")))
   (protect (:write (dyn :sse-conn) msg)))
 
 (defn ds/get
@@ -118,8 +120,8 @@
 
 (defn ds/hg-stream
   "Convenience for defining SSE stream handler"
-  [elements]
-  (http/stream (ds/patch-elements (hg/html elements))))
+  [elements &opt selector mode]
+  (http/stream (ds/patch-elements (hg/html elements) selector mode)))
 
 (defn ds/input
   "Datastar input helper"

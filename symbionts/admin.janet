@@ -49,9 +49,12 @@
    [:td credits]
    [:td semester]
    [:td {:class :active} (if active "x")]
-   [:td (if enrolled (hg/raw (string (length enrolled) "&nbsp;enrolled")))]
    [:td
-    [:a {:data-on:click (string "@get('/courses/edit/" code "')")}
+    (if enrolled
+      [:a {:data-on:click (ds/get "/courses/enrolled/" code)}
+       [:span (length enrolled) (hg/raw "&nbsp;enrolled")]])]
+   [:td
+    [:a {:data-on:click (ds/get "/courses/edit/" code)}
      "Edit"]]])
 
 (def- init-ds (json/encode {:active false :semester false :enrolled false}))
@@ -153,7 +156,7 @@
   "Edit course SSE stream"
   []
   (def code (params :code))
-  (def subject ((=> :courses (>Y (??? {:code (?eq code)})) 0) view))
+  (def subject ((=>course/by-code code) view))
   (ds/hg-stream (<course-form/> subject (view :semesters))))
 
 (defn ^save-course
@@ -260,6 +263,26 @@
   (ds/hg-stream
     (<courses-list/> ((=> :courses ;finders) view) true)))
 
+(defn <enrolled/>
+  "hg representation of enrolled students"
+  [code enrolled]
+  [:tr {:id (string code "-enrolled")}
+   [:td {:colspan "7"}
+    [:ul
+     (seq [{:fullname fn :email em} :in enrolled]
+       [:li fn " <" em ">"])]]])
+
+(defh /enrolled
+  "Enrolled students for a course"
+  []
+  (def code (params :code))
+  (def c @[])
+  (def enrolled
+    ((=> (<- c (=> :registrations))
+         (=>course/by-code code) :enrolled
+         (>reduce (fn [acc id] (array/push acc ((c 0) id)) acc) @[])) view))
+  (ds/hg-stream (<enrolled/> code enrolled) (string "#" code) "after"))
+
 (def routes
   "HTTP routes"
   @{"/" /index
@@ -273,7 +296,8 @@
     "/courses" @{"" /courses
                  "/edit/:code" /edit-course
                  "/:code" /save-course
-                 "/filter/" /filter}})
+                 "/filter/" /filter
+                 "/enrolled/:code" /enrolled}})
 
 (def rpc-funcs
   "RPC functions"
