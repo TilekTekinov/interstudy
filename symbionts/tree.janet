@@ -91,7 +91,8 @@
     {:update (fn [_ {:store store}]
                (:transact store :enrollments
                           (>put regkey regdata)))
-     :watch [Flush RefreshView (^refresh-peers :enrollments)]}))
+     :watch [Flush RefreshView (^refresh-peers :enrollments)
+             (^refresh-peers :courses)]}))
 
 (def rpc-funcs
   "RPC functions for the tree"
