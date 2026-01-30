@@ -87,7 +87,7 @@
 (defh /courses
   "Courses SSE stream"
   []
-  (ds/hg-stream (<courses-list/> (view :courses) (view :enrolled-index))))
+  (ds/hg-stream (<courses-list/> (view :courses))))
 
 (defn <semesters-list/>
   "Contructs htmlgen representation of all `semesters`"
@@ -243,6 +243,8 @@
       (if (present? search) (=>search view) (view :registrations))
       (view :enrollments) true)))
 
+(def?! searchable (?one-of "semester" "active" "enrolled"))
+
 (defh /filter
   "Filtered courses SSE stream"
   [http/query-params]
@@ -250,9 +252,11 @@
     ((=> :query-params "datastar"
          (>if present? json/decode (always {})) pairs
          (>Y (>check-all all
-                         (=> first (?one-of "semester" "active"))
+                         (=> first searchable?)
                          (=> last (>check-all some true? present?))))
-         (>map (fn [[k v]] (>Y (=> (??? {(keyword k) (?eq v)})))))) req))
+         (>map (fn [[k v]] (>Y (=> (??? {(keyword k)
+                                         (if (true? v) truthy? (?eq v))}))))))
+      req))
   (ds/hg-stream
     (<courses-list/> ((=> :courses ;finders) view) true)))
 
