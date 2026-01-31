@@ -4,16 +4,15 @@
 
 (declare-executable
   :name "tree"
-  :entry "symbionts/tree.janet")
+  :entry "tree.janet")
 
 (declare-executable
   :name "student"
-  :entry "symbionts/student.janet")
+  :entry "student.janet")
 
 (declare-executable
   :name "admin"
-  :entry "symbionts/admin.janet")
-
+  :entry "admin.janet")
 
 (defn check
   [&]
@@ -23,11 +22,14 @@
   (each dir (sorted (os/dir "test"))
     (def path (string "test/" dir))
     (when (string/has-suffix? ".janet" path)
-      (print "In file " path)
-      (def pass (zero? (os/execute [(dyn *executable* "janet") "--" path] :p)))
+      (print "----------------- In file " path " -----------------")
+      (def pass
+        (zero? (os/execute [(dyn *executable* "janet") "--" path] :p)))
       (++ total-count)
-      (unless pass (array/push failing path))
-      (when pass (++ pass-count))))
+      (if pass
+        (++ pass-count)
+        (array/push failing path))
+      (print)))
   (if (= pass-count total-count)
     (print "--------------------- All tests passed! ---------------------")
     (do
