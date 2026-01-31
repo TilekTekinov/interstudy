@@ -1,9 +1,9 @@
 (os/setenv "CONF" "test/conf.test.jdn")
 (use spork/test /environment /schema spork/http gp/net/rpc)
-(import /symbionts/tree)
+(import /tree)
 
 (start-suite :docs)
-(assert-docs "/symbionts/tree")
+(assert-docs "/tree")
 (end-suite)
 
 (init-test :tree)

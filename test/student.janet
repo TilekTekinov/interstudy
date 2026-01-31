@@ -1,11 +1,11 @@
 # TODO test the RPC fail over
 (os/setenv "CONF" "test/conf.test.jdn")
 (use spork/test /environment /schema spork/http gp/net/rpc)
-(import /symbionts/tree)
-(import /symbionts/student)
+(import /tree)
+(import /student)
 
 (start-suite :docs)
-(assert-docs "/symbionts/student")
+(assert-docs "/student")
 (end-suite)
 
 (init-test :tree)
