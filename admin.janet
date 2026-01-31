@@ -246,13 +246,14 @@
   [http/keywordize-body http/json->body]
   (def search (body :search))
   (def =>search
-    (=> :registrations pairs
-        (>Y (=> last |(string ($ :fullname) ($ :email)) |(fuzzy/hasmatch search $)))
-        (>map |(table ;$)) (>merge)))
+    (=> :registrations
+        (>if (always (present? search))
+             (=> pairs
+                 (>map (=> last (enrich-fuzzy search :email :fullname)))
+                 =>filter-sort-score
+                 (>map |(table (hash ($ :email)) $)) (>merge)))))
   (ds/hg-stream
-    (<registrations-list/>
-      (if (present? search) (=>search view) (view :registrations))
-      (view :enrollments) true)))
+    (<registrations-list/> (=>search view) (view :enrollments) true)))
 
 (def?! filterable (?one-of "semester" "active" "enrolled"))
 
@@ -296,12 +297,12 @@
   [http/keywordize-body http/json->body]
   (def search (body :search))
   (def =>search
-    (=> :courses pairs
-        (>Y (=> last |(string ($ :code) ($ :name)) |(fuzzy/hasmatch search $)))
-        (>map |(table ;$)) (>merge)))
-  (ds/hg-stream
-    (<courses-list/>
-      (if (present? search) (=>search view) (view :courses)) true)))
+    (=> :courses
+        (>if (always (present? search))
+             (=> pairs
+                 (>map (=> last (enrich-fuzzy search :code :name)))
+                 =>filter-sort-score))))
+  (ds/hg-stream (<courses-list/> (=>search view) true)))
 
 (def routes
   "HTTP routes"

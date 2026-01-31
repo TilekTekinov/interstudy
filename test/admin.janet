@@ -115,21 +115,21 @@
                    `Summer` `<a data-on:click` `/semesters/activate/` `Activate`)
       resp)))
 (let [resp (request "GET" (url "/registrations"))]
-  (assert (success? resp))
+  (assert (success? resp) "Registrations succ")
   (assert
     ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
                    `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
                    `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
-      resp)))
+      resp) "Registration succ content"))
 (let [resp (request "POST" (url "/registrations/search")
                     :headers {"Content-Type" "application/json"}
                     :body `{"search":"j"}`)]
-  (assert (success? resp))
+  (assert (success? resp) "Registrations search succ")
   (assert
     ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
                    `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
                    `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
-      resp)))
+      resp) "Registrations search succ content"))
 (end-suite)
 
 (start-suite :rpc)

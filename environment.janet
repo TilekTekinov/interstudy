@@ -20,6 +20,19 @@
   (fn >select [i] (select-keys i keys)))
 
 
+(defn enrich-fuzzy
+  "Navigation that enriches item with fuzzy score."
+  [search & fields]
+  (fn [i]
+    (def hay (string ;(seq [f :in fields] (get i f))))
+    (merge i {:score (fuzzy/score search hay)})))
+
+(def =>filter-sort-score
+  "Navigation that filters score and sorts it"
+  (=> (>Y (=> :score (?gt math/-inf)))
+      (>if (??? {length (?lt 11)})
+           (=> (>sort-by :score) reverse))))
+
 # TODO move to data/navigation
 (defn >collect-at
   "Collects result of calling `fun` into `tbl` under `key`."

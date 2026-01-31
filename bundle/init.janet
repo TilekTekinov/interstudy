@@ -19,7 +19,7 @@
   (var pass-count 0)
   (var total-count 0)
   (def failing @[])
-      (print "\e[2J\e[H\e[30;103m---------------------- Running Tests ------------------------\e[0m")
+  (print "\e[2J\e[H\e[30;103m---------------------- Running Tests ------------------------\e[0m")
   (each dir (sorted (os/dir "test"))
     (def path (string "test/" dir))
     (when (string/has-suffix? ".janet" path)
