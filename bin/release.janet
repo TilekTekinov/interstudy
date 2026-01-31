@@ -13,6 +13,7 @@
                 [jp :clean] [jp :build]) :p)
     (print "Kill servers")
     (os/execute (ssh-cmds host [:pkill "student"] [:pkill "admin"] [:pkill "tree"]) :p)
+    (os/sleep 0.5)
     (print "Run tree server")
     (os/execute
       (ssh-cmds host [:cd rp] ["nohup" "_build/release/tree" ">" "/dev/null" "2>&1" "&"]) :p)

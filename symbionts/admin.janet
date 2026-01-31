@@ -57,7 +57,7 @@
     [:a {:data-on:click (ds/get "/courses/edit/" code)}
      "Edit"]]])
 
-(def- init-ds (json/encode {:active false :semester false :enrolled false}))
+(def- init-ds (json/encode {:active false :semester "" :enrolled false}))
 
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
@@ -67,6 +67,13 @@
    [:details (if open {:open true})
     [:summary
      "Courses (" (length courses) ")"]
+    [:div {:class "margin-block"}
+     (ds/input
+       :search :type :search :size 50
+       :placeholder "Search in the course code and name"
+       :data-on:input__debounce.200ms
+       (string "$active = false; $enrolled = false; $semester = ''; "
+               (ds/post "/courses/search")))]
     [:div {:class "f-row margin-block"}
      "Filter: "
      [:label "Only active "
@@ -150,7 +157,7 @@
    [:td
     (ds/input :active :type "checkbox")]
    [:td
-    [:button {:data-on:click (ds/post "/courses/" code)} "Save"]]])
+    [:button {:data-on:click (ds/post "/courses/save" code)} "Save"]]])
 
 (defh /edit-course
   "Edit course SSE stream"
@@ -198,11 +205,12 @@
   (def {:courses ecs :timestamp ets :credits ecr} (or enrollment {}))
   [:tr {:id emhash}
    [:td fn] [:td em] [:td hu] [:td fa]
-   [:td (if ts (dt/format-date-time ts))]
+   [:td [:small (if ts (dt/format-date-time ts))]]
    [:td {:class "f-coll"}
     (if ets
-      [:div (dt/format-date-time ets) " "
-       (length ecs) " for " ecr " credits"])
+      [:small
+       [:div (dt/format-date-time ets) " "]
+       [:div (length ecs) " for " ecr " credits"]])
     [:a {:href (string student "/enroll/" (hash em))
          :target "_blank"} "Enroll link"]]])
 
@@ -233,7 +241,7 @@
   (ds/hg-stream
     (<registrations-list/> (view :registrations) (view :enrollments))))
 
-(defh /search
+(defh /registrations/search
   "Search registrations handler"
   [http/keywordize-body http/json->body]
   (def search (body :search))
@@ -246,7 +254,7 @@
       (if (present? search) (=>search view) (view :registrations))
       (view :enrollments) true)))
 
-(def?! searchable (?one-of "semester" "active" "enrolled"))
+(def?! filterable (?one-of "semester" "active" "enrolled"))
 
 (defh /filter
   "Filtered courses SSE stream"
@@ -255,7 +263,7 @@
     ((=> :query-params "datastar"
          (>if present? json/decode (always {})) pairs
          (>Y (>check-all all
-                         (=> first searchable?)
+                         (=> first filterable?)
                          (=> last (>check-all some true? present?))))
          (>map (fn [[k v]] (>Y (=> (??? {(keyword k)
                                          (if (true? v) truthy? (?eq v))}))))))
@@ -273,7 +281,7 @@
        [:li fn " <" em ">"])]]])
 
 (defh /enrolled
-  "Enrolled students for a course"
+  "Enrolled students for a course detail"
   []
   (def code (params :code))
   (def c @[])
@@ -283,21 +291,34 @@
          (>reduce (fn [acc id] (array/push acc ((c 0) id)) acc) @[])) view))
   (ds/hg-stream (<enrolled/> code enrolled) (string "#" code) "after"))
 
+(defh /courses/search
+  "Search courses handler"
+  [http/keywordize-body http/json->body]
+  (def search (body :search))
+  (def =>search
+    (=> :courses pairs
+        (>Y (=> last |(string ($ :code) ($ :name)) |(fuzzy/hasmatch search $)))
+        (>map |(table ;$)) (>merge)))
+  (ds/hg-stream
+    (<courses-list/>
+      (if (present? search) (=>search view) (view :courses)) true)))
+
 (def routes
   "HTTP routes"
   @{"/" /index
     "/registrations" @{"" /registrations
                        "/activate/:registration" /activate
                        "/deactivate" /deactivate
-                       "/search" /search}
+                       "/search" /registrations/search}
     "/semesters" @{"" /semesters
                    "/activate/:semester" /activate
                    "/deactivate" /deactivate}
     "/courses" @{"" /courses
                  "/edit/:code" /edit-course
-                 "/:code" /save-course
+                 "/save/:code" /save-course
                  "/filter/" /filter
-                 "/enrolled/:code" /enrolled}})
+                 "/enrolled/:code" /enrolled
+                 "/search" /courses/search}})
 
 (def rpc-funcs
   "RPC functions"

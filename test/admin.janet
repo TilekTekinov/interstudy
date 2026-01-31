@@ -65,6 +65,7 @@
   (assert
     ((success-has? `<div id="courses` `<details`
                    `<summary>` `Courses`
+                   `Search`
                    `Only active` `<input` `data-on:change` `/courses/filter/`
                    `Only enrolled` `<input` `data-on:change` `/courses/filter/`
                    `Winter semester` `<input` `data-on:change` `/courses/filter/`
@@ -73,6 +74,15 @@
                    `<a data-on:click="@get(&#39;/courses/enrolled` `1&nbsp;enrolled`
                    `<a data-on:click="@get(&#39;/courses/edit/` `Edit`) resp)
     "Courses succ content"))
+(let [resp (request "POST" (url "/courses/search")
+                    :headers {"Content-Type" "application/json"}
+                    :body `{"search":"e"}`)]
+  (assert (success? resp) "Search succ")
+  (assert
+    ((success-has? `<div id="courses` `<details` `<summary>` `Courses`
+                   `Search`
+                   `<table` `code` `name` `credits` `active` `enrolled` `action`)
+      resp) "Search succ content"))
 (let [resp (request "GET" (url "/courses/enrolled/EAE56E"))]
   (assert (success? resp) "Course enrolled succ")
   (assert ((success-has? `<tr id="EAE56E-enrolled`) resp) "Course enrolled succ content"))
@@ -93,7 +103,7 @@
              `<select data-bind="semester"`
              `<input data-bind="active"`
              `<button` `Save`) resp)))
-(let [resp (request "POST" (url "/courses/EAE56E")
+(let [resp (request "POST" (url "/courses/save/EAE56E")
                     :body `{"active": false}`)]
   (assert (success? resp) "Save course")
   (assert ((success-has? `<tr` "EAE56E") resp) "Save subject content"))

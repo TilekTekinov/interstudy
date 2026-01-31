@@ -136,7 +136,8 @@
         options]
        (if (present? (tabcourses name))
          [:a {:data-on:click
-              (string "$" name " = '';" post-change)} "Remove"])])]])
+              (string "$" name " = '';" post-change)}
+               "Remove"])])]])
 
 (defh /enrollment
   "Enrollment handler"
