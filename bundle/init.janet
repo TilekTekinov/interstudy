@@ -19,6 +19,7 @@
   (var pass-count 0)
   (var total-count 0)
   (def failing @[])
+      (print "\e[2J\e[H\e[30;103m---------------------- Running Tests ------------------------\e[0m")
   (each dir (sorted (os/dir "test"))
     (def path (string "test/" dir))
     (when (string/has-suffix? ".janet" path)
@@ -31,10 +32,10 @@
         (array/push failing path))
       (print)))
   (if (= pass-count total-count)
-    (print "--------------------- All tests passed! ---------------------")
+    (print "\e[30;102m--------------------- All tests passed! ---------------------\e[0m")
     (do
-      (printf "%d of %d passed." pass-count total-count)
-      (print "failing scripts:")
+      (print "\e[97;101m--------------------- Some tests failed! ---------------------\e[0m\n")
+      (printf "%d of %d passed. Failing scripts:" pass-count total-count)
       (each f failing
-        (print "  " f))
+        (print "  \e[97;101m" f "\e[0m"))
       (os/exit 1))))
