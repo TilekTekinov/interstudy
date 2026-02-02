@@ -27,7 +27,7 @@
 
 (define-watch Release
   "Release producer"
-  [_ {:dry dry :peers peers} _]
+  [_ {:dry dry :peers peers :build-path bp :release-path rp} _]
   (def jp (script "janet-pm"))
   (def out @"")
   (defn >out [& o] (buffer/push-string out ;o))
@@ -39,14 +39,15 @@
         (>out "Build dry run")
         (each peer peers (>out "Move " peer)))
       (do
+        (>out ($<_ cd ,bp))
         (>out ($<_ git pull))
         (>out ($<_ ,jp "clean"))
         (>out ($<_ ,jp "build"))
         (produce StopPeers)
         (each peer peers
           (def p (string "_build/release/" peer))
-          (>out ($<_ mv ,p .))
-          ($<_ nohup ,p > /dev/null "2>&1" &))))
+          (>out ($<_ mv ,p ,rp))
+          ($<_ nohup ,(string rp p) > /dev/null "2>&1" &))))
     (produce (log out) Released)))
 
 (defn ^release
