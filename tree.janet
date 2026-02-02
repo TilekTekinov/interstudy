@@ -119,17 +119,18 @@
                                     collections/leafs collections/fruits)]
       coll (fn [rpc] (define :view) (view coll)))))
 
-(def initial-state
-  "Configuration"
-  ((=> (=>symbiont-initial-state :tree)
-       (>update :rpc (update-rpc rpc-funcs))) compile-config))
+(def =>initial-state
+  "Navigation to initial state in config"
+  (=> (=>symbiont-initial-state :tree)
+      (>update :rpc (update-rpc rpc-funcs))))
 
 (defn main
   ```
   Main entry into tree.
   ```
   [_]
-  (-> initial-state
+  (-> compile-config
+      =>initial-state
       (make-manager on-error)
       (:transact PrepareStore PrepareView)
       (:transact RPC)

@@ -5,27 +5,19 @@
 
 (setdyn *handler-defines* [:view])
 
-(def collections
+(def collections/view
   "View collections"
-  [:faculties :semesters :registrations :enrollments])
-
-(define-update RecomputeIndices
-  "Recomputes indices in view"
-  [_ {:view view}]
-  (def c @[])
-  ((=>
-     (<- c (=> :enrollments values (>: :courses) flatten frequencies))
-     |(put $ :enrolled-index (array/pop c))) view))
+  [:faculties :semesters :active-semester :courses
+   :registrations :enrollments])
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
   {:update
    (fn [_ state]
      (def {:tree tree} state)
-     ((=> (>put :view (tabseq [coll :in collections] coll (coll tree))))
-       state))
-   :watch [(^refresh-view :active-semester :courses)
-           RecomputeIndices]
+     (put state :view
+          (tabseq [coll :in collections/view]
+            coll (coll tree))))
    :effect (fn [_ {:view view :student student} _]
              (setdyn :view view)
              (setdyn :student student))})
