@@ -83,18 +83,18 @@
             (produce (^release now))
             [:ok now])))}))
 
-(def =>initial-state
+(def initial-state
   "Navigation to initial state in config"
-  (=> (=>symbiont-initial-state :demiurge)
-      (>update :rpc (update-rpc rpc-funcs))))
+  ((=> (=>symbiont-initial-state :demiurge)
+      (>update :rpc (update-rpc rpc-funcs)))compile-config))
 
 (defn main
   ```
   Main entry into tree.
   ```
   [_]
-  (-> compile-config
-      =>initial-state
+  (->
+      initial-state
       (make-manager on-error)
       (:transact PrepareView GitSHA RPC)
       (:transact (^connect-peers (log "Demiurge is ready")))

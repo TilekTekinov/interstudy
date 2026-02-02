@@ -9,7 +9,7 @@
 (end-suite)
 
 (start-suite :utils)
-(assert (deep= (tracev ((=>symbiont-initial-state :admin) compile-config))
+(assert (deep= ((=>symbiont-initial-state :admin) compile-config)
                @{:build-path "/var/code/insterstudy"
                  :cookie-host "localhost"
                  :debug true
