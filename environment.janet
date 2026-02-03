@@ -168,7 +168,8 @@
 
 (defn ^connect-peers
   "Connects to the tree"
-  [& succ]
+  [succ &opt fail]
+  (default fail Stop)
   (make-event
     {:update
      (fn [_ state]
@@ -191,12 +192,11 @@
              (if (< tries 10)
                (++ tries)
                (do
-                 (array/push res
-                             (log "Cannot connect to " peer ". Exiting.") Stop)
+                 (array/push res (log "Cannot connect to " peer ".") fail)
                  (break)))
              (ev/sleep (* tries 0.1)))
            (array/push res (log "Connected to " peer)))
-         (produce ;res ;succ)))}
+         (produce ;res succ)))}
     "connect peers"))
 
 (defn ^reconnect-peers

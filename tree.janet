@@ -135,6 +135,6 @@
     (make-manager on-error)
     (:transact PrepareStore PrepareView)
     (:transact RPC)
-    (:transact (^connect-peers (log "Tree is ready")))
+    (:transact (^connect-peers (log "Tree is ready") Stop))
     :await)
   (os/exit 0))

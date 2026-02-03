@@ -16,6 +16,7 @@
 
 (defn check
   [&]
+  (def start (os/clock))
   (var pass-count 0)
   (var total-count 0)
   (def failing @[])
@@ -32,7 +33,7 @@
         (array/push failing path))
       (print)))
   (if (= pass-count total-count)
-    (print "\e[30;102m--------------------- All tests passed! ---------------------\e[0m")
+    (print "\e[30;102m--------------------- All tests passed in " (precise-time (- (os/clock) start)) "! ---------------------\e[0m")
     (do
       (print "\e[97;101m--------------------- Some tests failed! ---------------------\e[0m\n")
       (printf "%d of %d passed. Failing scripts:" pass-count total-count)

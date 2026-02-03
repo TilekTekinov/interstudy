@@ -207,6 +207,11 @@
        (>put :routes routes)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
+(define-watch Start
+  "Starts the machinery"
+  [&]
+  [PrepareView HTTP RPC])
+
 (defn main
   ```
   Main entry into student symbiont.
@@ -214,6 +219,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact (^connect-peers PrepareView HTTP RPC))
+      (:transact (^connect-peers Start Stop))
       :await)
   (os/exit 0))
