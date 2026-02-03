@@ -9,8 +9,11 @@
 
 (define-watch GitSHA
   "Save in the state the latest sha of the repository"
-  [&]
-  (^save-sha (string ($<_ git rev-parse HEAD))))
+  [_ {:build-path bp}]
+  (^save-sha
+    (do
+      ($ cd ,bp)
+      (string ($<_ git rev-parse HEAD)))))
 
 (define-event Released
   "Marks the end of releasing"
@@ -87,7 +90,7 @@
 (def initial-state
   "Navigation to initial state in config"
   ((=> (=>symbiont-initial-state :demiurge)
-      (>update :rpc (update-rpc rpc-funcs)))compile-config))
+       (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
 (defn main
   ```
@@ -95,9 +98,9 @@
   ```
   [_]
   (->
-      initial-state
-      (make-manager on-error)
-      (:transact PrepareView GitSHA RPC)
-      (:transact (^connect-peers (log "Demiurge is ready")))
-      :await)
+    initial-state
+    (make-manager on-error)
+    (:transact PrepareView GitSHA RPC)
+    (:transact (^connect-peers (log "Demiurge is ready")))
+    :await)
   (os/exit 0))
