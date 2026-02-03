@@ -17,7 +17,7 @@
   {:update
    (fn [_ {:view view}]
      ((>put :releasing false) view))
-   :watch GitSHA})
+   :watch [(^reconnect-peers (log "Released")) GitSHA]})
 
 (define-effect StopPeers
   "Sends stop RPC to all peers"
@@ -41,6 +41,7 @@
       (do
         (>out ($<_ cd ,bp))
         (>out ($<_ git pull))
+        (>out ($<_ . ./dev/bin/activate))
         (>out ($<_ ,jp "clean"))
         (>out ($<_ ,jp "build"))
         (produce StopPeers)

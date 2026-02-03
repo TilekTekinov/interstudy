@@ -1,6 +1,6 @@
 {:name "interstudy"
  :deploy
- {:host "localhost"
+ {:host "test.localhost"
   :build-path "/var/code/insterstudy"
   :release-path "/srv/insterstudy"
   :debug true
@@ -17,11 +17,12 @@
   :nodes
   {:demiurge
    {:rpc "localhost:5443"
-    :peers [:tree :student :admin]}
+    :peers [] # :tree :student :admin
+    }
    :tree
    {:rpc "localhost:5444"
     :peers [] # later [:student :admin]
-}
+    }
    :student
    {:rpc "localhost:5445"
     :peers [:tree]}
@@ -30,15 +31,17 @@
     :peers [:tree]}}}
  :membranes
  {:nodes
-  {:student
+  {:demiurg {:rpc "test.localhost:5443"}
+   :student
    {:http "localhost:8777"
     :cookie-host "localhost"
-    :address "http://localhost:8777"
+    :address "http://test.localhost:8777"
     :static true
     :public "public"}
    :admin
    {:http "localhost:8778"
     :cookie-host "localhost"
+    :address "http://test.localhost:8778"
     :static true
     :public "public"
     :neighbors [:student]}}}}

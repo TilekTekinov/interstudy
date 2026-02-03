@@ -57,7 +57,10 @@
   [symbiont]
   (let [c @[{:name (string symbiont)}]
         =>membrane (=> :membranes :nodes symbiont)
-        =>neighbors (=> =>membrane :neighbors)]
+        =>neighbors (=> =>membrane :neighbors)
+        =>mycelium-node |(=> :mycelium :nodes $)
+        =>mycelium (=>mycelium-node symbiont)
+        =>peers (=> =>mycelium :peers)]
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
         (<- c (=> :symbionts symbiont))
@@ -68,15 +71,14 @@
                           (<- c (=> :membranes :nodes
                                     |(tabseq [i :in (array/pop c)] i
                                        ((=> i :address) $))))))))
-        :mycelium
-        (<- c (=> (>select-keys :psk)))
-        :nodes
-        (>if (=> symbiont)
-             (<- c (=> symbiont)))
-        (>if (=> symbiont :peers present?)
-             (=> (<- c (=> symbiont :peers))
+
+        (<- c (=> :mycelium (>select-keys :psk)))
+        (>if =>mycelium (<- c =>mycelium))
+        (>if (=> =>peers present?)
+             (=> (<- c (=> =>peers))
                  (<- c |(tabseq [i :in (array/pop c)]
-                          i ((=> i :rpc) $)))))
+                          i ((=> (=>mycelium-node i) :rpc) $)))))
+        (>if (=> =>membrane :rpc) (<- c (=> =>membrane :rpc)))
         (>base c) (>merge))))
 
 (defn update-rpc
@@ -198,6 +200,27 @@
            (array/push res (log "Connected to " peer)))
          (produce ;res ;succ)))}
     "connect peers"))
+
+(defn ^reconnect-peers
+  "Connects to the tree"
+  [& succ]
+  (make-watch
+    (fn [_ state _]
+      (producer
+        (def {:peers peers} state)
+        (def res (array/new (length peers)))
+        (each peer peers
+          (var tries 0)
+          (while (not ((protect (:open (state peer))) 0))
+            (if (< tries 10)
+              (++ tries)
+              (do
+                (array/push res
+                            (log "Cannot connect to " peer ". Exiting.") Stop)
+                (break)))
+            (ev/sleep (* tries 0.1)))
+          (array/push res (log "Connected to " peer)))
+        (produce ;res ;succ)))))
 
 (defn ^delay
   "Delay the `event` for `s` time"

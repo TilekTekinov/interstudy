@@ -91,7 +91,12 @@
   {:psk present-string?
    :nodes mycelium-nodes-config?})
 
-(def?! membrane-node
+(def?! rpc-membrane-node
+  dictionary?
+  {:rpc url?
+   :key (?optional present-string?)})
+
+(def?! http-membrane-node
   dictionary?
   {:http url?
    :cookie-host present-string?
@@ -101,7 +106,8 @@
 (def?! membrane-nodes-config
   dictionary?
   {keys (>?? all keyword)
-   values (>?? all membrane-node?)})
+   values (>?? all (>check-all some rpc-membrane-node?
+                               http-membrane-node?))})
 
 (def?! membranes-config
   dictionary?

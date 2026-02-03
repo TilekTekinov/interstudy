@@ -12,7 +12,7 @@
 (load-dump "test/seed.jdn")
 (:save test-store "Winter" :active-semester)
 (:flush test-store)
-(ev/go tree/main)
+(os/spawn ["janet" "tree.janet"] :p)
 (ev/sleep 0.1) # Settle the server
 
 (init-test :student)

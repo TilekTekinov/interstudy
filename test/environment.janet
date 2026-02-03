@@ -10,11 +10,12 @@
 
 (start-suite :utils)
 (assert (deep= ((=>symbiont-initial-state :admin) compile-config)
-               @{:build-path "/var/code/insterstudy"
+               @{:address "http://test.localhost:8778"
+                 :build-path "/var/code/insterstudy"
                  :cookie-host "localhost"
                  :debug true
                  :dry true
-                 :host "localhost"
+                 :host "test.localhost"
                  :http "localhost:8778"
                  :log false
                  :name "admin"
@@ -25,10 +26,23 @@
                  :release-path "/srv/insterstudy"
                  :rpc "localhost:5446"
                  :static true
-                 :student "http://localhost:8777"
+                 :student "http://test.localhost:8777"
                  :thicket "interstudy"
                  :tree "localhost:5444"})
-        "symbiont config navigation")
+        "admin config navigation")
+(assert (deep= ((=>symbiont-initial-state :demiurge) compile-config)
+               @{:build-path "/var/code/insterstudy"
+                 :debug true
+                 :dry true
+                 :host "test.localhost"
+                 :log false
+                 :name "demiurge"
+                 :peers []
+                 :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
+                 :release-path "/srv/insterstudy"
+                 :rpc "localhost:5443"
+                 :thicket "interstudy"})
+        "demiurge config navigation")
 (assert (deep= ((update-rpc @{}) "localhost:4444") @{:url "localhost:4444" :functions @{}}))
 (assert ((??? {length (?eq 10)})
           (fixtures 10
