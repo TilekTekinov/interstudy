@@ -42,7 +42,7 @@
                  :peers []
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :release-path "./_release"
-                 :rpc "test.localhost:5443"
+                 :rpc "localhost:5442"
                  :thicket "interstudy"})
         "demiurge config navigation")
 (assert (deep= ((update-rpc @{}) "localhost:4444") @{:url "localhost:4444" :functions @{}}))
