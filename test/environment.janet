@@ -11,8 +11,9 @@
 (start-suite :utils)
 (assert (deep= ((=>symbiont-initial-state :admin) compile-config)
                @{:address "http://test.localhost:8778"
-                 :build-path "/var/code/insterstudy"
+                 :build-path "./"
                  :cookie-host "localhost"
+                 :data-path "./"
                  :debug true
                  :dry true
                  :host "test.localhost"
@@ -23,7 +24,7 @@
                  :peers [:tree]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :public "public"
-                 :release-path "/srv/insterstudy"
+                 :release-path "./_release"
                  :rpc "localhost:5446"
                  :static true
                  :student "http://test.localhost:8777"
@@ -31,7 +32,8 @@
                  :tree "localhost:5444"})
         "admin config navigation")
 (assert (deep= ((=>symbiont-initial-state :demiurge) compile-config)
-               @{:build-path "/var/code/insterstudy"
+               @{:build-path "./"
+                 :data-path "./"
                  :debug true
                  :dry true
                  :host "test.localhost"
@@ -39,7 +41,7 @@
                  :name "demiurge"
                  :peers []
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
-                 :release-path "/srv/insterstudy"
+                 :release-path "./_release"
                  :rpc "test.localhost:5443"
                  :thicket "interstudy"})
         "demiurge config navigation")

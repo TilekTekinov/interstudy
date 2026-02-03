@@ -70,7 +70,6 @@
                           (<- c (=> :membranes :nodes
                                     |(tabseq [i :in (array/pop c)] i
                                        ((=> i :address) $))))))))
-
         (<- c (=> :mycelium (>select-keys :psk)))
         (>if =>mycelium (<- c =>mycelium))
         (>if (=> =>peers present?)

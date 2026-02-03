@@ -1,8 +1,9 @@
 {:name "interstudy"
  :deploy
- {:host "tpw"
+ {:host "interstudy.example.com"
   :build-path "/srv/src/insterstudy"
   :release-path "/srv/exe/insterstudy"
+  :data-path "/srv/data/interstudy"
   :debug true
   :log true}
  :symbionts

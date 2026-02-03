@@ -1,8 +1,9 @@
 {:name "interstudy"
  :deploy
  {:host "test.localhost"
-  :build-path "/var/code/insterstudy"
-  :release-path "/srv/insterstudy"
+  :build-path "./"
+  :release-path "./_release"
+  :data-path "./"
   :debug true
   :log false
   :dry true}
