@@ -1,4 +1,4 @@
-(use /environment /schema spork/sh-dsl)
+(use /environment /schema spork/sh spork/sh-dsl)
 
 (defn main
   "Script that bootstraps demiurge on the server"
@@ -10,28 +10,32 @@
         url ($<_ git remote get-url origin)
         conf (os/getenv "CONF" "conf.jdn")]
     (eprint "------------ Ensure paths")
-    (os/execute
-      (ssh-cmds host
-                [:rm "-rf" bp] [:rm "-rf" sbp]
-                [:mkdir :-p rbp] [:mkdir :-p rp] [:mkdir :-p dp]) :p)
+    (exec
+      ;(ssh-cmds host
+                 [:rm "-rf" bp] [:rm "-rf" sbp]
+                 [:mkdir :-p rbp] [:mkdir :-p rp] [:mkdir :-p dp]))
     (eprint "------------ Ensure repositories")
-    (os/execute
-      (ssh-cmds host [:git :clone "--depth=1" url bp] [:git :clone "--depth=1" "https://github.com/janet-lang/spork" sbp]))
+    (exec
+      ;(ssh-cmds host
+                 [:git :clone "--depth=1" url bp]
+                 [:git :clone "--depth=1"
+                  "https://github.com/janet-lang/spork" sbp]))
     (eprint "------------ Ensure environment")
-    (os/execute
-      (ssh-cmds host
-                [:cd bp]
-                ["/usr/local/lib/janet/bin/janet-pm" :full-env :prod]
-                [". ./prod/bin/activate"]
-                [:janet "--install" sbp]
-                [:janet-pm :install "jhydro"]
-                [:janet-pm :install "https://git.sr.ht/~pepe/gp"]) :p)
+    (exec
+      ;(ssh-cmds host
+                 [:cd bp]
+                 ["/usr/local/lib/janet/bin/janet-pm" :full-env :prod]
+                 [". ./prod/bin/activate"]
+                 [:janet "--install" sbp]
+                 [:janet-pm :install "jhydro"]
+                 [:janet-pm :install "https://git.sr.ht/~pepe/gp"]))
     (eprint "------------ Upload configuration")
-    (os/execute ["scp" conf (string host ":" bp "/conf.jdn")] :p)
+    (exec "scp" conf (string host ":" bp "/conf.jdn"))
     (eprint "------------ Quickbin demiurge")
-    (os/execute (ssh-cmds host
-                          [:cd bp] [". ./prod/bin/activate"]
-                          [:janet-pm :quickbin "demiurge.janet" "demiurge"]
-                          [:mv "demiurge" rp]) :p)
+    (exec ;(ssh-cmds host
+                     [:cd bp] [". ./prod/bin/activate"]
+                     [:janet-pm :quickbin "demiurge.janet" "demiurge"]
+                     [:mv "demiurge" rp]))
     (eprint "------------ Run demiurge")
-    (os/execute (ssh-cmds host [:nohup (path/posix/join rp "/demiurge") ">" "/dev/null" "2>&1" "&"]) :p)))
+    (exec ;(ssh-cmds host [:nohup (path/posix/join rp "/demiurge")
+                           ">" "/dev/null" "2>&1" "&"]))))

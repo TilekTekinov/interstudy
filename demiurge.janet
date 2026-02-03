@@ -10,9 +10,7 @@
 (define-watch GitSHA
   "Save in the state the latest sha of the repository"
   [&]
-  (^save-sha
-    (do
-      (string ($<_ git rev-parse HEAD)))))
+  (^save-sha (string ($<_ git rev-parse HEAD))))
 
 (define-event Released
   "Marks the end of releasing"
