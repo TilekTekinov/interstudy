@@ -9,10 +9,9 @@
 
 (define-watch GitSHA
   "Save in the state the latest sha of the repository"
-  [_ {:build-path bp}]
+  [&]
   (^save-sha
     (do
-      ($ cd ,bp)
       (string ($<_ git rev-parse HEAD)))))
 
 (define-event Released
@@ -66,7 +65,9 @@
 (define-event PrepareView
   "Prepares view"
   {:update (fn [_ state] (put state :view @{}))
-   :effect (fn [_ {:view view} _] (setdyn :view view))})
+   :effect (fn [_ {:view view :build-path bp} _]
+             (os/cd bp)
+             (setdyn :view view))})
 
 (def rpc-funcs
   "RPC functions for the tree"
