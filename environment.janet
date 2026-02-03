@@ -2,6 +2,23 @@
 (import /templates/app)
 
 # Navigation
+# TODO move to data/navigation
+(defn >collect-at
+  "Collects result of calling `fun` into `tbl` under `key`."
+  [tbl key &opt fun]
+  (fn >collect-at [base]
+    (put tbl key (if fun (fun base) base))
+    base))
+
+(def <:- ">collect-at alias" >collect-at)
+
+(defn >collect-into
+  "Merges the result of running `fun` into the `tbl`"
+  [tbl &opt fun]
+  (fn >collect-merge [base]
+    (merge-into tbl (if fun (fun base) base))
+    base))
+
 # TODO PR spork
 (defn select-keys
   "Returns new table with selected `keyz` from dictionary `data`."
@@ -19,7 +36,6 @@
   [& keys]
   (fn >select [i] (select-keys i keys)))
 
-
 (defn enrich-fuzzy
   "Navigation that enriches item with fuzzy score."
   [search & fields]
@@ -32,23 +48,6 @@
   (=> (>Y (=> :score (?gt math/-inf)))
       (>if (??? {length (?lt 11)})
            (=> (>sort-by :score) reverse))))
-
-# TODO move to data/navigation
-(defn >collect-at
-  "Collects result of calling `fun` into `tbl` under `key`."
-  [tbl key &opt fun]
-  (fn >collect-at [base]
-    (put tbl key (if fun (fun base) base))
-    base))
-
-(def <:- ">collect-at alias" >collect-at)
-
-(defn >collect-into
-  "Merges the result of running `fun` into the `tbl`"
-  [tbl &opt fun]
-  (fn >collect-merge [base]
-    (merge-into tbl (if fun (fun base) base))
-    base))
 
 (def <:= ">collect-into alias" >collect-into)
 
@@ -78,7 +77,7 @@
              (=> (<- c (=> =>peers))
                  (<- c |(tabseq [i :in (array/pop c)]
                           i ((=> (=>mycelium-node i) :rpc) $)))))
-        (>if (=> =>membrane :rpc) (<- c (=> =>membrane :rpc)))
+        (>if (=> =>membrane :rpc) (<- c =>membrane))
         (>base c) (>merge))))
 
 (defn update-rpc

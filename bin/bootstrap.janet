@@ -1,7 +1,7 @@
 (use /environment /schema spork/sh-dsl)
 
 (defn main
-  "Script that bootstraps on the server"
+  "Script that bootstraps demiurge on the server"
   [&]
   (let [{:host host :build-path bp :release-path rp}
         (get compile-config :deploy)

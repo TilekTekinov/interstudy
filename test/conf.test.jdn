@@ -31,7 +31,7 @@
     :peers [:tree]}}}
  :membranes
  {:nodes
-  {:demiurg {:rpc "test.localhost:5443"}
+  {:demiurge {:rpc "test.localhost:5443"}
    :student
    {:http "localhost:8777"
     :cookie-host "localhost"
