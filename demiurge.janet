@@ -31,28 +31,33 @@
   [peer]
   (make-update
     (fn [_ state]
-    (def {:view {:spawned spawned}} state)
-    (def ep (state peer))
-    (put state peer (string (ep :host) ":" (ep :port)))
-    (put spawned peer nil))))
+      (def {:view {:spawned spawned}} state)
+      (when (spawned peer)
+        (def ep (state peer))
+        (put state peer (string (ep :host) ":" (ep :port)))
+        (put spawned peer nil)))))
 
 (defn ^stop-peer
   "Stops one peer"
   [peer]
-  (make-event {:watch (^remove-peer peer)
-               :effect
-               (fn [_ state _]
-                 (def {:view {:spawned spawned}} state)
-                 (protect (:stop (state peer)))
-                 (protect (os/proc-kill (spawned peer))))}))
+  (make-event
+    {:watch (^remove-peer peer)
+     :effect
+     (fn [_ state _]
+       (def {:view {:spawned spawned}} state)
+       (def pc (state peer))
+       (protect (:stop pc)
+                (:close pc)
+                (os/proc-kill (spawned peer))))}))
 
 (define-event StopPeers
   "Sends stop RPC to all peers"
   {:update (fn [_ {:view view}] (put view :ran false))
-   :watch (fn [_ state _]
-            (def {:dry dry :peers peers :view {:spawned spawned}} state)
-            (if (and spawned (not dry))
-              (seq [peer :in peers] (^stop-peer peer))))})
+   :watch
+   (fn [_ state _]
+     (def {:dry dry :peers peers :view {:spawned spawned}} state)
+     (if (and spawned (not dry))
+       (seq [peer :in peers] (^stop-peer peer))))})
 
 (defn ^save-spawned
   "Saves peer's process"
@@ -85,16 +90,16 @@
     {:watch (log "Deployed peer " peer)
      :effect (fn [_ {:build-path bp :release-path rp} _]
                (def ep (executable peer))
+               (def target (path/abspath (path/join rp ep)))
+               (os/rm target)
                (copy-file
                  (path/abspath (path/join bp "_build/release/" ep))
-                 (path/abspath (path/join rp ep))))}))
+                 target))}))
 
 (define-watch Deploy
   "Deploys peers"
   [_ {:peers peers} _]
-  [;(flatten
-      (seq [peer :in peers]
-        [(^stop-peer peer) (^deploy-peer peer)]))
+  [;(seq [peer :in peers] (^deploy-peer peer))
    ReleaseSHA])
 
 (define-event Build
@@ -113,15 +118,14 @@
     {:update
      (fn [_ {:view view}] ((>put :releasing now) view))
      :watch
-     (fn [_ {:release-path rp :dry dry :peers peers :view {:sha sha :release-sha rsha}} _]
+     (fn [_ {:release-path rp :dry dry
+             :view {:sha sha :release-sha rsha}} _]
        (if (= sha rsha)
          [(log "Latest version is already released") Released]
          [(log "Starting new release")
-          GitPull
           ;(if dry
-             [(log "Build dry run")
-              ;(seq [p :in peers] (log "Move " p))]
-             [Build Deploy RunPeers Released])
+             (log "Build dry run")
+             [StopPeers Build Deploy RunPeers Released])
           (log "Release finished")]))}
     "release"))
 
@@ -171,7 +175,7 @@
         (if-let [ts (view :ran)]
           [:running ts]
           (do
-            (produce RunPeers) :ok)))}))
+            (produce RunPeers (^connect-peers (log "Demiurg is ready"))) :ok)))}))
 
 (def initial-state
   "Navigation to initial state in config"
