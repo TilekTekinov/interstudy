@@ -2,20 +2,20 @@
 
 (defn ^save-sha
   "Event that saves git sha"
-  [sha]
+  [sha rsha]
   (make-update
-    (fn [_ {:view view :release-path rp}]
-      (def rshap (path/abspath (path/join rp "released.sha")))
-      (def rsha (if (os/stat rshap) (string (slurp rshap))))
+    (fn [_ {:view view}]
       ((=> (>put :sha sha) (>put :release-sha rsha)) view))
     "save sha"))
 
 (define-watch GitSHA
   "Save in the state the latest shas of the repository"
-  [&]
+  [_ {:release-path rp} _]
   (producer
+    (def rshap (path/abspath (path/join rp "released.sha")))
+    (def rsha (if (os/stat rshap) (string (slurp rshap))))
     ($< git pull)
-    (produce (^save-sha (string ($<_ git rev-parse HEAD))))))
+    (produce (^save-sha (string ($<_ git rev-parse HEAD)) rsha))))
 
 (define-event Released
   "Marks the end of releasing"
