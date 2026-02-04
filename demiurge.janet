@@ -2,26 +2,32 @@
 
 (defn ^save-sha
   "Event that saves git sha"
-  [sha rsha]
+  [sha]
   (make-update
     (fn [_ {:view view}]
-      ((=> (>put :sha sha) (>put :release-sha rsha)) view))
+      ((>put :sha sha) view))
     "save sha"))
 
-(define-watch GitSHA
+
+# (def rshap (path/abspath (path/join rp "released.sha")))
+# (def rsha (if (os/stat rshap) (string (slurp rshap))))
+(define-effect SetReleasedSHA
+  "Writes the current SHA to file"
+  [_ {:view {:sha sha} :release-path rp} _]
+  (spit (path/abspath (path/join rp "released.sha")) sha))
+
+(define-watch GetGitSHA
   "Save in the state the latest shas of the repository"
   [_ {:release-path rp} _]
   (producer
-    (def rshap (path/abspath (path/join rp "released.sha")))
-    (def rsha (if (os/stat rshap) (string (slurp rshap))))
     ($< git pull)
-    (produce (^save-sha (string ($<_ git rev-parse HEAD)) rsha))))
+    (produce (^save-sha (string ($<_ git rev-parse HEAD))))))
 
 (define-event Released
   "Marks the end of releasing"
   {:update
    (fn [_ {:view view}] ((>put :releasing false) view))
-   :watch [GitSHA]})
+   :watch [GetGitSHA]})
 
 (defn ^remove-peer
   "Removes peer from spawned"
@@ -76,11 +82,6 @@
              :when (os/stat ep)]
          (^save-spawned peer (os/spawn [ep])))))})
 
-(define-effect ReleaseSHA
-  "Writes the current SHA to file"
-  [_ {:view {:sha sha} :release-path rp} _]
-  (spit (path/abspath (path/join rp "released.sha")) sha))
-
 (defn ^deploy-peer
   "Deploys one peer"
   [peer]
@@ -97,8 +98,7 @@
 (define-watch Deploy
   "Deploys peers"
   [_ {:peers peers} _]
-  [;(seq [peer :in peers] (^deploy-peer peer))
-   ReleaseSHA])
+  [;(seq [peer :in peers] (^deploy-peer peer))])
 
 (define-event Build
   "Builds peers"
@@ -123,7 +123,8 @@
          [(log "Starting new release")
           ;(if dry
              [(log "Build dry run") (^delay 0.001 Released)]
-             [StopPeers Build Deploy RunPeers Released])
+             [GetGitSHA StopPeers Build Deploy
+              SetReleasedSHA Released RunPeers])
           (log "Release finished")]))}
     "release"))
 
@@ -192,7 +193,7 @@
   (->
     initial-state
     (make-manager on-error)
-    (:transact RPC GitSHA PrepareView RunPeers)
+    (:transact RPC GetGitSHA PrepareView RunPeers)
     (:transact (^connect-peers Start))
     :await)
   (os/exit 0))
