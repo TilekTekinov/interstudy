@@ -90,7 +90,7 @@
      :effect (fn [_ {:build-path bp :release-path rp} _]
                (def ep (executable peer))
                (def target (path/abspath (path/join rp ep)))
-               (os/rm target)
+               (protect (os/rm target))
                (copy-file
                  (path/abspath (path/join bp "_build/release/" ep))
                  target))}))
@@ -105,6 +105,7 @@
   {:effect
    (fn [_ {:view {:sha sha}} _]
      (def jp (script "janet-pm"))
+     ($ pwd)
      ($ . ./prod/bin/activate)
      ($ ,jp "clean")
      ($ ,jp "build"))})
