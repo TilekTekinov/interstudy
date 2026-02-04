@@ -38,4 +38,5 @@
                      [:mv "demiurge" rp]))
     (eprint "------------ Run demiurge")
     (exec ;(ssh-cmds host [:nohup (path/posix/join rp "/demiurge")
-                           ">" "/dev/null" "2>&1" "&"]))))
+                           # ">" "/dev/null" "2>&1" "&"
+                          ]))))
