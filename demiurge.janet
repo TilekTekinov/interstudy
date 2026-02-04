@@ -106,7 +106,7 @@
    (fn [_ {:view {:sha sha}} _]
      (def jp (script "janet-pm"))
      ($ pwd)
-     ($ . ./prod/bin/activate)
+     ($ source ./prod/bin/activate)
      ($ ,jp "clean")
      ($ ,jp "build"))})
 
