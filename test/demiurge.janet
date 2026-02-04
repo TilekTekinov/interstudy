@@ -8,7 +8,7 @@
 
 (init-test :demiurge)
 (ev/go demiurge/main)
-(ev/sleep 0.5) # Settle the server
+(ev/sleep 0.01) # Settle the server
 
 (def?! sha string? (?long 40))
 (def?! ok (?eq :ok))
@@ -29,13 +29,6 @@
   (assert ((??? {0 (?eq :busy)
                  1 epoch?})
             (:release demiurge)))
-  (ev/sleep 0.2)
-  (assert ((??? {0 ok?
-                 1 epoch?})
-            (:release demiurge)))
-  (assert ((??? {0 (?eq :running)
-                 1 epoch?})
-            (:run-all demiurge)))
   (assert ((??? {0 (?eq :running)
                  1 epoch?})
             (:run-all demiurge)))

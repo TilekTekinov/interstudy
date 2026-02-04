@@ -10,15 +10,12 @@
       ((=> (>put :sha sha) (>put :release-sha rsha)) view))
     "save sha"))
 
-(define-effect GitPull
-  "Pulls the latest from the origin"
-  [&]
-  ($< git pull))
-
 (define-watch GitSHA
   "Save in the state the latest shas of the repository"
   [&]
-  [GitPull (^save-sha (string ($<_ git rev-parse HEAD)))])
+  (producer
+    ($< git pull)
+    (produce (^save-sha (string ($<_ git rev-parse HEAD))))))
 
 (define-event Released
   "Marks the end of releasing"
@@ -74,7 +71,8 @@
    :watch
    (fn [_ {:dry dry :peers peers :release-path rp} _]
      (if-not dry
-       (seq [peer :in peers :let [ep (path/join rp (executable peer))]
+       (seq [peer :in peers
+             :let [ep (path/join rp (executable peer))]
              :when (os/stat ep)]
          (^save-spawned peer (os/spawn [ep])))))})
 
@@ -120,11 +118,11 @@
      :watch
      (fn [_ {:release-path rp :dry dry
              :view {:sha sha :release-sha rsha}} _]
-       (if (= sha rsha)
+       (if (and rsha (= sha rsha))
          [(log "Latest version is already released") Released]
          [(log "Starting new release")
           ;(if dry
-             (log "Build dry run")
+             [(log "Build dry run") (^delay 0.001 Released)]
              [StopPeers Build Deploy RunPeers Released])
           (log "Release finished")]))}
     "release"))
@@ -194,7 +192,7 @@
   (->
     initial-state
     (make-manager on-error)
-    (:transact GitSHA PrepareView RunPeers RPC)
+    (:transact RPC GitSHA PrepareView RunPeers)
     (:transact (^connect-peers Start))
     :await)
   (os/exit 0))

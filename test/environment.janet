@@ -24,7 +24,7 @@
                  :peers [:tree]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :public "public"
-                 :release-path "./_release"
+                 :release-path "./test/_release"
                  :rpc "localhost:5446"
                  :static true
                  :student "http://test.localhost:8777"
@@ -41,7 +41,7 @@
                  :name "demiurge"
                  :peers []
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
-                 :release-path "./_release"
+                 :release-path "./test/_release"
                  :rpc "localhost:5442"
                  :thicket "interstudy"})
         "demiurge config navigation")

@@ -2,7 +2,7 @@
  :deploy
  {:host "test.localhost"
   :build-path "./"
-  :release-path "./_release"
+  :release-path "./test/_release"
   :data-path "./"
   :debug true
   :log false
