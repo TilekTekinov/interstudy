@@ -35,8 +35,9 @@
     (exec ;(ssh-cmds host
                      [:cd bp] [". ./prod/bin/activate"]
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
-                     [:mv "demiurge" rp]))
+                     [:mv "demiurge" rp]
+                     [:janet "bin/seed-tree.janet"]))
     (eprint "------------ Run demiurge")
     (exec ;(ssh-cmds host [:nohup (path/posix/join rp "/demiurge")
                            # ">" "/dev/null" "2>&1" "&"
-                          ]))))
+                           ]))))
