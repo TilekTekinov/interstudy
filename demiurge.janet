@@ -5,7 +5,8 @@
   [sha]
   (make-update
     (fn [_ {:view view :release-path rp}]
-      (def rsha (string (slurp (path/abspath (path/join rp "released.sha")))))
+      (def rshap (path/abspath (path/join rp "released.sha")))
+      (def rsha (if (os/stat rshap) (string (slurp rshap))))
       ((=> (>put :sha sha) (>put :release-sha rsha)) view))
     "save sha"))
 
@@ -25,16 +26,26 @@
    (fn [_ {:view view}] ((>put :releasing false) view))
    :watch [GitSHA]})
 
+(defn ^remove-peer
+  "Removes peer from spawned"
+  [peer]
+  (make-update
+    (fn [_ state]
+    (def {:view {:spawned spawned}} state)
+    (def ep (state peer))
+    (put state peer (string (ep :host) ":" (ep :port)))
+    (put spawned peer nil))))
+
 (defn ^stop-peer
   "Stops one peer"
   [peer]
-  (make-effect
-    (fn [_ state _]
-      (def {:view {:spawned spawned}} state)
-      (protect (:stop (state peer)))
-      (protect (os/proc-kill (spawned peer))))))
+  (make-event {:watch (^remove-peer peer)
+               :effect
+               (fn [_ state _]
+                 (def {:view {:spawned spawned}} state)
+                 (protect (:stop (state peer)))
+                 (protect (os/proc-kill (spawned peer))))}))
 
-# TODO seq
 (define-event StopPeers
   "Sends stop RPC to all peers"
   {:update (fn [_ {:view view}] (put view :ran false))
@@ -54,14 +65,13 @@
 (define-event RunPeers
   "Runs peers event"
   {:update
-   (fn [_ {:view view}]
-     (put view :ran (os/clock)))
+   (fn [_ {:view view}] (put view :ran (os/clock)))
    :watch
    (fn [_ {:dry dry :peers peers :release-path rp} _]
      (if-not dry
-       (seq [peer :in peers]
-         (^save-spawned
-           peer (os/spawn [(path/join rp (executable peer))])))))})
+       (seq [peer :in peers :let [ep (path/join rp (executable peer))]
+             :when (os/stat ep)]
+         (^save-spawned peer (os/spawn [ep])))))})
 
 (define-effect ReleaseSHA
   "Writes the current SHA to file"
@@ -72,7 +82,7 @@
   "Deploys one peer"
   [peer]
   (make-event
-    {:watch (log "Deploying peer " peer)
+    {:watch (log "Deployed peer " peer)
      :effect (fn [_ {:build-path bp :release-path rp} _]
                (def ep (executable peer))
                (copy-file
@@ -82,8 +92,10 @@
 (define-watch Deploy
   "Deploys peers"
   [_ {:peers peers} _]
-  [;(seq [peer :in peers]
-      [(^stop-peer peer) (^deploy-peer peer)]) ReleaseSHA])
+  [;(flatten
+      (seq [peer :in peers]
+        [(^stop-peer peer) (^deploy-peer peer)]))
+   ReleaseSHA])
 
 (define-event Build
   "Builds peers"
@@ -103,7 +115,7 @@
      :watch
      (fn [_ {:release-path rp :dry dry :peers peers :view {:sha sha :release-sha rsha}} _]
        (if (= sha rsha)
-         (log "Latest version is already released")
+         [(log "Latest version is already released") Released]
          [(log "Starting new release")
           GitPull
           ;(if dry
