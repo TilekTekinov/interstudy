@@ -105,8 +105,10 @@
   {:effect
    (fn [_ {:view {:sha sha} :build-path bp} _]
      (def jp (script "janet-pm"))
-     (os/setenv "JANET_PATH" (path/join bp "prod"))
-     (os/setenv "PATH" (path/join bp "prod" "bin"))
+     (def jpa (path/join bp "prod"))
+     (os/setenv "JANET_PATH" jpa)
+     (os/setenv "PATH" (string (path/join jpa "bin") ":"
+                               (os/getenv "PATH")))
      ($ ,jp "clean")
      ($ ,jp "build"))})
 
