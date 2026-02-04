@@ -9,4 +9,4 @@
   [_ cmd]
   (def client (rpc/client ;(server/host-port (conf :rpc))
                           :client (conf :psk)))
-  (pp (cmd client)))
+  (pp ((keyword cmd) client)))

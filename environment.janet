@@ -169,6 +169,7 @@
 (defn ^connect-peers
   "Connects to the tree"
   [succ &opt fail]
+  (default fail succ)
   (make-event
     {:update
      (fn [_ state]
@@ -184,46 +185,19 @@
      (fn [_ state _]
        (producer
          (def {:peers peers} state)
-         (def res (array/new (length peers)))
+         (var failed false)
          (each peer peers
            (var tries 0)
-           (while (not ((protect (:open (state peer))) 0))
-             (if (< tries 10)
-               (++ tries)
-               (do
-                 (array/push res (log "Cannot connect to " peer "."))
-                 (if fail (array/push res fail))
-                 (break)))
-             (ev/sleep (* tries 0.1)))
-           (array/push res (log "Connected to " peer)))
-         (produce ;res succ)))}
+           (while
+             (match [(protect (:open (state peer))) tries]
+               [[true _] _] (produce (log "Connected to " peer))
+               [[false _] 10] (do
+                                (set failed true)
+                                (produce (log "Cannot connect to " peer ".")))
+               true)
+             (ev/sleep (* (++ tries) 0.1))))
+         (if failed (produce fail) (produce succ))))}
     "connect peers"))
-
-(defn ^reconnect-peers
-  "Connects to the tree"
-  [& succ]
-  (make-watch
-    (fn [_ state _]
-      (producer
-        (def {:peers peers} state)
-        (def res (array/new (length peers)))
-        (each peer peers
-          (var tries 0)
-          (while (not ((protect (:open (state peer))) 0))
-            (if (< tries 10)
-              (++ tries)
-              (do
-                (array/push res
-                            (log "Cannot connect to " peer ". Exiting.") Stop)
-                (break)))
-            (ev/sleep (* tries 0.1)))
-          (array/push res (log "Connected to " peer)))
-        (produce ;res ;succ)))))
-
-(defn ^delay
-  "Delay the `event` for `s` time"
-  [s event]
-  (make-watch (producer (ev/sleep s) (produce event)) "delay"))
 
 # Test helpers
 (defmacro init-test

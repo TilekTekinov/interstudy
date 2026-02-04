@@ -219,6 +219,6 @@
   [_]
   (-> initial-state
       (make-manager on-error)
-      (:transact (^connect-peers Start Stop))
+      (:transact (^connect-peers Start Exit))
       :await)
   (os/exit 0))

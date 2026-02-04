@@ -5,3 +5,4 @@ dev
 _build
 *.obj
 .vcvars.jdn
+_release
