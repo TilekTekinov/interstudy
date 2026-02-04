@@ -103,11 +103,10 @@
 (define-event Build
   "Builds peers"
   {:effect
-   (fn [_ {:view {:sha sha}} _]
+   (fn [_ {:view {:sha sha} :build-path bp} _]
      (def jp (script "janet-pm"))
-     (def ap "./prod/bin/activate")
-     ($ ls -la ,ap)
-     ($ . ,ap)
+     (os/setenv "JANET_PATH" (path/join bp "prod"))
+     (os/setenv "PATH" (path/join bp "prod" "bin"))
      ($ ,jp "clean")
      ($ ,jp "build"))})
 
