@@ -93,7 +93,8 @@
                (protect (os/rm target))
                (copy-file
                  (path/abspath (path/join bp "_build/release/" ep))
-                 target))}))
+                 target)
+               (os/chmod target 8r700))}))
 
 (define-watch Deploy
   "Deploys peers"
@@ -103,12 +104,8 @@
 (define-event Build
   "Builds peers"
   {:effect
-   (fn [_ {:view {:sha sha} :build-path bp} _]
+   (fn [_ {:view {:sha sha}} _]
      (def jp (script "janet-pm"))
-     (def jpa (path/join bp "prod"))
-     (os/setenv "JANET_PATH" jpa)
-     (os/setenv "PATH" (string (path/join jpa "bin") ":"
-                               (os/getenv "PATH")))
      ($ ,jp "clean")
      ($ ,jp "build"))})
 
@@ -135,6 +132,10 @@
   "Prepares view"
   {:update (fn [_ state] (put state :view @{:spawned @{}}))
    :effect (fn [_ {:view view :build-path bp} _]
+             (def jpa (path/join bp "prod"))
+             (os/setenv "JANET_PATH" jpa)
+             (os/setenv "PATH" (string (path/join jpa "bin") ":"
+                                       (os/getenv "PATH")))
              (os/cd bp)
              (setdyn :view view))})
 
