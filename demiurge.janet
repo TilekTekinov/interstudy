@@ -105,7 +105,7 @@
   {:effect
    (fn [_ {:view {:sha sha}} _]
      (def jp (script "janet-pm"))
-     (protect ($<_ . ./dev/bin/activate))
+     ($ . ./dev/bin/activate)
      ($ ,jp "clean")
      ($ ,jp "build"))})
 
