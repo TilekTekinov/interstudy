@@ -315,7 +315,8 @@
 
 (def rpc-funcs
   "RPC functions"
-  @{:refresh (fn [_ & what] (produce (^refresh-view ;what)) :ok)})
+  @{:refresh (fn [_ & what] (produce (^refresh-view ;what)) :ok)
+    :stop close-peers-stop})
 
 (def initial-state
   "Initial state"

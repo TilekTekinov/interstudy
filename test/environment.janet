@@ -16,6 +16,7 @@
                  :data-path "./"
                  :debug true
                  :dry true
+                 :env "dev"
                  :host "test.localhost"
                  :http "localhost:8778"
                  :log false
@@ -36,6 +37,7 @@
                  :data-path "./"
                  :debug true
                  :dry true
+                 :env "dev"
                  :host "test.localhost"
                  :log false
                  :name "demiurge"

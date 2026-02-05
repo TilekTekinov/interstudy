@@ -199,6 +199,20 @@
          (if failed (produce fail) (produce succ))))}
     "connect peers"))
 
+(define-watch ClosePeers
+  "Closes all connections to peers"
+  [_ state _]
+  (def {:peers peers} state)
+  (each peer peers (:close (state peer))))
+
+(defn close-peers-stop
+  "RPC function that closes peers and stops the server"
+  [&]
+  (produce ClosePeers
+           (log "tree RPC server going down")
+           (^delay 0.001 Stop))
+  :ok)
+
 # Test helpers
 (defmacro init-test
   "Initializes test defs and store"

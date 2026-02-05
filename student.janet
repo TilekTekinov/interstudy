@@ -199,7 +199,8 @@
         :courses
         (produce (^refresh-view :active-courses :courses))
         (produce (^refresh-view what)))
-      :ok)})
+      :ok)
+    :stop close-peers-stop})
 
 (def initial-state
   "Initial state"

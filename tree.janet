@@ -114,7 +114,8 @@
       :save-enrollment
       (fn [rpc key enrollment]
         (produce (^save-enrollment key enrollment))
-        :ok)}
+        :ok)
+      :stop close-peers-stop}
     (tabseq [coll :in (array/concat @[:active-courses :courses]
                                     collections/leafs collections/fruits)]
       coll (fn [rpc] (define :view) (view coll)))))
