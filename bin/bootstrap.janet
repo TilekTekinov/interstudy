@@ -36,7 +36,7 @@
                      [:cd bp] [". ./prod/bin/activate"]
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
                      [:mv "demiurge" rp]
-                     [:janet "bin/seed-tree.janet"]))
+                     [:janet "bin/seed-tree.janet" "t"]))
     (eprint "------------ Run demiurge")
     (exec ;(ssh-cmds host [:nohup (path/posix/join rp "/demiurge")
                            ">" "/dev/null" "2>&1" "&"]))))

@@ -224,14 +224,15 @@
        [:th "Home University"] [:th "Faculty"]
        [:th "Registered"] [:th "Enrollment"]]]
      [:tbody
-      (seq [[emhash registration] :pairs registrations]
+      (seq [registration :in registrations
+            :let [emhash (hash (registration :email))]]
         (<registration/> emhash registration (enrollments emhash)))]]]])
 
 (defh /registrations
   "Registrations SSE stream"
   []
   (ds/hg-stream
-    (<registrations-list/> (view :registrations) (view :enrollments))))
+    (<registrations-list/> (values (view :registrations)) (view :enrollments))))
 
 (defh /registrations/search
   "Search registrations handler"
@@ -242,8 +243,7 @@
         (>if (always (present? search))
              (=> pairs
                  (>map (=> last (enrich-fuzzy search :email :fullname)))
-                 =>filter-sort-score
-                 (>map |(table (hash ($ :email)) $)) (>merge)))))
+                 =>filter-sort-score))))
   (ds/hg-stream
     (<registrations-list/> (=>search view) (view :enrollments) true)))
 

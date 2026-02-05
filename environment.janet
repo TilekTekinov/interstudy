@@ -47,7 +47,7 @@
   "Navigation that filters score and sorts it"
   (=> (>Y (=> :score (?gt math/-inf)))
       (>if (??? {length (?lt 11)})
-           (=> (>sort-by :score) reverse))))
+           (=> (>sort-by (=> :score)) reverse))))
 
 (def <:= ">collect-into alias" >collect-into)
 
