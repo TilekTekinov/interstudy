@@ -4,6 +4,7 @@
   :build-path "/srv/src/insterstudy"
   :release-path "/srv/exe/insterstudy"
   :data-path "/srv/data/interstudy"
+  :env "prod"
   :debug true
   :log true}
  :symbionts

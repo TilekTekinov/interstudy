@@ -4,6 +4,7 @@
   :build-path "./"
   :release-path "./test/_release"
   :data-path "./"
+  :env "dev"
   :debug true
   :log false
   :dry true}

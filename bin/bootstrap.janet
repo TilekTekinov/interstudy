@@ -3,7 +3,8 @@
 (defn main
   "Script that bootstraps demiurge on the server"
   [&]
-  (let [{:host host :build-path bp :data-path dp :release-path rp}
+  (let [{:host host :env env
+         :build-path bp :data-path dp :release-path rp}
         (get compile-config :deploy)
         rbp (path/posix/join "/" ;(butlast (path/parts bp)))
         sbp (path/posix/join rbp "spork")
@@ -24,7 +25,7 @@
     (exec
       ;(ssh-cmds host
                  [:cd bp]
-                 ["/usr/local/lib/janet/bin/janet-pm" :full-env :prod]
+                 ["/usr/local/lib/janet/bin/janet-pm" :full-env env]
                  [". ./prod/bin/activate"]
                  [:janet "--install" sbp]
                  [:janet-pm :install "jhydro"]

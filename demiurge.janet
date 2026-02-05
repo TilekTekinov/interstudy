@@ -51,7 +51,7 @@
        (def pc (state peer))
        (protect (:stop pc)
                 (:close pc)
-                (os/proc-kill (spawned peer))))}))
+                (os/proc-wait (spawned peer))))}))
 
 (define-event StopPeers
   "Sends stop RPC to all peers"
@@ -124,19 +124,33 @@
           ;(if dry
              [(log "Build dry run") (^delay 0.001 Released)]
              [GetGitSHA StopPeers Build Deploy
-              SetReleasedSHA Released RunPeers])
+              SetReleasedSHA Released RunPeers
+              (^connect-peers (log "Demiurg is ready"))])
           (log "Release finished")]))}
     "release"))
+
+(define-spy ReleaseOnSHA
+  "Spy that snoops sha and start the release on setting it"
+  [&]
+  (make-snoop
+    @{:snoop
+      (fn [_ {:view view} spys]
+        (when (view :sha)
+          (array/clear spys)
+          (^release (os/clock))))}
+    "release on sha"))
 
 (define-event PrepareView
   "Prepares view"
   {:update (fn [_ state] (put state :view @{:spawned @{}}))
-   :effect (fn [_ {:view view :build-path bp} _]
-             (def jpa (path/join bp "prod"))
-             (os/setenv "JANET_PATH" jpa)
-             (os/setenv "PATH" (string (path/join jpa "bin") ":"
-                                       (os/getenv "PATH")))
+   :effect (fn [_ {:view view :build-path bp :env env} _]
              (os/cd bp)
+             (def jpa (path/abspath (path/join bp env)))
+             (os/setenv "JANET_PATH" jpa)
+             (os/setenv "PATH"
+                        (string (path/join jpa "bin")
+                                (if (= (os/which) :windows) ";" ":")
+                                (os/getenv "PATH")))
              (setdyn :view view))})
 
 (def rpc-funcs
@@ -185,10 +199,6 @@
   ((=> (=>symbiont-initial-state :demiurge)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
-(define-watch Start
-  "Tries to release and presents demiurge"
-  [&] [(^release (os/clock)) (log "Demiurge is ready")])
-
 (defn main
   ```
   Main entry into demiurge.
@@ -197,7 +207,7 @@
   (->
     initial-state
     (make-manager on-error)
-    (:transact RPC GetGitSHA PrepareView RunPeers)
-    (:transact (^connect-peers Start))
+    (:transact RPC GetGitSHA PrepareView RunPeers ReleaseOnSHA)
+    (:transact (^connect-peers (log "Demiurge is ready")))
     :await)
   (os/exit 0))
