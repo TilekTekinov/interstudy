@@ -194,6 +194,52 @@
           (do
             (produce RunPeers (^connect-peers (log "Demiurg is ready"))) :ok)))}))
 
+(define-effect Bootstrap
+  "Event that bootstraps the remote site"
+  [_ {:host host :env env
+      :build-path bp :data-path dp :release-path rp} _]
+  (let [rbp (path/posix/join "/" ;(butlast (path/parts bp)))
+        sbp (path/posix/join rbp "spork")
+        url ($<_ git remote get-url origin)
+        conf (os/getenv "CONF" "conf.jdn")
+        cdbp [:cd bp]
+        activate [". ./prod/bin/activate"]]
+    (eprint "------------ Ensure paths")
+    (exec
+      ;(ssh-cmds host
+                 [:rm "-rf" bp] [:rm "-rf" sbp]
+                 [:mkdir :-p rbp] [:mkdir :-p rp] [:mkdir :-p dp]))
+    (eprint "------------ Ensure repositories")
+    (exec
+      ;(ssh-cmds host
+                 [:git :clone "--depth=1" url bp]
+                 [:git :clone "--depth=1"
+                  "https://github.com/janet-lang/spork" sbp]))
+    (eprint "------------ Ensure environment")
+    (exec
+      ;(ssh-cmds host
+                 cdbp
+                 ["/usr/local/lib/janet/bin/janet-pm" :full-env env]
+                 activate
+                 [:janet "--install" sbp]
+                 [:janet-pm :install "jhydro"]
+                 [:janet-pm :install "https://git.sr.ht/~pepe/gp"]))
+    (eprint "------------ Upload configuration")
+    (exec "scp" conf (string host ":" bp "/conf.jdn"))
+    (eprint "------------ Quickbin demiurge")
+    (exec ;(ssh-cmds host
+                     cdbp activate
+                     [:janet-pm :quickbin "demiurge.janet" "demiurge"]
+                     [:mv "demiurge" rp]))
+    (eprint "---------- Seed the Tree")
+    (exec ;(ssh-cmds host cdbp activate
+                     [:janet "bin/seed-tree.janet" "t"]))
+    (eprint "------------ Run demiurge")
+    (exec ;(ssh-cmds host cdbp
+                     (shlc
+                       "nohup"
+                       (sh/escape (path/posix/join rp "demiurge"))
+                       "> /dev/null 2>&1 &")))))
 (def initial-state
   "Navigation to initial state in config"
   ((=> (=>symbiont-initial-state :demiurge)
@@ -203,11 +249,15 @@
   ```
   Main entry into demiurge.
   ```
-  [_]
+  [_ &opt bootstrap]
+  (def events
+    (if bootstrap
+      [Bootstrap]
+      [RPC GetGitSHA PrepareView RunPeers ReleaseOnSHA
+       (^connect-peers (log "Demiurge is ready"))]))
   (->
     initial-state
     (make-manager on-error)
-    (:transact RPC GetGitSHA PrepareView RunPeers ReleaseOnSHA)
-    (:transact (^connect-peers (log "Demiurge is ready")))
+    (:transact ;events)
     :await)
   (os/exit 0))
