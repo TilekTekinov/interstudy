@@ -105,9 +105,8 @@
   "Builds peers"
   {:effect
    (fn [_ {:view {:sha sha}} _]
-     (def jp (script "janet-pm"))
-     ($ ,jp "clean")
-     ($ ,jp "build"))})
+     ($ janet-pm "clean")
+     ($ janet-pm "build"))})
 
 (defn ^release
   "Event that releases the new version of the thicket."
