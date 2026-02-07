@@ -236,7 +236,6 @@
 (def initial-state
   "Initial state"
   ((=> (=>symbiont-initial-state :admin)
-       >trace-base
        (>put :routes routes)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
 

@@ -8,9 +8,6 @@
       ((>put :sha sha) view))
     "save sha"))
 
-
-# (def rshap (path/abspath (path/join rp "released.sha")))
-# (def rsha (if (os/stat rshap) (string (slurp rshap))))
 (define-effect SetReleasedSHA
   "Writes the current SHA to file"
   [_ {:view {:sha sha} :release-path rp} _]
@@ -75,12 +72,16 @@
   {:update
    (fn [_ {:view view}] (put view :ran (os/clock)))
    :watch
-   (fn [_ {:dry dry :peers peers :release-path rp} _]
-     (if-not dry
-       (seq [peer :in peers
-             :let [ep (path/join rp (executable peer))]
-             :when (os/stat ep)]
-         (^save-spawned peer (os/spawn [ep])))))})
+   (fn [_ {:dry dry :peers peers :release-path rp
+           :builder builder :entries entries} _]
+     (unless dry
+       (defn spawn [peer]
+         (os/spawn
+           ;(if builder
+              [[(path/join rp (executable peer))]]
+              [["janet" "-d" (entries peer)] :p])))
+       (seq [peer :in peers]
+         (^save-spawned peer (spawn peer)))))})
 
 (defn ^deploy-peer
   "Deploys one peer"
@@ -133,15 +134,31 @@
   [&]
   (make-snoop
     @{:snoop
-      (fn [_ {:view view} spys]
-        (when (view :sha)
-          (array/clear spys)
-          (^release (os/clock))))}
+      (fn [_ {:view view :builder builder} spys]
+        (cond
+          (not builder) (array/clear spys)
+          (view :sha)
+          (do
+            (array/clear spys)
+            (^release (os/clock)))))}
     "release on sha"))
+
+(defn ^save-entries
+  "Saves code entries for peers"
+  [entries]
+  (make-update
+    (fn [_ state]
+      (put state :entries entries))))
 
 (define-event PrepareView
   "Prepares view"
   {:update (fn [_ state] (put state :view @{:spawned @{}}))
+   :watch (fn [_ {:builder builder} _]
+            (unless builder
+              (^save-entries ((=> (>Y (??? {first (?eq 'declare-executable)}))
+                                  (>map |(slice $ 1 -1))
+                                  |(tabseq [[_ n _ e] :in $] (keyword n) e))
+                               (parse-all (slurp "bundle/init.janet"))))))
    :effect (fn [_ {:view view :build-path bp :env env} _]
              (os/cd bp)
              (def jpa (path/abspath (path/join bp env)))
@@ -256,7 +273,7 @@
   (def events
     (if bootstrap
       [Bootstrap]
-      [RPC GetGitSHA PrepareView RunPeers ReleaseOnSHA
+      [RPC GetGitSHA PrepareView ReleaseOnSHA
        (^connect-peers (log "Demiurge is ready"))]))
   (->
     initial-state

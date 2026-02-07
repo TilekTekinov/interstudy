@@ -9,9 +9,8 @@
   :log false
   :dry true}
  :symbionts
- {:demiurge {}
-  :tree
-  {:image "test/tree"}
+ {:demiurge {:builder false}
+  :tree {:image "test/tree"}
   :student {}
   :admin {}
   :viewer {}}

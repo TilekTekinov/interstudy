@@ -8,9 +8,8 @@
   :debug true
   :log true}
  :symbionts
- {:demiurge {}
-  :tree
-  {:image "data/tree"}
+ {:demiurge {:builder false}
+  :tree {:image "data/tree"}
   :student {}
   :admin {}
   :viewer {}}
@@ -38,7 +37,7 @@
    {:rpc "test.localhost:4443"}
    :student
    {:http "localhost:7777"
-    :address "localhost:7777"
+    :address "test.localhost:7777"
     :cookie-host "localhost"
     :static true
     :public "public"}
