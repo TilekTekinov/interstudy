@@ -125,7 +125,7 @@
              [(log "Build dry run") (^delay 0.001 Released)]
              [GetGitSHA StopPeers Build Deploy
               SetReleasedSHA Released RunPeers
-              (^connect-peers (log "Demiurg is ready"))])
+              (^connect-peers (log "Demiurge is ready"))])
           (log "Release finished")]))}
     "release"))
 
@@ -192,7 +192,7 @@
         (if-let [ts (view :ran)]
           [:running ts]
           (do
-            (produce RunPeers (^connect-peers (log "Demiurg is ready"))) :ok)))}))
+            (produce RunPeers (^connect-peers (log "Demiurge is ready"))) :ok)))}))
 
 (define-effect Bootstrap
   "Event that bootstraps the remote site"

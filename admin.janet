@@ -54,6 +54,7 @@
 (defn <courses-list/>
   "Contructs htmlgen representation of all `courses`"
   [courses &opt open]
+  (def filter-change (string "$search = ''; " (ds/get "/courses/filter/")))
   [:div {:id "courses"
          :data-bind init-ds}
    [:details (if open {:open true})
@@ -70,16 +71,16 @@
      "Filter: "
      [:label "Only active "
       (ds/input :active :type :checkbox
-                :data-on:change (ds/get "/courses/filter/"))]
+                :data-on:change filter-change)]
      [:label "Only enrolled "
       (ds/input :enrolled :type :checkbox
-                :data-on:change (ds/get "/courses/filter/"))]
+                :data-on:change filter-change)]
      [:label "Only Winter semester "
       (ds/input :semester :type :checkbox :value "Winter"
-                :data-on:change (ds/get "/courses/filter/"))]
+                :data-on:change filter-change)]
      [:label "Only Summer semester "
       (ds/input :semester :type :checkbox :value "Summer"
-                :data-on:change (ds/get "/courses/filter/"))]]
+                :data-on:change filter-change)]]
     [:table
      [:thead
       [:tr [:th "code"] [:th {:class :name} "name"] [:th "credits"]
