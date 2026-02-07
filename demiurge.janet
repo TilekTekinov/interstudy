@@ -198,16 +198,14 @@
   "Event that bootstraps the remote site"
   [_ {:host host :env env
       :build-path bp :data-path dp :release-path rp} _]
-  (let [rbp (path/posix/join "/" ;(butlast (path/parts bp)))
+  (let [url ($<_ git remote get-url origin)
+        rbp (path/posix/join "/" ;(butlast (path/parts bp)))
         sbp (path/posix/join rbp "spork")
-        url ($<_ git remote get-url origin)
-        conf (os/getenv "CONF" "conf.jdn")
-        cdbp [:cd bp]
-        activate [". ./prod/bin/activate"]]
+        conf (os/getenv "CONF" "conf.jdn")]
     (eprint "------------ Ensure paths")
     (exec
       ;(ssh-cmds host
-                 [:rm "-rf" bp] [:rm "-rf" sbp]
+                 [:rm "-rf" bp] [:rm "-rf" rp] [:rm "-rf" sbp]
                  [:mkdir :-p rbp] [:mkdir :-p rp] [:mkdir :-p dp]))
     (eprint "------------ Ensure repositories")
     (exec
@@ -218,9 +216,9 @@
     (eprint "------------ Ensure environment")
     (exec
       ;(ssh-cmds host
-                 cdbp
+                 [:cd bp]
                  ["/usr/local/lib/janet/bin/janet-pm" :full-env env]
-                 activate
+                 [". ./prod/bin/activate"]
                  [:janet "--install" sbp]
                  [:janet-pm :install "jhydro"]
                  [:janet-pm :install "https://git.sr.ht/~pepe/gp"]))
@@ -228,18 +226,17 @@
     (exec "scp" conf (string host ":" bp "/conf.jdn"))
     (eprint "------------ Quickbin demiurge")
     (exec ;(ssh-cmds host
-                     cdbp activate
+                     [:cd bp] [". ./prod/bin/activate"]
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
                      [:mv "demiurge" rp]))
     (eprint "---------- Seed the Tree")
-    (exec ;(ssh-cmds host cdbp activate
+    (exec ;(ssh-cmds host [:cd bp] [". ./prod/bin/activate"]
                      [:janet "bin/seed-tree.janet" "t"]))
     (eprint "------------ Run demiurge")
-    (exec ;(ssh-cmds host cdbp
-                     (shlc
-                       "nohup"
-                       (sh/escape (path/posix/join rp "demiurge"))
-                       "> /dev/null 2>&1 &")))))
+    (exec ;(ssh-cmds host
+                     [:nohup (path/posix/join rp "/demiurge")
+                      "> /dev/null 2>&1 &"]))))
+
 (def initial-state
   "Navigation to initial state in config"
   ((=> (=>symbiont-initial-state :demiurge)
