@@ -12,7 +12,11 @@
 
 (declare-executable
   :name "admin"
-  :entry "admin.janet")
+  :entry "admin/init.janet")
+
+(declare-executable
+  :name "viewer"
+  :entry "admin/viewer.janet")
 
 (defn check
   [&]

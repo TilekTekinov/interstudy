@@ -1,35 +1,10 @@
-(use /environment /schema)
-(import gp/data/fuzzy)
-(import /templates/app)
-(import /templates/admin)
-
+(use ./environment /schema)
 (setdyn *handler-defines* [:view])
 
 (def collections/view
   "View collections"
   [:faculties :semesters :active-semester :courses
    :registrations :enrollments])
-
-(define-event PrepareView
-  "Initializes view and puts it in the dyn"
-  {:update
-   (fn [_ state]
-     (def {:tree tree} state)
-     (put state :view
-          (tabseq [coll :in collections/view]
-            coll (coll tree))))
-   :effect (fn [_ {:view view :student student} _]
-             (setdyn :view view)
-             (setdyn :student student))})
-
-(def admin-page
-  "Admin captured"
-  (admin/capture))
-
-(defh /index
-  "Index page"
-  [appcap]
-  ["Admin" admin-page])
 
 (defn <course/>
   "Contructs htmlgen representation of one `course`"
@@ -189,65 +164,6 @@
   (produce Deactivate)
   (ds/hg-stream (<semesters-list/> false (view :semesters) true)))
 
-(defn <registration/>
-  "Contructs htmlgen representation of one `registration`"
-  [emhash
-   {:fullname fn :email em :home-university hu :faculty fa :timestamp ts}
-   enrollment]
-  (define :student)
-  (def {:courses ecs :timestamp ets :credits ecr} (or enrollment {}))
-  [:tr {:id emhash}
-   [:td fn] [:td em] [:td hu] [:td fa]
-   [:td [:small (if ts (dt/format-date-time ts))]]
-   [:td {:class "f-coll"}
-    (if ets
-      [:small
-       [:div (dt/format-date-time ets) " "]
-       [:div (length ecs) " for " ecr " credits"]])
-    [:a {:href (string student "/enroll/" (hash em))
-         :target "_blank"} "Enroll link"]]])
-
-(defn <registrations-list/>
-  "Contructs htmlgen representation of all `registrations`"
-  [registrations enrollments &opt open]
-  [:div {:id "registrations"}
-   [:details (if open {:open true})
-    [:summary
-     "Registrations (" (length registrations) ")"]
-    [:div {:class "margin-block"}
-     (ds/input
-       :search :type :search :size 50
-       :placeholder "Search in email and fullname"
-       :data-on:input__debounce.200ms (ds/post "/registrations/search"))]
-    [:table
-     [:thead
-      [:tr [:th "Fullname"] [:th "Email"]
-       [:th "Home University"] [:th "Faculty"]
-       [:th "Registered"] [:th "Enrollment"]]]
-     [:tbody
-      (seq [registration :in registrations
-            :let [emhash (hash (registration :email))]]
-        (<registration/> emhash registration (enrollments emhash)))]]]])
-
-(defh /registrations
-  "Registrations SSE stream"
-  []
-  (ds/hg-stream
-    (<registrations-list/> (values (view :registrations)) (view :enrollments))))
-
-(defh /registrations/search
-  "Search registrations handler"
-  [http/keywordize-body http/json->body]
-  (def search (body :search))
-  (def =>search
-    (=> :registrations
-        (>if (always (present? search))
-             (=> pairs
-                 (>map (=> last (enrich-fuzzy search :email :fullname)))
-                 =>filter-sort-score))))
-  (ds/hg-stream
-    (<registrations-list/> (=>search view) (view :enrollments) true)))
-
 (def?! filterable (?one-of "semester" "active" "enrolled"))
 
 (defh /filter
@@ -299,10 +215,8 @@
 
 (def routes
   "HTTP routes"
-  @{"/" /index
+  @{"/" (make/index "Admin")
     "/registrations" @{"" /registrations
-                       "/activate/:registration" /activate
-                       "/deactivate" /deactivate
                        "/search" /registrations/search}
     "/semesters" @{"" /semesters
                    "/activate/:semester" /activate
@@ -322,13 +236,14 @@
 (def initial-state
   "Initial state"
   ((=> (=>symbiont-initial-state :admin)
+       >trace-base
        (>put :routes routes)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
 (define-watch Start
   "Starts the machinery"
   [&]
-  [PrepareView HTTP RPC])
+  [(^prepare-view collections/view) HTTP RPC])
 
 (defn main
   ```

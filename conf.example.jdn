@@ -12,33 +12,44 @@
   :tree
   {:image "data/tree"}
   :student {}
-  :admin {}}
+  :admin {}
+  :viewer {}}
  :mycelium
  {:psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
   :nodes
   {:demiurge
    {:rpc "localhost:4443"
-    :peers [:tree :student :admin]}
+    :peers [:tree :student :admin :viewer]}
    :tree
    {:rpc "localhost:4444"
-    :peers [:student :admin]}
+    :peers [:student :admin :viewer]}
    :student
    {:rpc "localhost:4445"
     :peers [:tree]}
    :admin
    {:rpc "localhost:4446"
+    :peers [:tree]}
+   :viewer
+   {:rpc "localhost:4447"
     :peers [:tree]}}}
  :membranes
  {:nodes
   {:demiurge
-   {:rpc "localhost:4443"}
+   {:rpc "test.localhost:4443"}
    :student
    {:http "localhost:7777"
+    :address "localhost:7777"
     :cookie-host "localhost"
     :static true
     :public "public"}
    :admin
    {:http "localhost:7778"
+    :cookie-host "localhost"
+    :static true
+    :public "public"
+    :neighbors [:student]}
+   :viewer
+   {:http "localhost:7779"
     :cookie-host "localhost"
     :static true
     :public "public"

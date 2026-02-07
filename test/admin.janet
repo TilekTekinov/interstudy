@@ -10,7 +10,7 @@
 (init-test :tree)
 (load-dump "test/seed.jdn")
 (def tree-server (os/spawn ["janet" "tree.janet"] :p))
-(ev/sleep 0.1) # Settle the server
+(ev/sleep 0.1) # Settle the tree
 (def tree-client
   (client ;(server/host-port rpc-url) :test psk))
 (:save-registration tree-client (hash "josef@pospisil.work")
@@ -34,9 +34,9 @@
   (assert (success? resp))
   (assert
     ((success-has? `<h1>Interstudy - Admin` `Collections`
-                   `/semesters` `Semesters`
-                   `/registrations` `Registrations`
-                   `/courses` `Courses`) resp)))
+                   `/semesters`
+                   `/registrations`
+                   `/courses`) resp)))
 (end-suite)
 
 (start-suite :sse)

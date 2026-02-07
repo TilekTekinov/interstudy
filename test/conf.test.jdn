@@ -13,23 +13,27 @@
   :tree
   {:image "test/tree"}
   :student {}
-  :admin {}}
+  :admin {}
+  :viewer {}}
  :mycelium
  {:psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
   :nodes
   {:demiurge
    {:rpc "localhost:5443"
-    :peers [] # :tree :student :admin
+    :peers [] # TODO [:tree :student :admin :viewer]
     }
    :tree
    {:rpc "localhost:5444"
-    :peers [] # later [:student :admin]
+    :peers [] # TOHO [:student :admin]
     }
    :student
    {:rpc "localhost:5445"
     :peers [:tree]}
    :admin
    {:rpc "localhost:5446"
+    :peers [:tree]}
+   :viewer
+   {:rpc "localhost:5447"
     :peers [:tree]}}}
  :membranes
  {:nodes
@@ -44,6 +48,13 @@
    {:http "localhost:8778"
     :cookie-host "localhost"
     :address "http://test.localhost:8778"
+    :static true
+    :public "public"
+    :neighbors [:student]}
+   :viewer
+   {:http "localhost:8779"
+    :cookie-host "localhost"
+    :address "http://test.localhost:8779"
     :static true
     :public "public"
     :neighbors [:student]}}}}
