@@ -201,12 +201,13 @@
   (let [url ($<_ git remote get-url origin)
         rbp (path/posix/join "/" ;(butlast (path/parts bp)))
         sbp (path/posix/join rbp "spork")
-        conf (os/getenv "CONF" "conf.jdn")]
-    (eprint "------------ Ensure paths")
+        conf (string/format "%j" compile-config)]
+    (eprin "------------ Ensure paths")
     (exec
       ;(ssh-cmds host
                  [:rm "-rf" bp] [:rm "-rf" rp] [:rm "-rf" sbp]
                  [:mkdir :-p rbp] [:mkdir :-p rp] [:mkdir :-p dp]))
+    (eprint " done")
     (eprint "------------ Ensure repositories")
     (exec
       ;(ssh-cmds host
@@ -222,20 +223,26 @@
                  [:janet "--install" sbp]
                  [:janet-pm :install "jhydro"]
                  [:janet-pm :install "https://git.sr.ht/~pepe/gp"]))
-    (eprint "------------ Upload configuration")
-    (exec "scp" conf (string host ":" bp "/conf.jdn"))
+    (eprin "------------ Upload configuration")
+    (exec ;(ssh-cmds host
+                     [:cd bp]
+                     (shlc "cat <<'EOF' > conf.jdn" "\n" conf "\nEOF")))
+    (eprint " done")
     (eprint "------------ Quickbin demiurge")
     (exec ;(ssh-cmds host
                      [:cd bp] [". ./prod/bin/activate"]
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
                      [:mv "demiurge" rp]))
     (eprint "---------- Seed the Tree")
-    (exec ;(ssh-cmds host [:cd bp] [". ./prod/bin/activate"]
+    (exec ;(ssh-cmds host
+                     [:cd bp] [". ./prod/bin/activate"]
                      [:janet "bin/seed-tree.janet" "t"]))
     (eprint "------------ Run demiurge")
     (exec ;(ssh-cmds host
-                     [:nohup (path/posix/join rp "/demiurge")
-                      "> /dev/null 2>&1 &"]))))
+                     [:nohup
+                      (path/posix/join rp "/demiurge") ">>"
+                      (path/posix/join dp "/demiurge.log")
+                      "2>&1 &"]))))
 
 (def initial-state
   "Navigation to initial state in config"
