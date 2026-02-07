@@ -262,3 +262,8 @@
            "bundle" "test" "schema" "environment" "dev")
         (thru ".janet") -1)
      (* "templates" (thru ".temple") -1)))
+
+(defn shlc
+  "Joins `parts` and make sh -lc"
+  [& parts]
+  [:sh "-lc" (string/join parts " ")])
