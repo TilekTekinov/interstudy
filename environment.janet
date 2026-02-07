@@ -148,6 +148,7 @@
 
 # Utils
 (def ctx "Jhydro context" "interstu")
+(setdyn :ctx ctx)
 
 (defn hash
   "Returns hash item"

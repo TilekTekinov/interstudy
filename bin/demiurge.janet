@@ -20,6 +20,8 @@
   (filewatch/listen fw)
   (forever (def e (ev/take ch))
     (when-let [[fnm] (peg/match mp (e :file-name))]
-      (eprintf "File %s modified, restarting" fnm)
+      (eprintf "----------- File %s modified, restarting" fnm)
       (:stop-all client)
-      (:run-all client))))
+      (ev/sleep 0.1)
+      (:run-all client)
+      (ev/drain ch))))
