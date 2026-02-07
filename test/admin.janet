@@ -10,7 +10,7 @@
 (init-test :tree)
 (load-dump "test/seed.jdn")
 (def tree-server (os/spawn ["janet" "tree.janet"] :p))
-(ev/sleep 0.05) # Settle the server
+(ev/sleep 0.1) # Settle the server
 (def tree-client
   (client ;(server/host-port rpc-url) :test psk))
 (:save-registration tree-client (hash "josef@pospisil.work")
