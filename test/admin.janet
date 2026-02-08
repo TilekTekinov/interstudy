@@ -130,9 +130,9 @@
                    `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
                    `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
       resp) "Registrations search succ content"))
-(let [resp (request "GET" (url `/registrations/filter/?datastar=%7B%22search%22%3A%22%22%2C%22enrolled%22%3Afalse%2C%22active%22%3Afalse%2C%22semester%22%3A%22%22%7D`))]
+(let [resp (request "GET" (url `/registrations/filter/?datastar=%7B%22search%22%3A%22%22%2C%22enrolled%22%3Atrue%2C%22active%22%3Afalse%2C%22semester%22%3A%22%22%7D`))]
   (assert (success? resp) "Enrolled filter succ")
-  (assert ((success-has? `<details open` `Josef`) resp) "Some active"))
+  (assert ((success-has? `<details open` `Josef`) resp) "No active"))
 (end-suite)
 
 (start-suite :rpc)

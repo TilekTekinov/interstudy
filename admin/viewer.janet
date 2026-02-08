@@ -8,7 +8,8 @@
   "HTTP routes"
   @{"/" (make/index "Viewer")
     "/registrations" @{"" /registrations
-                       "/search" /registrations/search}})
+                       "/search" /registrations/search
+                       "/filter/" /registrations/filter}})
 
 (def rpc-funcs
   "RPC functions"

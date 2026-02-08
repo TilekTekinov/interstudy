@@ -216,18 +216,21 @@
 (def routes
   "HTTP routes"
   @{"/" (make/index "Admin")
-    "/registrations" @{"" /registrations
-                       "/search" /registrations/search
-                       "/filter/" /registrations/filter}
-    "/semesters" @{"" /semesters
-                   "/activate/:semester" /semesters/activate
-                   "/deactivate" /semesters/deactivate}
-    "/courses" @{"" /courses
-                 "/edit/:code" /courses/edit
-                 "/save/:code" /courses/save
-                 "/filter/" /courses/filter
-                 "/enrolled/:code" /courses/enrolled
-                 "/search" /courses/search}})
+    "/registrations"
+    @{"" /registrations
+      "/search" /registrations/search
+      "/filter/" /registrations/filter}
+    "/semesters"
+    @{"" /semesters
+      "/activate/:semester" /semesters/activate
+      "/deactivate" /semesters/deactivate}
+    "/courses"
+    @{"" /courses
+      "/edit/:code" /courses/edit
+      "/save/:code" /courses/save
+      "/filter/" /courses/filter
+      "/enrolled/:code" /courses/enrolled
+      "/search" /courses/search}})
 
 (def rpc-funcs
   "RPC functions"
