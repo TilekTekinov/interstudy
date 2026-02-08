@@ -33,10 +33,14 @@
     [:a {:href (string student "/enroll/" (hash em))
          :target "_blank"} "Enroll link"]]])
 
+(def- init-ds (json/encode {:search "" :enrolled false}))
+
 (defn <registrations-list/>
   "Contructs htmlgen representation of all `registrations`"
   [registrations enrollments &opt open]
-  [:div {:id "registrations"}
+  (def filter-change (string "$search = ''; " (ds/get "/registrations/filter/")))
+  [:div {:id "registrations"
+         :data-bind init-ds}
    [:details (if open {:open true})
     [:summary
      "Registrations (" (length registrations) ")"]
@@ -45,6 +49,11 @@
        :search :type :search :size 50
        :placeholder "Search in email and fullname"
        :data-on:input__debounce.200ms (ds/post "/registrations/search"))]
+    [:div {:class "f-row margin-block"}
+     "Filter: "
+     [:label "Only enrolled "
+      (ds/input :enrolled :type :checkbox
+                :data-on:change filter-change)]]
     [:table
      [:thead
       [:tr [:th "Fullname"] [:th "Email"]
@@ -73,6 +82,27 @@
                  =>filter-sort-score))))
   (ds/hg-stream
     (<registrations-list/> (=>search view) (view :enrollments) true)))
+
+(def?! filterable (?one-of "enrolled"))
+
+(defh /registrations/filter
+  "Filtered registrations SSE stream"
+  [http/query-params]
+  (def c @[])
+  (def enrolled
+    ((=> :query-params "datastar"
+         (>if present? json/decode (always {})) "enrolled")
+      req))
+  (def registrations
+    (if enrolled
+      ((=> (<- c (=> :enrollments))
+      :registrations
+           |(tabseq [[emhash r] :pairs $ :when ((c 0) emhash)]
+              emhash r)) view)
+      (view :registrations)))
+  (ds/hg-stream
+    (<registrations-list/> registrations
+                           (view :enrollments) true)))
 
 (defn ^prepare-view
   "Initializes view and puts it in the dyn"

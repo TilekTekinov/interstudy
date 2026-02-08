@@ -104,7 +104,7 @@
                (:set-active-semester tree semester))
      :watch (^refresh-view :active-semester)}))
 
-(defh /activate
+(defh /semesters/activate
   "Semesters SSE stream"
   []
   (def semester (params :semester))
@@ -127,7 +127,7 @@
    [:td
     [:button {:data-on:click (ds/post "/courses/save" code)} "Save"]]])
 
-(defh /edit-course
+(defh /courses/edit
   "Edit course SSE stream"
   []
   (def code (params :code))
@@ -142,7 +142,7 @@
                (:save-course tree code course))
      :watch (^refresh-view :courses)}))
 
-(defh /save-course
+(defh /courses/save
   "Save course"
   [http/keywordize-body http/json->body]
   (def code (get params :code))
@@ -158,7 +158,7 @@
              (:set-active-semester tree false))
    :watch (^refresh-view :active-semester)})
 
-(defh /deactivate
+(defh /semesters/deactivate
   "Deactivation handler"
   []
   (produce Deactivate)
@@ -166,7 +166,7 @@
 
 (def?! filterable (?one-of "semester" "active" "enrolled"))
 
-(defh /filter
+(defh /courses/filter
   "Filtered courses SSE stream"
   [http/query-params]
   (def finders
@@ -190,7 +190,7 @@
      (seq [{:fullname fn :email em} :in enrolled]
        [:li fn " <" em ">"])]]])
 
-(defh /enrolled
+(defh /courses/enrolled
   "Enrolled students for a course detail"
   []
   (def code (params :code))
@@ -217,15 +217,16 @@
   "HTTP routes"
   @{"/" (make/index "Admin")
     "/registrations" @{"" /registrations
-                       "/search" /registrations/search}
+                       "/search" /registrations/search
+                       "/filter/" /registrations/filter}
     "/semesters" @{"" /semesters
-                   "/activate/:semester" /activate
-                   "/deactivate" /deactivate}
+                   "/activate/:semester" /semesters/activate
+                   "/deactivate" /semesters/deactivate}
     "/courses" @{"" /courses
-                 "/edit/:code" /edit-course
-                 "/save/:code" /save-course
-                 "/filter/" /filter
-                 "/enrolled/:code" /enrolled
+                 "/edit/:code" /courses/edit
+                 "/save/:code" /courses/save
+                 "/filter/" /courses/filter
+                 "/enrolled/:code" /courses/enrolled
                  "/search" /courses/search}})
 
 (def rpc-funcs
