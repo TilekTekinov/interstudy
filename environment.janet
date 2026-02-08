@@ -176,8 +176,9 @@
      (fn [_ state]
        (def {:psk psk :name name :peers peers} state)
        (each peer peers
-         (let [url (state peer)
-               [host port] (server/host-port url)]
+         (def url (state peer))
+         (unless (table? url)
+           (def [host port] (server/host-port url))
            (put state peer
                 (make rpc/Client
                       :host host :port port

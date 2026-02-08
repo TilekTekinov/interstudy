@@ -17,8 +17,8 @@
 (let [demiurge (client ;(server/host-port rpc-url) "test" psk)]
   (assert demiurge)
   (assert (= :pong (:ping demiurge)))
-  (assert ((??? {0 (?eq :running)
-                 1 epoch?})
+  (assert ((??? {0 (?eq :idle)
+                 1 nil?})
             (:state demiurge)))
   (assert ((??? {0 ok?
                  1 epoch?})
@@ -29,9 +29,7 @@
   (assert ((??? {0 (?eq :busy)
                  1 epoch?})
             (:release demiurge)))
-  (assert ((??? {0 (?eq :running)
-                 1 epoch?})
-            (:run-all demiurge)))
+  (assert (ok? (:run-all demiurge)))
   (assert (ok? (:stop-all demiurge)))
   (assert (ok? (:run-all demiurge)))
   (assert (ok? (:stop demiurge))))

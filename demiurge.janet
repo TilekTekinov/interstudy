@@ -15,9 +15,9 @@
 
 (define-watch GetGitSHA
   "Save in the state the latest shas of the repository"
-  [_ {:release-path rp} _]
+  [_ {:release-path rp :dry dry} _]
   (producer
-    ($< git pull)
+    (unless dry ($< git pull))
     (produce (^save-sha (string ($<_ git rev-parse HEAD))))))
 
 (define-event Released
@@ -134,7 +134,7 @@
   [&]
   (make-snoop
     @{:snoop
-      (fn [_ {:view view :builder builder} spys]
+      (fn [_ {:view view :builder builder} spys event]
         (cond
           (not builder) (array/clear spys)
           (view :sha)
@@ -273,7 +273,7 @@
   (def events
     (if bootstrap
       [Bootstrap]
-      [RPC GetGitSHA PrepareView ReleaseOnSHA
+      [RPC (log "hoho") GetGitSHA PrepareView ReleaseOnSHA
        (^connect-peers (log "Demiurge is ready"))]))
   (->
     initial-state

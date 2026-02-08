@@ -94,6 +94,7 @@
         "viewer config navigation")
 (assert (deep= ((=>symbiont-initial-state :demiurge) compile-config)
                @{:build-path "./"
+                 :builder false
                  :data-path "./"
                  :debug true
                  :dry true
