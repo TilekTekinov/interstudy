@@ -54,7 +54,7 @@
 (defn =>symbiont-initial-state
   "Navigation to extract `symbiont` congig from main config"
   [symbiont]
-  (let [c @[{:name (string symbiont)}]
+  (let [c @[{:name symbiont}]
         =>guards (=> :symbionts symbiont :guards)
         =>membrane (=> :membranes :nodes symbiont)
         =>neighbors (=> =>membrane :neighbors)
@@ -195,8 +195,35 @@
       (each coll colls
         (put view coll (coll tree))))))
 
+(defn ^connect-peer
+  "Connects to one peer"
+  [peer]
+  (make-event
+    {:update
+     (fn [_ state]
+       (def {:psk psk :name name} state)
+       (def url (state peer))
+       (when (string? url)
+         (def [host port] (server/host-port url))
+         (put state peer
+              (make rpc/Client
+                    :host host :port port
+                    :psk psk :name name))))
+     :watch
+     (fn [_ state _]
+       (producer
+         (var failed false)
+         (var tries 0)
+         (while
+           (match [(protect (:open (state peer))) tries]
+             [[true _] _] (produce (log "Connected to " peer))
+             [[false _] 10] (produce (log "Cannot connect to " peer "."))
+             true)
+           (ev/sleep (* (++ tries) 0.1)))))}
+    "connect peer"))
+
 (defn ^connect-peers
-  "Connects to the tree"
+  "Connects to all the peers"
   [succ &opt fail]
   (default fail succ)
   (make-event
@@ -228,6 +255,13 @@
              (ev/sleep (* (++ tries) 0.1))))
          (if failed (produce fail) (produce succ))))}
     "connect peers"))
+
+(defn ^register
+  "Registers for refresh"
+  [peer]
+  (make-watch
+    (fn [_ state _]
+      (:register (state :tree) (state :name)))))
 
 (define-watch ClosePeers
   "Closes all connections to peers"

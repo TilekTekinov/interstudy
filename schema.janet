@@ -142,3 +142,7 @@
           (eprint "Config does not conform to its schema. Exiting!")
           (eprintf "%Q" (config! c))
           (os/exit 1)))))
+
+(def?! sha string? (?long 40))
+(def?! ok (?eq :ok))
+

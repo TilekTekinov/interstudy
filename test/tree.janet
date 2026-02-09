@@ -48,11 +48,13 @@
                                        :timestamp (os/time)})) "Save registration")
   (assert-not (empty? (:registrations tree)) "Present registrations")
   (assert (empty? (:enrollments tree)) "Empty enrollments")
-  (assert (= :ok (:save-enrollment tree (hash "josef@pospisil.work")
+  (assert (ok? (:save-enrollment tree (hash "josef@pospisil.work")
                                    @{:courses ["EAE56E"]
                                      :credits 5
                                      :timestamp 1768995243})) "Save registration")
   (assert-not (empty? (:enrollments tree)) "Present enrollments")
+  (assert (tree :register))
+  (assert (ok? (:register tree :admin)))
   (assert (= :ok (:stop tree))))
 (end-suite)
 (os/exit 0)

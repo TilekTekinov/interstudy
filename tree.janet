@@ -42,7 +42,10 @@
   (make-effect
     (fn [_ state _]
       (def {:peers peers} state)
-      (each peer peers (:refresh (state peer) what)))))
+      (loop [peer :in peers
+             :let [p (state peer)]
+             :when (table? p)]
+        (:refresh p what)))))
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
@@ -115,7 +118,11 @@
       (fn [rpc key enrollment]
         (produce (^save-enrollment key enrollment))
         :ok)
-      :stop close-peers-stop}
+      :stop close-peers-stop
+      :register
+      (fn [rpc peer]
+        (produce (^connect-peer peer))
+        :ok)}
     (tabseq [coll :in (array/concat @[:active-courses :courses]
                                     collections/leafs collections/fruits)]
       coll (fn [rpc] (define :view) (view coll)))))
@@ -134,8 +141,7 @@
   (->
     initial-state
     (make-manager on-error)
-    (:transact PrepareStore PrepareView)
-    (:transact RPC)
-    (:transact (^connect-peers (log "Tree is ready") Exit))
+    (:transact PrepareStore PrepareView RPC
+               (log "Tree is ready"))
     :await)
   (os/exit 0))

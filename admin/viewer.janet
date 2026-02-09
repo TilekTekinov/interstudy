@@ -26,7 +26,8 @@
 (define-watch Start
   "Starts the machinery"
   [&]
-  [(^prepare-view collections/view) HTTP RPC])
+  [(^prepare-view collections/view) (^register :tree) HTTP RPC
+    (log "Viewer is ready")])
 
 (defn main
   ```

@@ -211,7 +211,7 @@
 (define-watch Start
   "Starts the machinery"
   [&]
-  [PrepareView HTTP RPC])
+  [PrepareView HTTP RPC (^register :tree)])
 
 (defn main
   ```

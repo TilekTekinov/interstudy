@@ -18,7 +18,7 @@
                  :host "test.localhost"
                  :image "test/data/tree"
                  :log false
-                 :name "tree"
+                 :name :tree
                  :peers []
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :release-path "./test/_release"
@@ -36,7 +36,7 @@
                  :host "test.localhost"
                  :http "localhost:8777"
                  :log false
-                 :name "student"
+                 :name :student
                  :peers [:tree]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :public "public"
@@ -58,7 +58,7 @@
                  :host "test.localhost"
                  :http "localhost:8778"
                  :log false
-                 :name "admin"
+                 :name :admin
                  :neighbors [:student]
                  :peers [:tree]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
@@ -83,7 +83,7 @@
                  :http "localhost:8778"
                  :key "\xF6`\xF6\xC1.\x89\xFF\x8C\x95\xB0P\x973\xE4)o\x11\xBEH\x1DW\xF8Dp5\xD6\xC6\x8F\xBE\x03\x9F\xA8"
                  :log false
-                 :name "admin-sentry"
+                 :name :admin-sentry
                  :neighbors [:student]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :peers [:tree]
@@ -106,7 +106,7 @@
                  :host "test.localhost"
                  :http "localhost:8779"
                  :log false
-                 :name "viewer"
+                 :name :viewer
                  :neighbors [:student]
                  :peers [:tree]
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
@@ -128,7 +128,7 @@
                  :env "dev"
                  :host "test.localhost"
                  :log false
-                 :name "demiurge"
+                 :name :demiurge
                  :peers []
                  :psk "[\xCE0h\xD6>\xC7.\xE6\xF6\xA3\xE0z\x98\xFB\xDB\xE64l@\xCB\xBBr\xD8\xBA\xF6\xB9\xA9\x8B\xE6H\xF1"
                  :release-path "./test/_release"

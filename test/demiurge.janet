@@ -10,9 +10,6 @@
 (ev/go demiurge/main)
 (ev/sleep 0.01) # Settle the server
 
-(def?! sha string? (?long 40))
-(def?! ok (?eq :ok))
-
 (start-suite :rpc)
 (let [demiurge (client ;(server/host-port rpc-url) "test" psk)]
   (assert demiurge)
