@@ -64,11 +64,24 @@
 (def?! avatar-config
   dictionary?
   persisted-config?
-  {:timeout (?optional number?)})
+  {:guarded-by (?optional keyword?)
+   :timeout (?optional number?)})
+
+(def?! demiurge-config
+  dictionary?
+  {:builder boolean?
+   :autostart (>?? all keyword?)})
+
+(def?! sentry-config
+  dictionary?
+  {:guards keyword?
+   :secret present-string?
+   :key present-string?})
 
 (def?! symbiont-config
   dictionary?
-  (>check-all some avatar-config? tree-config?))
+  (>check-all some avatar-config? tree-config?
+              demiurge-config? sentry-config?))
 
 (def?! symbionts-config
   dictionary?

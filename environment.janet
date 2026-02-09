@@ -64,6 +64,9 @@
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
         (<- c (=> :symbionts symbiont))
+        (>if (=> :symbionts symbiont :image)
+             (<- c (=> :symbionts symbiont :image
+                       |{:image (path/posix/join ((c 2) :data-path) $)})))
         (>if =>guards
              (=> (<- c =>guards)
                  (<- c (=> :membranes :nodes |(get $ (array/pop c))))

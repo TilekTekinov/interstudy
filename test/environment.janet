@@ -16,7 +16,7 @@
                  :dry true
                  :env "dev"
                  :host "test.localhost"
-                 :image "test/tree"
+                 :image "test/data/tree"
                  :log false
                  :name "tree"
                  :peers []

@@ -12,7 +12,7 @@
  {:demiurge
   {:builder false
    :autostart [:tree :student :admin-sentry :viewer-sentry]}
-  :tree {:image "test/tree"}
+  :tree {:image "tree"}
   :student {}
   :admin {:guarded-by :admin-sentry}
   :admin-sentry

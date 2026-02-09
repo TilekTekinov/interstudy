@@ -10,6 +10,8 @@
 (start-suite :config)
 (assert?! schema/tree-config ((=> :symbionts :tree) schema/compile-config))
 (assert?! schema/avatar-config ((=> :symbionts :student) schema/compile-config))
+(assert?! schema/avatar-config ((=> :symbionts :admin) schema/compile-config))
+(assert?! schema/demiurge-config ((=> :symbionts :demiurge) schema/compile-config))
 (assert?! schema/symbionts-config (schema/compile-config :symbionts))
 (assert?! schema/mycelium-config (schema/compile-config :mycelium))
 (assert?! schema/membranes-config (schema/compile-config :membranes))

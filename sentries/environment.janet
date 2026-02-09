@@ -11,7 +11,8 @@
   (string/join
     (->> name (string/split "-")
          (map |(string (string/ascii-upper
-                         (string/from-bytes ($ 0))) (slice $ 1 -1)))) " "))
+                         (string/from-bytes ($ 0))) (slice $ 1 -1))))
+    " "))
 
 (defh /index
   "Handler for the form"
