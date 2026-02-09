@@ -15,6 +15,10 @@
   :entry "admin/init.janet")
 
 (declare-executable
+  :name "admin-sentry"
+  :entry "admin-sentry.janet")
+
+(declare-executable
   :name "viewer"
   :entry "admin/viewer.janet")
 

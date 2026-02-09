@@ -46,9 +46,9 @@
      (fn [_ state _]
        (def {:view {:spawned spawned}} state)
        (def pc (state peer))
+       (def sp (spawned peer))
        (protect (:stop pc)
-                (:close pc)
-                (os/proc-wait (spawned peer))))}))
+                (:close pc)))}))
 
 (define-event StopPeers
   "Sends stop RPC to all peers"
@@ -59,29 +59,38 @@
      (if (and spawned (not dry))
        (seq [peer :in peers] (^stop-peer peer))))})
 
-(defn ^save-spawned
-  "Saves peer's process"
+(defn ^save-wait-spawned
+  "Saves peer's process and waits it for commands"
   [peer proc]
-  (make-update
-    (fn [_ {:view {:spawned spawned}}]
-      (put spawned peer proc))
-    "save peer"))
+  (make-event
+    {:update
+     (fn [_ {:view {:spawned spawned}}]
+       (put spawned peer proc))
+     :watch (fn [_ {:entries entries} _]
+              (producer
+                (def ob @"")
+                (os/proc-wait proc)
+                (ev/read (proc :out) :all ob)
+                (unless (empty? ob)
+                  (def [peer arg] (unmarshal ob))
+                  (def [cmd flags] (entries peer))
+                  (def proc (os/spawn [;cmd arg] flags))
+                  (produce
+                    (^save-wait-spawned peer proc)))))}
+    "save and wait for peer"))
 
 (define-event RunPeers
   "Runs peers event"
   {:update
    (fn [_ {:view view}] (put view :ran (os/clock)))
    :watch
-   (fn [_ {:dry dry :peers peers :release-path rp
-           :builder builder :entries entries} _]
+   (fn [_ {:dry dry :release-path rp :builder builder
+           :entries entries :autostart autostart} _]
      (unless dry
-       (defn spawn [peer]
-         (os/spawn
-           ;(if builder
-              [[(path/join rp (executable peer))]]
-              [["janet" "-d" (entries peer)] :p])))
-       (seq [peer :in peers]
-         (^save-spawned peer (spawn peer)))))})
+       [;(seq [peer :in autostart
+               :let [proc (os/spawn ;(entries peer) {:out :pipe})]]
+           (^save-wait-spawned peer proc))
+        (^connect-peers (log "Peers connected"))]))})
 
 (defn ^deploy-peer
   "Deploys one peer"
@@ -124,7 +133,7 @@
           ;(if dry
              [(log "Build dry run") (^delay 0.001 Released)]
              [GetGitSHA StopPeers Build Deploy
-              SetReleasedSHA Released RunPeers
+              SetReleasedSHA Released
               (^connect-peers (log "Demiurge is ready"))])
           (log "Release finished")]))}
     "release"))
@@ -147,17 +156,18 @@
   "Saves code entries for peers"
   [entries]
   (make-update
-    (fn [_ state]
-      (put state :entries entries))))
+    (fn [_ state] (put state :entries entries))))
 
 (define-event PrepareView
   "Prepares view"
   {:update (fn [_ state] (put state :view @{:spawned @{}}))
-   :watch (fn [_ {:builder builder} _]
-            (unless builder
+   :watch (fn [_ {:builder builder :peers peers :release-path rp} _]
+            (if builder
+              (^save-entries (tabseq [peer :in peers]
+                               peer [[(path/join rp (executable peer))]]))
               (^save-entries ((=> (>Y (??? {first (?eq 'declare-executable)}))
                                   (>map |(slice $ 1 -1))
-                                  |(tabseq [[_ n _ e] :in $] (keyword n) e))
+                                  |(tabseq [[_ n _ e] :in $] (keyword n) [["janet" "-d" e] :p]))
                                (parse-all (slurp "bundle/init.janet"))))))
    :effect (fn [_ {:view view :build-path bp :env env} _]
              (os/cd bp)
@@ -173,14 +183,14 @@
   "RPC functions for the tree"
   (merge-into
     @{:stop
-      (fn [&]
+      (fn [_]
         (define :view)
         (if-let [ts (view :ran)]
           (produce StopPeers))
         (produce (log "Demiurge going down") (^delay 0.001 Stop))
         :ok)
       :state
-      (fn [&]
+      (fn [_]
         (define :view)
         (if-let [releasing (view :releasing)]
           [:busy (view :releasing)]
@@ -188,7 +198,7 @@
             [:running ran]
             [:idle (view :sha)])))
       :release
-      (fn [&]
+      (fn [_]
         (define :view)
         (if-let [releasing (view :releasing)]
           [:busy releasing]
@@ -196,19 +206,23 @@
             (def now (os/clock))
             (produce (^release now))
             [:ok now])))
-      :stop-all
-      (fn [&]
+      :stop-peers
+      (fn [_]
         (define :view)
         (if-let [ts (view :ran)]
           (do (produce StopPeers) :ok)
           :not-running))
-      :run-all
-      (fn [&]
+      :run-peers
+      (fn [_]
         (define :view)
         (if-let [ts (view :ran)]
           [:running ts]
           (do
-            (produce RunPeers (^connect-peers (log "Demiurge is ready"))) :ok)))}))
+            (produce RunPeers (^connect-peers (log "Demiurge is ready"))) :ok)))
+      :update-config
+      (fn [_ new-config]
+        (spit "conf.jdn" (jdn/render new-config))
+        :ok)}))
 
 (define-effect Bootstrap
   "Event that bootstraps the remote site"
@@ -273,8 +287,7 @@
   (def events
     (if bootstrap
       [Bootstrap]
-      [RPC (log "hoho") GetGitSHA PrepareView ReleaseOnSHA
-       (^connect-peers (log "Demiurge is ready"))]))
+      [RPC GetGitSHA PrepareView ReleaseOnSHA (log "Demiurge is ready")]))
   (->
     initial-state
     (make-manager on-error)

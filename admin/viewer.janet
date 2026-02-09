@@ -7,9 +7,10 @@
 (def routes
   "HTTP routes"
   @{"/" (make/index "Viewer")
-    "/registrations" @{"" /registrations
-                       "/search" /registrations/search
-                       "/filter/" /registrations/filter}})
+    "/registrations"
+    @{"" /registrations
+      "/search" /registrations/search
+      "/filter/" /registrations/filter}})
 
 (def rpc-funcs
   "RPC functions"

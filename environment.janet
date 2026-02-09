@@ -55,6 +55,7 @@
   "Navigation to extract `symbiont` congig from main config"
   [symbiont]
   (let [c @[{:name (string symbiont)}]
+        =>guards (=> :symbionts symbiont :guards)
         =>membrane (=> :membranes :nodes symbiont)
         =>neighbors (=> =>membrane :neighbors)
         =>mycelium-node |(=> :mycelium :nodes $)
@@ -63,6 +64,11 @@
     (=> (<- c (=> :name |{:thicket $}))
         (<- c (=> :deploy))
         (<- c (=> :symbionts symbiont))
+        (>if =>guards
+             (=> (<- c =>guards)
+                 (<- c (=> :membranes :nodes |(get $ (array/pop c))))
+                 (<- c =>guards)
+                 (<- c (=> :mycelium :nodes |(get $ (array/pop c))))))
         (>if =>membrane
              (=> (<- c =>membrane)
                  (>if (=> =>neighbors present?)
@@ -92,6 +98,11 @@
 (def >stamp
   "Function that timestamps"
   (>put :timestamp (os/time)))
+
+(defn jdn/render
+  "Renders Janet `item` into jdn"
+  [item]
+  (string/format "%j" item))
 
 # HTTP
 (defn appcap
@@ -205,14 +216,14 @@
   "Closes all connections to peers"
   [_ state _]
   (def {:peers peers} state)
-  (each peer peers (:close (state peer))))
+  (each peer peers (protect (:close (state peer)))))
 
 (defn close-peers-stop
   "RPC function that closes peers and stops the server"
-  [&]
+  [name]
   (produce ClosePeers
-           (log "tree RPC server going down")
-           (^delay 0.001 Stop))
+           (log "RPC server going down")
+           Stop)
   :ok)
 
 # Test helpers

@@ -26,7 +26,7 @@
                     :timestamp 1768995243})
 
 (init-test :admin)
-(ev/go admin/main)
+(ev/go (fn [] (admin/main "admin" "abcd")))
 (ev/sleep 0.05) # Settle the server
 
 (start-suite :http)
