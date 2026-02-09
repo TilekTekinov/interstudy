@@ -22,6 +22,10 @@
   :name "viewer"
   :entry "admin/viewer.janet")
 
+(declare-executable
+  :name "viewer-sentry"
+  :entry "viewer-sentry.janet")
+
 (defn check
   [&]
   (def start (os/clock))

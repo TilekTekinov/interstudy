@@ -28,7 +28,7 @@
       (if-let [ck (and sk ((=> :session (?eq sk)) view))]
         (next-middleware (put req :session ck))
         (do
-          (if-let [[peer arg] (tracev (dyn :spawn-after))]
+          (if-let [[peer arg] (dyn :spawn-after)]
             (produce (^write-spawn peer arg)))
           (produce Exit)
           (http/not-authorized))))))

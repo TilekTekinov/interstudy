@@ -16,7 +16,9 @@ data-signals="{- (json/encode enr) -}">
     <select name='{{ n }}' id='{{ n }}' type='text' required >
     <option value="">-- please choose your first course --</option>
     {% (each {:code code :name name :credits credits} (args :courses) %}
-      <option value="{{ code }}" {- (if (= code (and enr (enr (keyword n)))) "selected") -}>{{ code }} {{ credits }} {{ name }}</option>
+      <option value="{{ code }}" {- (if (= code (and enr (enr (keyword n)))) "selected") -}>
+      {{ code }} {{ credits }} {{ name }}
+      </option>
     {% ) %}
     </select>
   </p>

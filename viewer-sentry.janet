@@ -7,7 +7,7 @@
 
 (def <form/>
   "Rendered form"
-  (http/html-success-resp (auth-form/capture :title "Admin authentification")))
+  (http/html-success-resp (auth-form/capture :title "Viewer authentification")))
 
 (defh /index
   "Handler for the form"
@@ -16,8 +16,8 @@
 
 (def redirect-page
   "Rendered redirect"
-  (redirect/capture :title "Redirection to Admin"
-                    :to "Admin"
+  (redirect/capture :title "Redirection to Viewer"
+                    :to "Viewer"
                     :location "/"))
 
 (defh /auth
@@ -73,7 +73,7 @@
 
 (def initial-state
   "Initial state"
-  ((=> (=>symbiont-initial-state :admin-sentry)
+  ((=> (=>symbiont-initial-state :viewer-sentry)
        (>put :routes routes)
        (>put :static false)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))

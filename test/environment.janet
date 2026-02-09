@@ -102,6 +102,7 @@
                  :debug true
                  :dry true
                  :env "dev"
+                 :guarded-by :viewer-sentry
                  :host "test.localhost"
                  :http "localhost:8779"
                  :log false
@@ -118,7 +119,7 @@
                  :tree "localhost:5444"})
         "viewer config navigation")
 (assert (deep= ((=>symbiont-initial-state :demiurge) compile-config)
-               @{:autostart [:tree :student :admin-sentry]
+               @{:autostart [:tree :student :admin-sentry :viewer-sentry]
                  :build-path "./test"
                  :builder false
                  :data-path "./test/data"

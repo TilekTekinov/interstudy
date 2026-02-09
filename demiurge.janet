@@ -71,7 +71,7 @@
                 (def ob @"")
                 (os/proc-wait proc)
                 (ev/read (proc :out) :all ob)
-                (unless (empty? (tracev ob))
+                (unless (empty? ob)
                   (def [peer arg] (unmarshal ob))
                   (def [cmd flags] (entries peer))
                   (def proc (os/spawn [;cmd arg] flags {:out :pipe}))

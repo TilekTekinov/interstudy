@@ -3,28 +3,44 @@
 {% (when (args :error) %}
 <div class="error bad box">{{ (args :error) }}</div>
 {% ) %}
-<form method='post' action='/' class='table rows'>
+<form method="post" action="/" class="table rows">
   <p>
-    <label for='fullname'>Fullname</label>
-   <input name='fullname' id='fullname' type='text' required value='{- (if reg (reg :fullname)) -}'/>
+    <label for="fullname">Fullname</label>
+    <input
+      name="fullname"
+      id="fullname"
+      type="text"
+      required
+      value="{- (if reg (reg :fullname)) -}"
+    />
   </p>
   <p>
-    <label for='email'>Email</label>
-    <input name='email' id='email' type='email' required value='{- (if reg (reg :email)) -}'/>
+    <label for="email">Email</label>
+    <input
+      name="email"
+      id="email"
+      type="email"
+      required
+      value="{- (if reg (reg :email)) -}"
+    />
   </p>
   <p>
-    <label for='home-university'>
-      Home university
-    </label>
-    <input name='home-university' id='home-university' type='text' required value='{- (if reg (reg :home-university)) -}'/>
+    <label for="home-university"> Home university </label>
+    <input
+      name="home-university"
+      id="home-university"
+      type="text"
+      required
+      value="{- (if reg (reg :home-university)) -}"
+    />
   </p>
   <p>
-    <label for='faculty'>Faculty on ČZU</label>
-    <select name='faculty' id='faculty' type='text' required>
-	{% (eachp [code name] (args :faculties) %}
+    <label for="faculty">Faculty on ČZU</label>
+    <select name="faculty" id="faculty" type="text" required>
+      {% (eachp [code name] (args :faculties) %}
       <option value="{{ code }}">{{ name }}</option>
-	{% ) %}
-	</select>
+      {% ) %}
+    </select>
   </p>
   <button>Register</button>
 </form>

@@ -26,14 +26,16 @@
                     :timestamp 1768995243})
 
 (init-test :viewer)
-(ev/go viewer/main)
+(ev/go (fn [] (viewer/main "viewer" "abcd")))
 (ev/sleep 0.05) # Settle the server
 (start-suite :http)
-(let [resp (request "GET" (url "/"))]
+(let [resp (request "GET" (url "/")
+                    :headers {"Cookie" "session=abcd"})]
   (assert (success? resp))
   (assert
     ((success-has? `<h1>Interstudy - Viewer` `/registrations`) resp)))
-(let [resp (request "GET" (url "/registrations"))]
+(let [resp (request "GET" (url "/registrations")
+                    :headers {"Cookie" "session=abcd"})]
   (assert (success? resp) "Registrations succ")
   (assert
     ((success-has? `<div id="registrations` `<details` `<summary>` `Registrations`
@@ -41,7 +43,8 @@
                    `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
       resp) "Registration succ content"))
 (let [resp (request "POST" (url "/registrations/search")
-                    :headers {"Content-Type" "application/json"}
+                    :headers {"Content-Type" "application/json"
+                              "Cookie" "session=abcd"}
                     :body `{"search":"j"}`)]
   (assert (success? resp) "Registrations search succ")
   (assert
@@ -49,7 +52,8 @@
                    `Search` `<table` `Fullname` `Email` `Registered` `Enrollment`
                    `Josef Pospíšil` `josef@pospisil.work` `3 for 15 credits`)
       resp) "Registrations search succ content"))
-(let [resp (request "GET" (url `/registrations/filter/?datastar=%7B%22search%22%3A%22%22%2C%22enrolled%22%3Atrue%2C%22active%22%3Afalse%2C%22semester%22%3A%22%22%7D`))]
+(let [resp (request "GET" (url `/registrations/filter/?datastar=%7B%22search%22%3A%22%22%2C%22enrolled%22%3Atrue%2C%22active%22%3Afalse%2C%22semester%22%3A%22%22%7D`)
+                    :headers {"Cookie" "session=abcd"})]
   (assert (success? resp) "Enrolled filter succ")
   (assert ((success-has? `<details open` `Josef`) resp) "No active"))
 (end-suite)

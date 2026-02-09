@@ -27,10 +27,10 @@
        "<h1>Interstudy - Registration"
        "<h2>All fields are required"
        "<form" "post" "/"
-       "<label for='fullname'>" "Fullname" "<input name='fullname' id='fullname' type='text'" "required"
-       "<label for='email'>" "Email" "<input name='email' id='email' type='email'" "required"
-       "<label for='home-university'>" "Home university" "<input name='home-university' id='home-university'" "required"
-       "<label for='faculty'>" "Faculty" "<select name='faculty' id='faculty'" "required" "<option"
+       `<label for="fullname">` `Fullname` `<input` `name="fullname"` `id="fullname"` `type="text"` `required`
+       `<label for="email">` `Email` `<input` `name="email"` `id="email"` `type="email"` `required`
+       `<label for="home-university">` `Home university` `<input` `name="home-university"` `id="home-university"` `required`
+       `<label for="faculty">` `Faculty` `<select` `name="faculty"` `id="faculty"` `required` `<option`
        "<button>Register</button>")
       resp)
     "Registration page"))
@@ -49,7 +49,7 @@
                     :headers {"Content-Type" "application/x-www-form-urlencoded"}
                     :body (slurp "test/registration-req"))]
   (assert (success? resp) "Reject email registration succ")
-  (assert ((success-has? "Registration failed" "value='Josef") resp) "Reject email registration content"))
+  (assert ((success-has? "Registration failed" `value="Josef`) resp) "Reject email registration content"))
 (let [resp (request "GET" (url "/enroll/d73e5fabb537b904d535047420894bc1"))]
   (assert (success? resp))
   (assert

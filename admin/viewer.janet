@@ -32,8 +32,9 @@
   ```
   Main entry into student symbiont.
   ```
-  [_]
+  [_ session]
   (-> initial-state
+      (put :session session)
       (make-manager on-error)
       (:transact (^connect-peers Start Exit))
       :await)
