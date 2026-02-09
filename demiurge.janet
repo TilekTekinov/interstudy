@@ -71,10 +71,10 @@
                 (def ob @"")
                 (os/proc-wait proc)
                 (ev/read (proc :out) :all ob)
-                (unless (empty? ob)
+                (unless (empty? (tracev ob))
                   (def [peer arg] (unmarshal ob))
                   (def [cmd flags] (entries peer))
-                  (def proc (os/spawn [;cmd arg] flags))
+                  (def proc (os/spawn [;cmd arg] flags {:out :pipe}))
                   (produce
                     (^save-wait-spawned peer proc)))))}
     "save and wait for peer"))

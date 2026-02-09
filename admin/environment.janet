@@ -15,6 +15,24 @@
   (fnh /index [appcap]
        [title admin-page]))
 
+(defn check-session
+  ```
+  Checks if user cookie is in the session. If it is found  `next-middleware`
+  is called. If the session is not found it exits.
+  ```
+  [next-middleware]
+  (http/cookies
+    (fn check-session [req]
+      (define :view)
+      (def sk (=>header-cookie req))
+      (if-let [ck (and sk ((=> :session (?eq sk)) view))]
+        (next-middleware (put req :session ck))
+        (do
+          (if-let [[peer arg] (tracev (dyn :spawn-after))]
+            (produce (^write-spawn peer arg)))
+          (produce Exit)
+          (http/not-authorized))))))
+
 (defn <registration/>
   "Contructs htmlgen representation of one `registration`"
   [emhash
@@ -66,13 +84,13 @@
 
 (defh /registrations
   "Registrations SSE stream"
-  []
+  [check-session]
   (ds/hg-stream
     (<registrations-list/> (values (view :registrations)) (view :enrollments))))
 
 (defh /registrations/search
   "Search registrations handler"
-  [http/keywordize-body http/json->body]
+  [check-session http/keywordize-body http/json->body]
   (def search (body :search))
   (def =>search
     (=> :registrations
@@ -87,7 +105,7 @@
 
 (defh /registrations/filter
   "Filtered registrations SSE stream"
-  [http/query-params]
+  [check-session http/query-params]
   (def c @[])
   (def enrolled
     ((=> :query-params "datastar"
@@ -96,7 +114,7 @@
   (def registrations
     (if enrolled
       ((=> (<- c (=> :enrollments))
-      :registrations
+           :registrations
            |(tabseq [[emhash r] :pairs $ :when ((c 0) emhash)]
               emhash r)) view)
       (view :registrations)))
@@ -110,10 +128,12 @@
   (make-event
     {:update
      (fn [_ state]
-       (def {:tree tree} state)
+       (def {:tree tree :session session} state)
        (put state :view
-            (tabseq [coll :in view-collections]
-              coll (coll tree))))
-     :effect (fn [_ {:view view :student student} _]
+            (merge {:session session}
+                   (tabseq [coll :in view-collections]
+                     coll (coll tree)))))
+     :effect (fn [_ {:view view :student student :guarded-by guarded-by} _]
+               (setdyn :spawn-after [guarded-by ""])
                (setdyn :view view)
                (setdyn :student student))}))

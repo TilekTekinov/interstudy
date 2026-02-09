@@ -64,7 +64,7 @@
 
 (defh /courses
   "Courses SSE stream"
-  []
+  [check-session]
   (ds/hg-stream (<courses-list/> (view :courses))))
 
 (defn <semesters-list/>
@@ -90,7 +90,7 @@
 
 (defh /semesters
   "Semesters SSE stream"
-  []
+  [check-session]
   (ds/hg-stream
     (<semesters-list/> (view :active-semester)
                        (view :semesters))))
@@ -129,7 +129,7 @@
 
 (defh /courses/edit
   "Edit course SSE stream"
-  []
+  [check-session]
   (def code (params :code))
   (def subject ((=>course/by-code code) view))
   (ds/hg-stream (<course-form/> subject (view :semesters))))
@@ -144,7 +144,7 @@
 
 (defh /courses/save
   "Save course"
-  [http/keywordize-body http/json->body]
+  [check-session http/keywordize-body http/json->body]
   (def code (get params :code))
   (def course
     ((=> (=>course/by-code code)
@@ -160,7 +160,7 @@
 
 (defh /semesters/deactivate
   "Deactivation handler"
-  []
+  [check-session]
   (produce Deactivate)
   (ds/hg-stream (<semesters-list/> false (view :semesters) true)))
 
@@ -168,7 +168,7 @@
 
 (defh /courses/filter
   "Filtered courses SSE stream"
-  [http/query-params]
+  [check-session http/query-params]
   (def finders
     ((=> :query-params "datastar"
          (>if present? json/decode (always {})) pairs
@@ -192,7 +192,7 @@
 
 (defh /courses/enrolled
   "Enrolled students for a course detail"
-  []
+  [check-session]
   (def code (params :code))
   (def c @[])
   (def enrolled
@@ -203,7 +203,7 @@
 
 (defh /courses/search
   "Search courses handler"
-  [http/keywordize-body http/json->body]
+  [check-session http/keywordize-body http/json->body]
   (def search (body :search))
   (def =>search
     (=> :courses
@@ -254,7 +254,7 @@
   ```
   [_ session]
   (-> initial-state
-
+      (put :session session)
       (make-manager on-error)
       (:transact (^connect-peers Start Exit))
       :await)
