@@ -285,7 +285,7 @@
 (def project-files-peg
   "PEG for filewatch"
   '(+
-     (* (+ "admin" "student" "tree" "demiurge"
+     (* (+ "admin" "student" "tree" "demiurge" "sentries"
            "bundle" "test" "schema" "environment" "dev")
         (thru ".janet") -1)
      (* "templates" (thru ".temple") -1)))

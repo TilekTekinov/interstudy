@@ -1,24 +1,22 @@
-(use /environment /schema)
-(import /templates/auth-form)
-(import /templates/redirect)
+(import /environment :export true :prefix "")
+(import /templates/auth-form :export true)
+(import /templates/redirect :export true)
 
 (setdyn *handler-defines* [:view :conn])
 (defdyn *view* "View for handlers")
 
-(def <form/>
-  "Rendered form"
-  (http/html-success-resp (auth-form/capture :title "Viewer authentification")))
+(defn human
+  "Capitalizes and replace -"
+  [name]
+  (string/join
+    (->> name (string/split "-")
+         (map |(string (string/ascii-upper
+                         (string/from-bytes ($ 0))) (slice $ 1 -1)))) " "))
 
 (defh /index
   "Handler for the form"
-  [http/cookies]
-  <form/>)
-
-(def redirect-page
-  "Rendered redirect"
-  (redirect/capture :title "Redirection to Viewer"
-                    :to "Viewer"
-                    :location "/"))
+  [http/cookies http/html-get]
+  (auth-form/capture :title (human (view :name))))
 
 (defh /auth
   "Authentication handler"
@@ -30,9 +28,9 @@
     (let [sk (derive-from key)]
       (fn [conn]
         (:write conn
-                (http/success
-                  redirect-page
-                  (merge (http/content-type ".html")
+                (http/response
+                  303 ""
+                  (merge {"Location" (req :uri) "Content-Length" 0}
                          (http/cookie "session"
                                       (string sk "; Secure; HttpOnly; Domain="
                                               cookie-host ";")))))
@@ -61,7 +59,7 @@
   {:update
    (fn [_ state]
      (put state :view
-          (select-keys state [:guards :session :secret :key
+          (select-keys state [:name :guards :session :secret :key
                               :public :cookie-host])))
    :effect
    (fn [_ state _] (setdyn *view* (state :view)))})
@@ -71,22 +69,18 @@
   @{:refresh (fn [&] :ok)
     :stop close-peers-stop})
 
-(def initial-state
-  "Initial state"
-  ((=> (=>symbiont-initial-state :viewer-sentry)
-       (>put :routes routes)
-       (>put :static false)
-       (>update :rpc (update-rpc rpc-funcs))) compile-config))
+(defn =>sentry-initial-state
+  "Navigation to sentry initial state"
+  [sentry]
+  (=> (=>symbiont-initial-state sentry)
+      (>put :routes routes)
+      (>put :static false)
+      (>update :rpc (update-rpc rpc-funcs))))
 
-
-(defn main
-  ```
-  Main entry into sentry.
-  Initializes manager, transacts HTTP and awaits it.
-  ```
-  [&]
-  (-> initial-state
-      (make-manager on-error)
-      (:transact PrepareView HTTP RPC)
-      :await)
-  (os/exit 0))
+(defmacro sentry-main
+  []
+  '(do (-> initial-state
+           (make-manager on-error)
+           (:transact PrepareView HTTP RPC)
+           :await)
+     (os/exit 0)))

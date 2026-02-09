@@ -16,7 +16,7 @@
 
 (declare-executable
   :name "admin-sentry"
-  :entry "admin-sentry.janet")
+  :entry "sentries/admin.janet")
 
 (declare-executable
   :name "viewer"
@@ -24,7 +24,7 @@
 
 (declare-executable
   :name "viewer-sentry"
-  :entry "viewer-sentry.janet")
+  :entry "sentries/viewer.janet")
 
 (defn check
   [&]

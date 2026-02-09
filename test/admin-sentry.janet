@@ -3,14 +3,14 @@
 (use spork/test spork/misc spork/http
      gp/data/store gp/data/schema gp/data/navigation
      /environment /schema)
-(import /admin-sentry)
+(import /sentries/admin)
 
 (start-suite :docs)
-(assert-docs "/admin-sentry")
+(assert-docs "/sentries/admin")
 (end-suite)
 
 (init-test :admin-sentry)
-(ev/go admin-sentry/main)
+(ev/go admin/main)
 (ev/sleep 0.01) # Settle the server
 (start-suite :new-auth)
 (assert (success? (request "GET" (url "/"))) "auth form succ")
@@ -28,7 +28,7 @@
 (assert ((success-has? "<h1" "Authentication" "<form" "<label" "secret" "<input" "password" "<button")
           (request "POST" (url "/new/whatever")))
           "catch all POST")
-(assert ((success-has? "You are being redirected to Admin in one second.")
+(assert ((redirect? "/")
           (request "POST" (url "/")
                    :headers {"Content-Type" "application/x-www-form-urlencoded"}
                    :body "secret=testist")))
