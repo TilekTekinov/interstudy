@@ -161,14 +161,15 @@
 (define-event PrepareView
   "Prepares view"
   {:update (fn [_ state] (put state :view @{:spawned @{}}))
-   :watch (fn [_ {:builder builder :peers peers :release-path rp} _]
+   :watch (fn [_ {:builder builder :peers peers
+                  :release-path rp :build-path bp} _]
             (if builder
               (^save-entries (tabseq [peer :in peers]
                                peer [[(path/join rp (executable peer))]]))
               (^save-entries ((=> (>Y (??? {first (?eq 'declare-executable)}))
                                   (>map |(slice $ 1 -1))
                                   |(tabseq [[_ n _ e] :in $] (keyword n) [["janet" "-d" e] :p]))
-                               (parse-all (slurp "bundle/init.janet"))))))
+                               (parse-all (slurp (path/join bp "bundle/init.janet")))))))
    :effect (fn [_ {:view view :build-path bp :env env} _]
              (os/cd bp)
              (def jpa (path/abspath (path/join bp env)))

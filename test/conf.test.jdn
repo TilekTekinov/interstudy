@@ -1,7 +1,7 @@
 {:name "interstudy"
  :deploy
  {:host "test.localhost"
-  :build-path "./test"
+  :build-path "./"
   :release-path "./test/_release"
   :data-path "./test/data"
   :env "dev"
