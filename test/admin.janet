@@ -145,6 +145,9 @@
                     :headers {"Cookie" "session=abcd"})]
   (assert (success? resp) "Enrolled filter succ")
   (assert ((success-has? `<details open` `Josef`) resp) "No active"))
+(let [resp (request "GET" (url `/logout`)
+                    :headers {"Cookie" "session=abcd"})]
+  (assert ((redirect? "/") resp) "Logout filter succ"))
 (end-suite)
 
 (start-suite :rpc)

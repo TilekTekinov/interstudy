@@ -261,7 +261,7 @@
   [peer]
   (make-watch
     (fn [_ state _]
-      (:register (state :tree) (state :name)))))
+      (:register (state peer) (state :name)))))
 
 (define-watch ClosePeers
   "Closes all connections to peers"

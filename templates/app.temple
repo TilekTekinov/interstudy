@@ -22,6 +22,9 @@
         <a class="brand" href="/" aria-label="Home">
           <h1>Interstudy - {{ (args :title) }}</h1>
         </a>
+        <section class="tool-bar">
+          <a href="/logout">logout</a>
+        </section>
       </span>
     </header>
     <main>{- (args :content) -}</main>

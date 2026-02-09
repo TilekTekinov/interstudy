@@ -216,6 +216,7 @@
 (def routes
   "HTTP routes"
   @{"/" (make/index "Admin")
+    "/logout" /logout
     "/registrations"
     @{"" /registrations
       "/search" /registrations/search

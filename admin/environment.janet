@@ -33,6 +33,16 @@
           (produce Exit)
           (http/not-authorized))))))
 
+(defh /logout
+  "Handles lgout"
+  []
+  (if-let [[peer arg] (dyn :spawn-after)]
+    (produce (^write-spawn peer arg)))
+  (produce Stop)
+  (http/response
+    303 ""
+    (merge {"Location" "/" "Content-Length" 0})))
+
 (defn <registration/>
   "Contructs htmlgen representation of one `registration`"
   [emhash
