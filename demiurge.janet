@@ -273,7 +273,11 @@
                      [:nohup
                       (path/posix/join rp "/demiurge") ">>"
                       (path/posix/join dp "/demiurge.log")
-                      "2>&1 &"]))))
+                      "2>&1 &"]))
+    (eprint "------------ Run peers")
+    (exec ;(ssh-cmds host
+                     [:cd bp] [". ./prod/bin/activate"]
+                     [:janet "bin/dm.janet" "run-peers"]))))
 
 (def initial-state
   "Navigation to initial state in config"
