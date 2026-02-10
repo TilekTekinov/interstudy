@@ -88,7 +88,7 @@
            :entries entries :autostart autostart} _]
      (unless dry
        [;(seq [peer :in autostart
-               :let [proc (os/spawn ;(entries peer) {:out :pipe})]]
+               :let [proc (os/spawn ;(tracev (entries (tracev peer))) {:out :pipe})]]
            (^save-wait-spawned peer proc))
         (^connect-peers (log "Peers connected"))]))})
 
@@ -163,13 +163,16 @@
   {:update (fn [_ state] (put state :view @{:spawned @{}}))
    :watch (fn [_ {:builder builder :peers peers
                   :release-path rp :build-path bp} _]
-            (if builder
-              (^save-entries (tabseq [peer :in peers]
-                               peer [[(path/join rp (executable peer))] :x]))
-              (^save-entries ((=> (>Y (??? {first (?eq 'declare-executable)}))
-                                  (>map |(slice $ 1 -1))
-                                  |(tabseq [[_ n _ e] :in $] (keyword n) [["janet" "-d" e] :p]))
-                               (parse-all (slurp (path/join bp "bundle/init.janet")))))))
+            (def entries
+              ((=> (>Y (??? {first (?eq 'declare-executable)}))
+                   (>map |(slice $ 1 -1)) >trace-base)
+                (parse-all (slurp (path/join bp "bundle/init.janet")))))
+            (def transformer
+              (if builder
+                (fn [n e] [[(path/join rp (executable n))] :x])
+                (fn [n e] [["janet" "-d" e] :p])))
+            (^save-entries (tabseq [[_ n _ e] :in entries] (keyword n)
+                             (transformer n e))))
    :effect (fn [_ {:view view :build-path bp :env env} _]
              (os/cd bp)
              (def jpa (path/abspath (path/join bp env)))
