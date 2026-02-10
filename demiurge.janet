@@ -165,7 +165,7 @@
                   :release-path rp :build-path bp} _]
             (if builder
               (^save-entries (tabseq [peer :in peers]
-                               peer [[(path/join rp (executable peer))]]))
+                               peer [[(path/join rp (executable peer))] :x]))
               (^save-entries ((=> (>Y (??? {first (?eq 'declare-executable)}))
                                   (>map |(slice $ 1 -1))
                                   |(tabseq [[_ n _ e] :in $] (keyword n) [["janet" "-d" e] :p]))
