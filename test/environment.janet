@@ -10,7 +10,7 @@
 
 (start-suite :utils)
 (assert (deep= ((=>symbiont-initial-state :tree) compile-config)
-               @{:build-path "./"
+               @{:build-path "./test"
                  :data-path "./test/data"
                  :debug true
                  :dry true
@@ -27,7 +27,7 @@
         "tree config navigation")
 (assert (deep= ((=>symbiont-initial-state :student) compile-config)
                @{:address "http://test.localhost:8777"
-                 :build-path "./"
+                 :build-path "./test"
                  :cookie-host "localhost"
                  :data-path "./test/data" :debug true
                  :debug true
@@ -48,7 +48,7 @@
         "student config navigation")
 (assert (deep= ((=>symbiont-initial-state :admin) compile-config)
                @{:address "http://test.localhost:8778"
-                 :build-path "./"
+                 :build-path "./test"
                  :cookie-host "localhost"
                  :data-path "./test/data"
                  :debug true
@@ -72,7 +72,7 @@
         "admin config navigation")
 (assert (deep= ((=>symbiont-initial-state :admin-sentry) compile-config)
                @{:address "http://test.localhost:8778"
-                 :build-path "./"
+                 :build-path "./test"
                  :cookie-host "localhost"
                  :data-path "./test/data"
                  :debug true
@@ -96,7 +96,7 @@
         "admin-sentry config navigation")
 (assert (deep= ((=>symbiont-initial-state :viewer) compile-config)
                @{:address "http://test.localhost:8779"
-                 :build-path "./"
+                 :build-path "./test"
                  :cookie-host "localhost"
                  :data-path "./test/data"
                  :debug true
@@ -120,7 +120,7 @@
         "viewer config navigation")
 (assert (deep= ((=>symbiont-initial-state :demiurge) compile-config)
                @{:autostart [:tree :student :admin-sentry :viewer-sentry]
-                 :build-path "./"
+                 :build-path "./test"
                  :builder false
                  :data-path "./test/data"
                  :debug true
