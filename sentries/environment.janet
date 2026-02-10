@@ -1,6 +1,5 @@
 (import /environment :export true :prefix "")
 (import /templates/auth-form :export true)
-(import /templates/redirect :export true)
 
 (setdyn *handler-defines* [:view :conn])
 (defdyn *view* "View for handlers")
