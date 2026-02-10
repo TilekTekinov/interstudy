@@ -1,5 +1,6 @@
 (import /environment :export true :prefix "")
 (import /templates/auth-form :export true)
+(import /templates/redirect :export true)
 
 (setdyn *handler-defines* [:view :conn])
 (defdyn *view* "View for handlers")
@@ -23,17 +24,16 @@
   [http/urlenc-post]
   (if-let [sec (view :secret)
            bsec (get body :secret "")
-           {:cookie-host cookie-host :key key :guards guards} view
+           {:name name :cookie-host cookie-host :key key :guards guards} view
            _ (pwhash/verify sec bsec key)]
     (let [sk (derive-from key)]
       (fn [conn]
         (:write conn
-                (http/response
-                  303 ""
-                  (merge {"Location" (req :uri) "Content-Length" 0}
-                         (http/cookie "session"
-                                      (string sk "; Secure; HttpOnly; Domain="
-                                              cookie-host ";")))))
+                (http/html-success-resp
+                  (redirect/capture :to guards :title name :location "/")
+                  (http/cookie "session"
+                               (string sk "; Secure; HttpOnly; Domain="
+                                       cookie-host ";"))))
         (ev/give-supervisor :close conn)
         (produce (^write-spawn guards sk) Exit)))
     (http/html-success-resp
