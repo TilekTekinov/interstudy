@@ -215,7 +215,7 @@
 
 (def routes
   "HTTP routes"
-  @{"/" (make/index "Admin")
+  @{"/" (make/index "Admin" [:semesters :registrations :courses])
     "/logout" /logout
     "/registrations"
     @{"" /registrations

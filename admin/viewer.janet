@@ -6,7 +6,7 @@
 
 (def routes
   "HTTP routes"
-  @{"/" (make/index "Viewer")
+  @{"/" (make/index "Viewer" [:registrations])
     "/logout" /logout
     "/registrations"
     @{"" /registrations

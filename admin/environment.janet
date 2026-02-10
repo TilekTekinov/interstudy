@@ -5,15 +5,11 @@
 
 (setdyn *handler-defines* [:view])
 
-(def admin-page
-  "Admin captured"
-  (admin/capture))
-
 (defn make/index
   "Creates index handler with `title`"
-  [title]
+  [title colls]
   (fnh /index [appcap]
-       [title admin-page]))
+       [title (admin/capture :colls colls)]))
 
 (defn check-session
   ```

@@ -1,0 +1,6 @@
+<svg width="45" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" height="45">
+  <rect y="2" width="40" stroke-width="2" fill="white" rx="5" stroke="black" x="2" height="40"/>
+  <text font-weight="normal" font-size="18" font-family="Segoe UI" x="9" y="23">
+    <tspan rotate="-15">I</tspan><tspan dy="5">S</tspan><tspan dy="7" rotate="15">D</tspan>
+  </text>
+</svg>
