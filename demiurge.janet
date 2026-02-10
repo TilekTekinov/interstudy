@@ -88,7 +88,7 @@
            :entries entries :autostart autostart} _]
      (unless dry
        [;(seq [peer :in autostart
-               :let [proc (os/spawn ;(tracev (entries (tracev peer))) {:out :pipe})]]
+               :let [proc (os/spawn ;(entries peer) {:out :pipe})]]
            (^save-wait-spawned peer proc))
         (^connect-peers (log "Peers connected"))]))})
 
@@ -165,7 +165,7 @@
                   :release-path rp :build-path bp} _]
             (def entries
               ((=> (>Y (??? {first (?eq 'declare-executable)}))
-                   (>map |(slice $ 1 -1)) >trace-base)
+                   (>map |(slice $ 1 -1)))
                 (parse-all (slurp (path/join bp "bundle/init.janet")))))
             (def transformer
               (if builder

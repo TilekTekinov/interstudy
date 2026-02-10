@@ -45,7 +45,7 @@
       (loop [peer :in peers
              :let [p (state peer)]
              :when (table? p)]
-        (:refresh p what)))))
+        (protect (:refresh p what))))))
 
 (define-event PrepareView
   "Initializes view and puts it in the dyn"
