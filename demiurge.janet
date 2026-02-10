@@ -108,8 +108,8 @@
 
 (define-watch Deploy
   "Deploys peers"
-  [_ {:peers peers} _]
-  [;(seq [peer :in peers] (^deploy-peer peer))])
+  [_ {:entries entries} _]
+  [;(seq [peer :keys entries] (^deploy-peer peer))])
 
 (define-event Build
   "Builds peers"
