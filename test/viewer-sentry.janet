@@ -28,7 +28,7 @@
 (assert ((success-has? "<h1" "Authentication" "<form" "<label" "secret" "<input" "password" "<button")
           (request "POST" (url "/new/whatever")))
           "catch all POST")
-(assert ((redirect? "/")
+(assert ((success-has? "You are being redirected to")
           (request "POST" (url "/")
                    :headers {"Content-Type" "application/x-www-form-urlencoded"}
                    :body "secret=testist")))
