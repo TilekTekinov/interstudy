@@ -72,6 +72,8 @@
                  (<- c (=> :membranes :nodes |(get $ (array/pop c))))
                  (<- c =>guards)
                  (<- c (=> :mycelium :nodes |(get $ (array/pop c))))))
+        (<- c (=> :mycelium (>select-keys :psk)))
+        (>if =>mycelium (<- c =>mycelium))
         (>if =>membrane
              (=> (<- c =>membrane)
                  (>if (=> =>neighbors present?)
@@ -79,13 +81,21 @@
                           (<- c (=> :membranes :nodes
                                     |(tabseq [i :in (array/pop c)] i
                                        ((=> i :address) $))))))))
-        (<- c (=> :mycelium (>select-keys :psk)))
-        (>if =>mycelium (<- c =>mycelium))
         (>if (=> =>peers present?)
              (=> (<- c (=> =>peers))
                  (<- c |(tabseq [i :in (array/pop c)]
                           i ((=> (=>mycelium-node i) :rpc) $)))))
-        (>if (=> =>membrane :rpc) (<- c =>membrane))
+        (>if (=> =>membrane :public)
+             (<- c (=> =>membrane :public
+                       |{:public (path/posix/join ((c 2) :build-path) $)})))
+        (>if =>guards
+             (=> (<- c =>guards)
+                 (<- c (>if (=> :membranes :nodes |(get $ (last c)) :public)
+                            (=> :membranes :nodes |(get $ (array/pop c)) :public
+                                |{:public (path/posix/join ((c 2) :build-path) $)})))))
+        (>if (=> :symbionts symbiont :image)
+             (<- c (=> :symbionts symbiont :image
+                       |{:image (path/posix/join ((c 2) :data-path) $)})))
         (>base c) (>merge))))
 
 (defn update-rpc
