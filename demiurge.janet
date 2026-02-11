@@ -8,10 +8,13 @@
       ((>put :sha sha) view))
     "save sha"))
 
-(define-effect SetReleasedSHA
+(define-event SetReleasedSHA
   "Writes the current SHA to file"
-  [_ {:view {:sha sha} :release-path rp} _]
-  (spit (path/abspath (path/join rp "released.sha")) sha))
+  {:update
+   (fn [_ {:view view}] (put view :release-sha (view :sha)))
+   :effect
+   (fn [_ {:view {:sha sha} :release-path rp} _]
+     (spit (path/abspath (path/join rp "release.sha")) sha))})
 
 (define-watch GetGitSHA
   "Save in the state the latest shas of the repository"
@@ -114,28 +117,33 @@
 (define-event Build
   "Builds peers"
   {:effect
-   (fn [_ {:view {:sha sha}} _]
+   (fn [&]
      ($ janet-pm "clean")
      ($ janet-pm "build"))})
+
+(defn ^mark-release
+  "Marks that release has started"
+  [now]
+  (make-update
+    (fn [_ {:view view}] ((>put :releasing now) view))
+    "mark release"))
 
 (defn ^release
   "Event that releases the new version of the thicket."
   [now]
-  (make-event
-    {:update
-     (fn [_ {:view view}] ((>put :releasing now) view))
-     :watch
-     (fn [_ {:release-path rp :dry dry
-             :view {:sha sha :release-sha rsha}} _]
-       (if (and rsha (= sha rsha))
-         [(log "Latest version is already released") Released]
-         [(log "Starting new release")
-          ;(if dry
-             [(log "Build dry run") (^delay 0.001 Released)]
-             [GetGitSHA StopPeers Build Deploy
-              SetReleasedSHA Released
-              (^connect-peers (log "Demiurge is ready"))])
-          (log "Release finished")]))}
+  (make-watch
+    (fn [_ {:release-path rp :dry dry :builder builder
+            :view {:sha sha :release-sha rsha}} _]
+      (if (and rsha (= sha rsha))
+        [(log "Latest version is already released")
+         (^delay 0.01 Released)]
+        [(log "Starting new release")
+         ;(if (or (not builder) dry)
+            [(log "Build dry run") Released]
+            [GetGitSHA StopPeers Build Deploy
+             SetReleasedSHA Released
+             (^connect-peers (log "Demiurge is ready"))])
+         (log "Release finished")]))
     "release"))
 
 (define-spy ReleaseOnSHA
@@ -144,12 +152,9 @@
   (make-snoop
     @{:snoop
       (fn [_ {:view view :builder builder} spys event]
-        (cond
-          (not builder) (array/clear spys)
-          (view :sha)
-          (do
-            (array/clear spys)
-            (^release (os/clock)))))}
+        (when (or (not builder) (view :sha))
+          (array/clear spys)
+          (^release (os/clock))))}
     "release on sha"))
 
 (defn ^save-entries
@@ -186,21 +191,15 @@
 (def rpc-funcs
   "RPC functions for the tree"
   (merge-into
-    @{:stop
-      (fn [_]
-        (define :view)
-        (if-let [ts (view :ran)]
-          (produce StopPeers))
-        (produce (log "Demiurge going down") (^delay 0.001 Stop))
-        :ok)
-      :state
+    @{:state
       (fn [_]
         (define :view)
         (if-let [releasing (view :releasing)]
-          [:busy (view :releasing)]
-          (if-let [ran (view :ran)]
-            [:running ran]
-            [:idle (view :sha)])))
+          [:busy (view :releasing) (view :sha)]
+          (if-let [ran (view :ran)
+                   spwnd (keys (view :spawned))]
+            [:running ran spwnd]
+            [:idle (view :sha) (view :release-sha)])))
       :release
       (fn [_]
         (define :view)
@@ -208,7 +207,8 @@
           [:busy releasing]
           (do
             (def now (os/clock))
-            (produce (^release now))
+            (produce (^mark-release now)
+                     ReleaseOnSHA GetGitSHA)
             [:ok now])))
       :stop-peers
       (fn [_]
@@ -219,10 +219,21 @@
       :run-peers
       (fn [_]
         (define :view)
-        (if-let [ts (view :ran)]
-          [:running ts]
-          (do
-            (produce RunPeers (^connect-peers (log "Demiurge is ready"))) :ok)))
+        (if-let [releasing (view :releasing)]
+          [:busy releasing]
+          (if-let [ts (view :ran)]
+            [:running ts]
+            (do
+              (produce RunPeers
+                       (^connect-peers (log "Demiurge is ready")))
+              :ok))))
+      :stop
+      (fn [_]
+        (define :view)
+        (if (present? (view :spawned)) (produce StopPeers))
+        (produce (log "Demiurge going down")
+                 (^delay 0.001 Stop))
+        :ok)
       :update-config
       (fn [_ new-config]
         (spit "conf.jdn" (jdn/render new-config))

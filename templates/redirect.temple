@@ -16,7 +16,7 @@
       }
 
       .navbar a.brand {
-        background-image: url("./logo.svg");
+        background-image: url("/logo.svg");
         background-repeat: no-repeat;
         background-size: contain;
         padding-left: 3rem;
