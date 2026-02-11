@@ -90,10 +90,11 @@
    (fn [_ {:dry dry :release-path rp :builder builder
            :entries entries :autostart autostart} _]
      (unless dry
-       [;(seq [peer :in autostart
-               :let [proc (os/spawn ;(entries peer) {:out :pipe})]]
-           (^save-wait-spawned peer proc))
-        (^connect-peers (log "Peers connected"))]))})
+       (producer
+         (loop [peer :in autostart
+                :let [proc (os/spawn ;(entries peer) {:out :pipe})]]
+           (produce (^save-wait-spawned peer proc)))
+         (produce (^connect-peers (log "Peers connected"))))))})
 
 (defn ^deploy-peer
   "Deploys one peer"
@@ -245,7 +246,8 @@
   (let [url ($<_ git remote get-url origin)
         rbp (path/posix/join "/" ;(butlast (path/parts bp)))
         sbp (path/posix/join rbp "spork")
-        conf (string/format "%j" compile-config)]
+        conf (string/format "%j" compile-config)
+        activate [". ./prod/bin/activate"]]
     (eprin "------------ Ensure paths")
     (exec
       ;(ssh-cmds host
@@ -263,7 +265,7 @@
       ;(ssh-cmds host
                  [:cd bp]
                  ["/usr/local/lib/janet/bin/janet-pm" :full-env env]
-                 [". ./prod/bin/activate"]
+                 activate
                  [:janet "--install" sbp]
                  [:janet-pm :install "jhydro"]
                  [:janet-pm :install "https://git.sr.ht/~pepe/gp"]))
@@ -274,24 +276,25 @@
     (eprint " done")
     (eprint "------------ Quickbin demiurge")
     (exec ;(ssh-cmds host
-                     [:cd bp] [". ./prod/bin/activate"]
+                     [:cd bp] activate
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
                      [:mv "demiurge" rp]))
+    (eprint "------------ Quickbin dm")
+    (exec ;(ssh-cmds host
+                     [:cd bp] activate
+                     [:janet-pm :quickbin "bin/dm.janet" "dm"]
+                     [:mv "dm" rp]))
     (when (= bootstrap :seed)
       (eprint "---------- Seed the Tree")
       (exec ;(ssh-cmds host
-                       [:cd bp] [". ./prod/bin/activate"]
+                       [:cd bp] activate
                        [:janet "bin/seed-tree.janet" "t"])))
     (eprint "------------ Run demiurge")
     (exec ;(ssh-cmds host
                      [:nohup
                       (path/posix/join rp "/demiurge") ">>"
                       (path/posix/join dp "/demiurge.log")
-                      "2>&1 &"]))
-    (eprint "------------ Run peers")
-    (exec ;(ssh-cmds host
-                     [:cd bp] [". ./prod/bin/activate"]
-                     [:janet "bin/dm.janet" "run-peers"]))))
+                      "2>&1 &"]))))
 
 (def initial-state
   "Navigation to initial state in config"
