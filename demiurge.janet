@@ -279,7 +279,7 @@
                      [:cd bp] [". ./prod/bin/activate"]
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
                      [:mv "demiurge" rp]))
-    (when (= bootstrap "seed")
+    (when (= bootstrap :seed)
       (eprint "---------- Seed the Tree")
       (exec ;(ssh-cmds host
                        [:cd bp] [". ./prod/bin/activate"]
@@ -300,6 +300,12 @@
   ((=> (=>symbiont-initial-state :demiurge)
        (>update :rpc (update-rpc rpc-funcs))) compile-config))
 
+(defn ^bootstrap-arg
+  "Saves the bootstrap argument"
+  [arg]
+  (make-update
+    (fn [_ state] (put state :bootstrap (keyword arg)))))
+
 (defn main
   ```
   Main entry into demiurge.
@@ -307,7 +313,7 @@
   [_ &opt bootstrap]
   (def events
     (if bootstrap
-      [Bootstrap]
+      [(^bootstrap-arg bootstrap) Bootstrap]
       [RPC GetGitSHA PrepareView ReleaseOnSHA (log "Demiurge is ready")]))
   (->
     initial-state
