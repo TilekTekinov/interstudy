@@ -20,9 +20,6 @@
                  1 sha?
                  2 sha?})
             (:state demiurge)))
-  (assert ((??? {0 (?eq :latest)
-                 1 sha?})
-            (:release demiurge)))
   (assert ((??? {0 (?eq :idle)
                  1 sha?
                  2 sha?})

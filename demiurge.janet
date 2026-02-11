@@ -16,18 +16,18 @@
    (fn [_ {:view {:sha sha} :release-path rp} _]
      (spit (path/abspath (path/join rp "release.sha")) sha))})
 
-(define-watch GetGitSHA
+(define-watch PullGetSHA
   "Save in the state the latest shas of the repository"
   [_ {:release-path rp :dry dry} _]
   (producer
-    (unless dry ($< git pull))
+    (if-not dry ($< git pull))
     (produce (^save-sha (string ($<_ git rev-parse HEAD))))))
 
 (define-event Released
   "Marks the end of releasing"
   {:update
    (fn [_ {:view view}] ((>put :releasing false) view))
-   :watch [GetGitSHA]})
+   :watch PullGetSHA})
 
 (defn ^remove-peer
   "Removes peer from spawned"
@@ -139,10 +139,9 @@
         [(log "Starting new release")
          ;[;(if (or (not builder) dry)
               [(log "Build dry run") StopPeers SetReleasedSHA Released]
-              [GetGitSHA StopPeers Build Deploy
-               SetReleasedSHA Released
-               (^connect-peers (log "Demiurge is ready"))])
-           (if ran RunPeers (make Event))]
+              [PullGetSHA StopPeers Build Deploy
+               SetReleasedSHA Released])
+           ;(if ran [RunPeers (^connect-peers (log "Demiurge is ready"))] [(make Event)])]
          (log "Release finished")]))
     "release"))
 
@@ -206,9 +205,8 @@
         (def {:sha sha :release-sha rsha :releasing rls} view)
         (cond
           rls [:busy rls]
-          (and rsha (= sha rsha)) [:latest sha]
           (let [now (os/clock)]
-            (produce (^mark-release now) ReleaseOnSHA GetGitSHA)
+            (produce (^mark-release now) ReleaseOnSHA PullGetSHA)
             [:ok now])))
       :stop-peers
       (fn [_]
@@ -314,7 +312,7 @@
   (def events
     (if bootstrap
       [(^bootstrap-arg bootstrap) Bootstrap]
-      [RPC GetGitSHA PrepareView ReleaseOnSHA (log "Demiurge is ready")]))
+      [RPC PullGetSHA PrepareView ReleaseOnSHA (log "Demiurge is ready")]))
   (->
     initial-state
     (make-manager on-error)
