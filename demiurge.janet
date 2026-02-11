@@ -133,16 +133,16 @@
   [now]
   (make-watch
     (fn [_ {:release-path rp :dry dry :builder builder
-            :view {:sha sha :release-sha rsha}} _]
+            :view {:sha sha :release-sha rsha :ran ran}} _]
       (if (and rsha (= sha rsha))
-        [(log "Latest version is already released")
-         (^delay 0.01 Released)]
+        [(log "Latest version is already released") Released]
         [(log "Starting new release")
-         ;(if (or (not builder) dry)
-            [(log "Build dry run") Released]
-            [GetGitSHA StopPeers Build Deploy
-             SetReleasedSHA Released
-             (^connect-peers (log "Demiurge is ready"))])
+         ;[;(if (or (not builder) dry)
+              [(log "Build dry run") StopPeers SetReleasedSHA Released]
+              [GetGitSHA StopPeers Build Deploy
+               SetReleasedSHA Released
+               (^connect-peers (log "Demiurge is ready"))])
+           (if ran RunPeers (make Event))]
          (log "Release finished")]))
     "release"))
 
@@ -152,7 +152,7 @@
   (make-snoop
     @{:snoop
       (fn [_ {:view view :builder builder} spys event]
-        (when (or (not builder) (view :sha))
+        (when (view :sha)
           (array/clear spys)
           (^release (os/clock))))}
     "release on sha"))
@@ -194,8 +194,8 @@
     @{:state
       (fn [_]
         (define :view)
-        (if-let [releasing (view :releasing)]
-          [:busy (view :releasing) (view :sha)]
+        (if-let [from (view :releasing)]
+          [:busy from (view :sha)]
           (if-let [ran (view :ran)
                    spwnd (keys (view :spawned))]
             [:running ran spwnd]
@@ -203,12 +203,12 @@
       :release
       (fn [_]
         (define :view)
-        (if-let [releasing (view :releasing)]
-          [:busy releasing]
-          (do
-            (def now (os/clock))
-            (produce (^mark-release now)
-                     ReleaseOnSHA GetGitSHA)
+        (def {:sha sha :release-sha rsha :releasing rls} view)
+        (cond
+          rls [:busy rls]
+          (and rsha (= sha rsha)) [:latest sha]
+          (let [now (os/clock)]
+            (produce (^mark-release now) ReleaseOnSHA GetGitSHA)
             [:ok now])))
       :stop-peers
       (fn [_]
@@ -242,7 +242,8 @@
 (define-effect Bootstrap
   "Event that bootstraps the remote site"
   [_ {:host host :env env
-      :build-path bp :data-path dp :release-path rp} _]
+      :build-path bp :data-path dp :release-path rp
+      :bootstrap bootstrap} _]
   (let [url ($<_ git remote get-url origin)
         rbp (path/posix/join "/" ;(butlast (path/parts bp)))
         sbp (path/posix/join rbp "spork")
@@ -278,10 +279,11 @@
                      [:cd bp] [". ./prod/bin/activate"]
                      [:janet-pm :quickbin "demiurge.janet" "demiurge"]
                      [:mv "demiurge" rp]))
-    (eprint "---------- Seed the Tree")
-    (exec ;(ssh-cmds host
-                     [:cd bp] [". ./prod/bin/activate"]
-                     [:janet "bin/seed-tree.janet" "t"]))
+    (when (= bootstrap "seed")
+      (eprint "---------- Seed the Tree")
+      (exec ;(ssh-cmds host
+                       [:cd bp] [". ./prod/bin/activate"]
+                       [:janet "bin/seed-tree.janet" "t"])))
     (eprint "------------ Run demiurge")
     (exec ;(ssh-cmds host
                      [:nohup

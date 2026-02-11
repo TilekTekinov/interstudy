@@ -15,7 +15,7 @@
 (defn >collect-into
   "Merges the result of running `fun` into the `tbl`"
   [tbl &opt fun]
-  (fn >collect-merge [base]
+  (fn >collect-into [base]
     (merge-into tbl (if fun (fun base) base))
     base))
 
