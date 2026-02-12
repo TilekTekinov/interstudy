@@ -104,7 +104,7 @@
   (fn [url] @{:url url :functions funcs}))
 
 (defn =>course/by-code
-  "Subject finder by code"
+  "Course finder by code"
   [code]
   (=> :courses (>find-from-start (??? {:code (?eq code)}))))
 
@@ -112,14 +112,14 @@
   "Function that timestamps"
   (>put :timestamp (os/time)))
 
+(def =>header-cookie
+  "Navigate to cookie in request headers"
+  (=> :headers "Cookie" "session"))
+
 (defn jdn/render
   "Renders Janet `item` into jdn"
   [item]
   (string/format "%j" item))
-
-(def =>header-cookie
-  "Navigate to cookie in request headers"
-  (=> :headers "Cookie" "session"))
 
 # HTTP
 (defn ^write-spawn
@@ -195,7 +195,21 @@
     item
     (string (util/bin2hex (hash/hash 16 item ctx)))))
 
+(defn human
+  "Capitalizes and replace -"
+  [name]
+  (string/join
+    (->> name (string/split "-")
+         (map |(string (string/ascii-upper
+                         (string/from-bytes ($ 0))) (slice $ 1 -1))))
+    " "))
+
 # Events
+(define-watch Ready
+  "Event that logs readiness"
+  [_ {:name name} _]
+  (log (human name) " is ready"))
+
 (defn ^refresh-view
   "Refreshes the data in view from tree"
   [& colls]

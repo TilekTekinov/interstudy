@@ -189,17 +189,20 @@
     "/enroll/:id" (http/dispatch {"GET" /enrollment
                                   "POST" /enroll})})
 
+(defr +:refresh
+  "RPC function, that refreshes the view"
+  [produce-resp ok-resp]
+  (def [what] args)
+  (case what
+    :active-semester
+    (produce (^refresh-view :active-courses :active-semester))
+    :courses
+    (produce (^refresh-view :active-courses :courses))
+    (produce (^refresh-view what))))
+
 (def rpc-funcs
   "RPC functions"
-  @{:refresh
-    (fn [_ what]
-      (case what
-        :active-semester
-        (produce (^refresh-view :active-courses :active-semester))
-        :courses
-        (produce (^refresh-view :active-courses :courses))
-        (produce (^refresh-view what)))
-      :ok)
+  @{:refresh +:refresh
     :stop close-peers-stop})
 
 (def initial-state
@@ -211,7 +214,8 @@
 (define-watch Start
   "Starts the machinery"
   [&]
-  [PrepareView HTTP RPC (^register :tree)])
+  [PrepareView (^register :tree)
+   HTTP RPC Ready])
 
 (defn main
   ```

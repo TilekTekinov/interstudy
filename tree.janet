@@ -1,5 +1,7 @@
 (use /environment /schema)
 
+(setdyn *rpc-defines* [:view])
+
 (def collections/leafs
   "All collections provided by the tree"
   [:faculties :semesters :courses])
@@ -97,35 +99,54 @@
      :watch [Flush RefreshView (^refresh-peers :enrollments)
              (^refresh-peers :courses)]}))
 
+(defr +:active-semester
+  "RPC function, that returns the active semester"
+  []
+  (view :active-semester))
+
+(defr +:save-course
+  "RPC function, that save the `new` course under the `code`"
+  [produce-resp ok-resp]
+  (def [code new] args)
+  (^save-course code new))
+
+(defr +:set-active-semester
+  "RPC function, that sets the active `semester`"
+  [produce-resp ok-resp]
+  (def [semester] args)
+  (^set-active-semester semester))
+
+(defr +:save-registration
+  "RPC function, that saves the `registration`"
+  [produce-resp ok-resp]
+  (def [key registration] args)
+  (^save-registration key registration))
+
+(defr +:save-enrollment
+  "RPC function, that saves the `enrollment`"
+  [produce-resp ok-resp]
+  (def [key enrollment] args)
+  (^save-enrollment key enrollment))
+
+(defr +:register
+  "RPC function, that registers the `peer`"
+  [produce-resp ok-resp]
+  (def [peer] args)
+  (^connect-peer peer))
+
 (def rpc-funcs
   "RPC functions for the tree"
   (merge-into
-    @{:active-semester
-      (fn [rpc] (define :view) (print "fnnnnnn") (view :active-semester))
-      :set-active-semester
-      (fn [rpc semester]
-        (produce (^set-active-semester semester))
-        :ok)
-      :save-course
-      (fn [rpc code new]
-        (produce (^save-course code new))
-        :ok)
-      :save-registration
-      (fn [rpc key registration]
-        (produce (^save-registration key registration))
-        :ok)
-      :save-enrollment
-      (fn [rpc key enrollment]
-        (produce (^save-enrollment key enrollment))
-        :ok)
+    @{:active-semester +:active-semester
+      :set-active-semester +:set-active-semester
+      :save-course +:save-course
+      :save-registration +:save-registration
+      :save-enrollment +:save-enrollment
       :stop close-peers-stop
-      :register
-      (fn [rpc peer]
-        (produce (^connect-peer peer))
-        :ok)}
+      :register +:register}
     (tabseq [coll :in (array/concat @[:active-courses :courses]
                                     collections/leafs collections/fruits)]
-      coll (fn [rpc] (define :view) (view coll)))))
+      coll (fn [&] (define :view) (get view coll)))))
 
 (def initial-state
   "Navigation to initial state in config"

@@ -27,7 +27,7 @@
   (assert (ok? (:run-peers demiurge)))
   (assert ((??? {0 (?eq :running)
                  1 epoch?
-                 2 array?})
+                 2 tuple?})
             (:state demiurge)))
   (assert (ok? (:stop-peers demiurge)))
   (assert (ok? (:update-config demiurge compile-config)))

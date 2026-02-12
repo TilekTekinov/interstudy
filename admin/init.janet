@@ -233,9 +233,15 @@
       "/enrolled/:code" /courses/enrolled
       "/search" /courses/search}})
 
+(defr +:refresh
+  "RPC function that refreshes the view"
+  [produce-resp ok-resp]
+  (def [& what] args)
+  (^refresh-view ;what))
+
 (def rpc-funcs
   "RPC functions"
-  @{:refresh (fn [_ & what] (produce (^refresh-view ;what)) :ok)
+  @{:refresh +:refresh
     :stop close-peers-stop})
 
 (def initial-state
@@ -247,8 +253,8 @@
 (define-watch Start
   "Starts the machinery"
   [&]
-  [(^prepare-view collections/view) HTTP RPC
-   (^register :tree)])
+  [(^prepare-view collections/view) (^register :tree)
+   HTTP RPC Ready])
 
 (defn main
   ```

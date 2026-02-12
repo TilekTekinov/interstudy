@@ -5,15 +5,6 @@
 (setdyn *handler-defines* [:view :conn])
 (defdyn *view* "View for handlers")
 
-(defn human
-  "Capitalizes and replace -"
-  [name]
-  (string/join
-    (->> name (string/split "-")
-         (map |(string (string/ascii-upper
-                         (string/from-bytes ($ 0))) (slice $ 1 -1))))
-    " "))
-
 (defh /index
   "Handler for the form"
   [http/cookies http/html-get]
@@ -64,18 +55,13 @@
    :effect
    (fn [_ state _] (setdyn *view* (state :view)))})
 
-(def rpc-funcs
-  "RPC functions"
-  @{:refresh (fn [&] :ok)
-    :stop close-peers-stop})
-
 (defn =>sentry-initial-state
   "Navigation to sentry initial state"
   [sentry]
   (=> (=>symbiont-initial-state sentry)
       (>put :routes routes)
       (>put :static false)
-      (>update :rpc (update-rpc rpc-funcs))))
+      (>update :rpc (update-rpc @{}))))
 
 (defmacro sentry-main
   []
