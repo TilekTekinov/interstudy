@@ -2,11 +2,6 @@
 
 (setdyn *rpc-defines* [:view])
 
-(defn pipe-out
-  "Spawns the process with pipe out"
-  [[cmd flags]]
-  (os/spawn cmd flags {:out :pipe}))
-
 (def PeersConnected
   "Event that logs peers connections"
   (log "Peers connected"))
@@ -60,7 +55,6 @@
      (fn [_ state _]
        (def {:view {:spawned spawned}} state)
        (def pc (state peer))
-       (def sp (spawned peer))
        (protect (:stop pc)
                 (:close pc)))}))
 
@@ -157,7 +151,7 @@
            SetReleasedSHA Released Ready
            ;(if ran
               [RunPeers (^connect-peers PeersConnected)]
-              [(make Event)])]
+              [Empty])]
          (log "Release finished")]))
     "release"))
 
@@ -166,9 +160,10 @@
   [&]
   (make-snoop
     @{:snoop
-      (fn [_ {:view view :builder builder} spys event]
+      (fn [self {:view view :builder builder} spys event]
         (when (view :sha)
-          (array/clear spys)
+          (while (def i (find-index |(= $ self) spys))
+            (array/remove spys i))
           (^release (os/clock))))}
     "release on sha"))
 

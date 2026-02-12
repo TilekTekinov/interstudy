@@ -188,6 +188,11 @@
 (def ctx "Jhydro context" "interstu")
 (setdyn :ctx ctx)
 
+(defn pipe-out
+  "Spawns the process with pipe out"
+  [[cmd flags]]
+  (os/spawn cmd flags {:out :pipe}))
+
 (defn hash
   "Returns hash item"
   [item]
