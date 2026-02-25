@@ -55,7 +55,7 @@
        [:div (dt/format-date-time ets) " "]
        [:div (length ecs) " for " ecr " credits"]])
     [:a {:href (string student "/enroll/" (hash em))
-         :target "_blank"} "Enroll link"]]])
+         :target "_blank"} "Enroll link"]]]) # 3 Issue
 
 (def- init-ds (json/encode {:search "" :enrolled false}))
 

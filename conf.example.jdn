@@ -13,7 +13,6 @@
    :autostart [:tree :student :admin-sentry :viewer-sentry]}
   :tree {:image "tree"}
   :student {}
-  :admin {}
   :admin {:guarded-by :admin-sentry}
   :admin-sentry
   {:guards :admin

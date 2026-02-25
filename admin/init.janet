@@ -10,19 +10,20 @@
   "Contructs htmlgen representation of one `course`"
   [{:code code :name name :credits credits
     :semester semester :active active :enrolled enrolled}]
-  [:tr {:id code}
-   [:td code]
-   [:td name]
-   [:td credits]
-   [:td semester]
-   [:td {:class :active} (if active "x")]
-   [:td
-    (if enrolled
-      [:a {:data-on:click (ds/get "/courses/enrolled/" code)}
-       [:span (length enrolled) (hg/raw "&nbsp;enrolled")]])]
-   [:td
-    [:a {:data-on:click (ds/get "/courses/edit/" code)}
-     "Edit"]]])
+  @[[:tr {:id code}
+     [:td code]
+     [:td name]
+     [:td credits]
+     [:td semester]
+     [:td {:class :active} (if active "x")]
+     [:td
+      (if enrolled
+        [:a {:data-on:click (ds/get "/courses/enrolled/" code)}
+         [:span (length enrolled) (hg/raw "&nbsp;enrolled")]])] # Issue #1
+     [:td
+      [:a {:data-on:click (ds/get "/courses/edit/" code)}
+       "Edit"]]]
+    [:tr {:id (string code "-enrolled")}]])
 
 (def- init-ds (json/encode {:active false :semester "" :enrolled false}))
 
@@ -186,9 +187,11 @@
   [code enrolled]
   [:tr {:id (string code "-enrolled")}
    [:td {:colspan "7"}
+    (if-not (empty? enrolled)
+      [:a {:data-on:click (ds/get (string "/courses/clear/enrolled/" code))} "close"])
     [:ul
      (seq [{:fullname fn :email em} :in enrolled]
-       [:li fn " <" em ">"])]]])
+       [:li fn " <" em ">"])]]]) # Issue 2
 
 (defh /courses/enrolled
   "Enrolled students for a course detail"
@@ -199,7 +202,14 @@
     ((=> (<- c (=> :registrations))
          (=>course/by-code code) :enrolled
          (>reduce (fn [acc id] (array/push acc ((c 0) id)) acc) @[])) view))
-  (ds/hg-stream (<enrolled/> code enrolled) (string "#" code) "after"))
+  (ds/hg-stream (<enrolled/> code enrolled) (string "#" code "-enrolled") "outer"))
+
+(defh /courses/clear/enrolled
+  "Enrolled students for a course detail"
+  [check-session]
+  (def code (params :code))
+  (def c @[])
+  (ds/hg-stream (<enrolled/> code []) (string "#" code "-enrolled") "outer"))
 
 (defh /courses/search
   "Search courses handler"
@@ -231,6 +241,7 @@
       "/save/:code" /courses/save
       "/filter/" /courses/filter
       "/enrolled/:code" /courses/enrolled
+      "/clear/enrolled/:code" /courses/clear/enrolled
       "/search" /courses/search}})
 
 (defr +:refresh
