@@ -1,0 +1,9 @@
+@{:config @{:installed-with "spork/pm" :pm {:type :git :url "https://github.com/janet-lang/pkgs.git"}}
+  :dependencies @[]
+  :files @["C:\\Users\\josef\\code\\interstudy\\dev\\pkgs.janet"]
+  :hooks @[:install]
+  :info {:name "pkgs"}
+  :installed-with "spork/pm"
+  :local-source "C:\\Users\\josef\\code\\interstudy\\dev\\.cache\\git__https___github.com_janet-lang_pkgs.git"
+  :name "pkgs"
+  :pm {:type :git :url "https://github.com/janet-lang/pkgs.git"}}
