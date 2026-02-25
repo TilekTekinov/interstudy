@@ -1,0 +1,6 @@
+@{:author "MrWheatley "
+  :dependencies @["spork"]
+  :description "A simple janet lsp that works with Helix "
+  :jpm-dependencies @["spork"]
+  :name "simple-janet-lsp"
+  :version "0.1.0"}
