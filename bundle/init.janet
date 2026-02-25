@@ -44,10 +44,11 @@
         (++ pass-count)
         (array/push failing path))
       (print)))
+  (def duration (precise-time (- (os/clock) start)))
   (if (= pass-count total-count)
-    (print "\e[30;102m--------------------- All tests passed in " (precise-time (- (os/clock) start)) "! ---------------------\e[0m")
+    (print "\e[30;102m--------------------- All tests passed in " duration "! ---------------------\e[0m")
     (do
-      (print "\e[97;101m--------------------- Some tests failed! ---------------------\e[0m\n")
+      (print "\e[97;101m--------------------- Some tests failed in " duration "! ---------------------\e[0m\n")
       (printf "%d of %d passed. Failing scripts:" pass-count total-count)
       (each f failing
         (print "  \e[97;101m" f "\e[0m"))
