@@ -1,0 +1,22 @@
+@{:auto-remove true
+  :config @{:auto-remove true :installed-with "spork/pm" :pm {:type :git :url "https://github.com/janet-lang/jhydro.git"}}
+  :dependencies @[]
+  :files @["C:\\Users\\josef\\code\\interstudy\\dev\\jhydro.dll" "C:\\Users\\josef\\code\\interstudy\\dev\\jhydro.lib" "C:\\Users\\josef\\code\\interstudy\\dev\\jhydro.meta.janet"]
+  :hooks @[
+    :clean
+    :list-rules
+    :install
+    :default-ldflags
+    :default-cppflags
+    :default-cflags
+    :default-lflags
+    :clean-all
+    :build
+    :rule-tree
+    :check
+    :run]
+  :info {:name "jhydro"}
+  :installed-with "spork/pm"
+  :local-source "C:\\Users\\josef\\code\\interstudy\\dev\\.cache\\git__https___github.com_janet-lang_jhydro.git"
+  :name "jhydro"
+  :pm {:type :git :url "https://github.com/janet-lang/jhydro.git"}}

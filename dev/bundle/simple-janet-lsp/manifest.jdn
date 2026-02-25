@@ -1,0 +1,26 @@
+@{:dependencies @["spork"]
+  :files @["C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp" "C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp\\eval.janet" "C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp\\flycheck.janet" "C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp\\init.janet" "C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp\\log.janet" "C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp\\parser.janet" "C:\\Users\\josef\\code\\interstudy\\dev\\simple-janet-lsp\\utils.janet" "C:\\Users\\josef\\code\\interstudy\\dev\\bin\\janet-lsp" "C:\\Users\\josef\\code\\interstudy\\dev\\bin\\janet-lsp.bat"]
+  :has-bin-script true
+  :has-exe true
+  :hooks @[
+    :clean
+    :list-rules
+    :install
+    :default-ldflags
+    :default-cppflags
+    :default-cflags
+    :default-lflags
+    :clean-all
+    :build
+    :rule-tree
+    :check
+    :run]
+  :info @{
+    :author "MrWheatley "
+    :dependencies @["spork"]
+    :description "A simple janet lsp that works with Helix "
+    :jpm-dependencies @["spork"]
+    :name "simple-janet-lsp"
+    :version "0.1.0"}
+  :local-source "C:\\Users\\josef\\code\\simple-janet-lsp\\"
+  :name "simple-janet-lsp"}
